@@ -18,6 +18,7 @@ import 'package:logger/logger.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   final bangumi = BangumiSyncService();
   late Directory directory;
   late PathProviderPlatform originalPathProvider;
