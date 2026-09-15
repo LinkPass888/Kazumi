@@ -347,24 +347,15 @@ abstract class _CollectController with Store {
       return false;
     }
 
-    if (!BangumiSyncService().initialized) {
-      KazumiDialog.showToast(message: 'Bangumi同步已开启但未初始化，请检查Token后重试');
-      return false;
-    }
     try {
-      await BangumiSyncService().ping();
-      try {
-        await BangumiSyncService().syncCollectibles(onProgress: onProgress);
-        if (showSuccessToast) {
-          KazumiDialog.showToast(message: 'Bangumi同步完成');
-        }
-      } catch (e) {
-        KazumiDialog.showToast(message: 'Bangumi同步失败 $e');
-        return false;
+      await BangumiSyncService().syncCollectibles(onProgress: onProgress);
+      if (showSuccessToast) {
+        KazumiDialog.showToast(message: 'Bangumi同步完成');
       }
     } catch (e) {
       KazumiLogger().e('Bangumi: Bangumi connection failed', error: e);
-      KazumiDialog.showToast(message: 'Bangumi访问失败: $e');
+      KazumiDialog.showToast(
+          message: 'Bangumi同步失败 ${BangumiSyncService.describeError(e)}');
       return false;
     }
     loadCollectibles();
