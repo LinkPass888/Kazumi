@@ -17,12 +17,9 @@
 
 ## 支持平台
 
-- Android 10 及以上
-- Windows 10 及以上
-- MacOS 10.15 及以上
-- Linux (实验性)
-- iOS 13 及以上 (需要 [侧载](https://kazumi.app/docs/misc/how-to-install-in-ios))
-- HarmonyOS 5.0 及以上 (位于 [分支仓库](https://github.com/ErBWs/Kazumi/releases/latest)，需要 [侧载](https://kazumi.app/docs/misc/how-to-install-in-ohos))
+本仓库是 [Predidit/Kazumi](https://github.com/Predidit/Kazumi) 的 iOS 专用分支：界面回退到 2.3.0，只提供 iOS 的未签名 ipa。
+
+- iOS 13 及以上（需要 [侧载](https://kazumi.app/docs/misc/how-to-install-in-ios)）
 
 ## 屏幕截图
 
@@ -69,35 +66,13 @@
 
 ## 下载
 
-通过本页面 [Releases](https://github.com/Predidit/Kazumi/releases/latest) 选项卡下载：
+通过本仓库 [Releases](https://github.com/LinkPass888/Kazumi/releases/latest) 选项卡下载：
 
-<a href="https://github.com/Predidit/Kazumi/releases">
+<a href="https://github.com/LinkPass888/Kazumi/releases">
   <img src="static/svg/get_it_on_github.svg" alt="Get it on Github" width="200"/>
 </a>
 
-### Android
-
-<a href="https://f-droid.org/packages/com.predidit.kazumi">
-  <img src="https://fdroid.gitlab.io/artwork/badge/get-it-on-zh-hans.svg"
-  alt="Get it on F-Droid" width="200">
-</a>
-
-### GNU/Linux
-
-<a href="https://flathub.org/apps/io.github.Predidit.Kazumi">
-  <img src="https://flathub.org/api/badge?svg&locale=zh-Hans" alt="Get it on Flathub" width="175"/>
-</a>
-
-#### Arch Linux
-
-可以从 [AUR](http://aur.archlinux.org) 安装。
-
-##### AUR
-
-```bash
-[yay/paru] -S kazumi # 从源码构建
-[yay/paru] -S kazumi-bin # 二进制包
-```
+发布的是**未签名 ipa**，需要使用 [AltStore](https://altstore.io/)、[Sideloadly](https://sideloadly.io/) 等工具侧载，并自备 Apple ID 进行签名。
 
 ## 贡献
 
@@ -124,10 +99,6 @@ A: 本程序在视频播放时, 会尽可能多地缓存视频到内存, 以提�
 
 A: 部分视频源的番剧使用了反盗链措施, 这可以被 Kazumi 解决, 但无法被外部播放器解决。
 
-#### Q: 为什么下载的 Linux 版本缺少图标和托盘功能？
-
-A: 使用 .deb 版本进行安装, tar.gz 版本仅为方便二次打包, 这一格式先天缺乏图标和托盘功能支持。
-
 </details>
 
 <details>
@@ -148,7 +119,7 @@ A: 尝试关闭自定义规则的使用内置播放器选项, 这将尝试使用
 
 #### Q: 我在尝试自行编译该项目, 但编译没有成功。
 
-A: 本项目编译需要良好的网络环境, 除了由 Google 托管的 Flutter 相关依赖外, 本项目同样依赖托管在 MavenCentral/Github/SourceForge 上的资源。如果您位于中国大陆, 可能需要设置恰当的镜像地址。
+A: 本项目编译需要良好的网络环境, 除了由 Google 托管的 Flutter 相关依赖外, 本项目同样依赖托管在 CocoaPods/Github 上的资源。如果您位于中国大陆, 可能需要设置恰当的镜像地址。
 
 </details>
 
@@ -174,16 +145,9 @@ A: 本项目编译需要良好的网络环境, 除了由 Google 托管的 Flutte
 
 我们不收集任何用户数据, 不使用任何遥测组件。
 
-## 代码签名策略
-
-提交者: [贡献者](https://github.com/Predidit/Kazumi/graphs/contributors)
-审阅者: [所有者](https://github.com/Predidit)
-
 ## 赞助
 
 
-| ![signpath](https://signpath.org/assets/favicon-50x50.png)                                                                                                                      | Free code signing on Windows provided by[SignPath.io](https://about.signpath.io/), certficate by [SignPath Foundation](https://signpath.org/) |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | <img src="https://kilo.ai/favicon/favicon.svg" width="50">                                                                                                                      | **Automatic PR review provided by [Kilo Code](https://kilo.ai/), sponsored by the [Kilo OSS Program](https://kilo.ai/oss)**                   |
 | <a href="https://m.do.co/c/0062035db3e4"><img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_icon_blue.svg" width="50" height="50"></a> | **Cloud infrastructure is supported by [DigitalOcean](https://m.do.co/c/0062035db3e4)**                                                       |
 
@@ -199,7 +163,7 @@ A: 本项目编译需要良好的网络环境, 除了由 Google 托管的 Flutte
 
 特别感谢 [SyncPlay](https://github.com/Syncplay/syncplay) 本项目使用 SyncPlay 协议并通过 SyncPlay 公共服务器实现一起看功能。
 
-特别感谢 [所有贡献者](https://github.com/Predidit/Kazumi/graphs/contributors) 本项目因为你们变得更好。
+特别感谢 [所有贡献者](https://github.com/LinkPass888/Kazumi/graphs/contributors) 本项目因为你们变得更好。
 
 特别感谢 [trace.moe](https://trace.moe) 本项目使用了 trace.moe 提供的图片识别番剧功能。
 
