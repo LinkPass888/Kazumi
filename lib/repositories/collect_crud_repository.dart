@@ -1,6 +1,7 @@
 import 'package:kazumi/services/storage/storage.dart';
 import 'package:kazumi/services/storage/bangumi_timeline_store.dart';
 import 'package:kazumi/modules/bangumi/bangumi_item.dart';
+import 'package:kazumi/modules/collect/collect_type.dart';
 import 'package:kazumi/modules/collect/collect_module.dart';
 import 'package:kazumi/modules/collect/collect_change_module.dart';
 import 'package:kazumi/services/logging/logger.dart';
