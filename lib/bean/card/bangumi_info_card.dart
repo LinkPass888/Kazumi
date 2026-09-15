@@ -56,13 +56,10 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
   }
 
   void _loadTimelineEntry() {
-    weekday = BangumiTimelineStore.weekdayOf(
-      widget.bangumiItem.id,
-      widget.bangumiItem.airWeekday,
-    );
-    showInTimeline = BangumiTimelineStore.isShownInTimeline(
-      widget.bangumiItem.id,
-    );
+    final entry = BangumiTimelineStore.entryOf(widget.bangumiItem.id);
+    weekday = entry?.weekday ??
+        normalizeBangumiWeekday(widget.bangumiItem.airWeekday);
+    showInTimeline = entry?.showInTimeline ?? false;
   }
 
   CollectController? get _collectController {

@@ -160,19 +160,6 @@ class BangumiTimelineStore {
     return loadAll()[bangumiId];
   }
 
-  /// 读取番剧的放送星期，未设置时使用 [fallback]
-  static int weekdayOf(int bangumiId, int fallback) {
-    final entry = entryOf(bangumiId);
-    if (entry != null) {
-      return entry.weekday;
-    }
-    return normalizeBangumiWeekday(fallback);
-  }
-
-  static bool isShownInTimeline(int bangumiId) {
-    return entryOf(bangumiId)?.showInTimeline ?? false;
-  }
-
   /// 获取所有需要展示的番剧 ID -> 星期
   static Map<int, int> loadShownWeekdays() {
     final weekdays = <int, int>{};
@@ -220,24 +207,6 @@ class BangumiTimelineStore {
       return;
     }
     await _save(entries);
-  }
-
-  /// 批量删除数据
-  static Future<void> removeAll(Iterable<int> bangumiIds) async {
-    final entries = loadAll();
-    var changed = false;
-    for (final bangumiId in bangumiIds) {
-      changed = entries.remove(bangumiId) != null || changed;
-    }
-    if (!changed) {
-      return;
-    }
-    await _save(entries);
-  }
-
-  /// 清空全部数据
-  static Future<void> clear() async {
-    await GStorage.putSetting(SettingsKeys.bangumiTimelineEntries, '');
   }
 
   /// 番剧不再处于「在看」时删除数据
