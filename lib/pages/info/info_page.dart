@@ -409,8 +409,8 @@ class _InfoPageState extends State<InfoPage> with TickerProviderStateMixin {
                     stretch: true,
                     centerTitle: false,
                     expandedHeight: (Platform.isMacOS && showWindowButton)
-                        ? 400 + kTextTabBarHeight + kToolbarHeight + 22
-                        : 400 + kTextTabBarHeight + kToolbarHeight,
+                        ? 364 + kTextTabBarHeight + kToolbarHeight + 22
+                        : 364 + kTextTabBarHeight + kToolbarHeight,
                     collapsedHeight: (Platform.isMacOS && showWindowButton)
                         ? kTextTabBarHeight +
                             kToolbarHeight +

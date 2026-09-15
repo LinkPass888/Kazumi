@@ -123,7 +123,7 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
     _refreshTimeline();
     if (!showInTimeline) {
       KazumiDialog.showToast(
-        message: '已设置放送星期，开启「在时间表展示」后会出现在时间表',
+        message: '已设置放送星期，点亮右侧图标后即可在时间表展示',
       );
     }
   }
@@ -283,7 +283,7 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 392,
+      height: 356,
       constraints: BoxConstraints(maxWidth: 950),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -349,64 +349,71 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
                             ),
                             const SizedBox(height: 4),
                             const Text('放送星期:'),
-                            InkWell(
-                              borderRadius: BorderRadius.circular(8),
-                              onTap: widget.isLoading
-                                  ? null
-                                  : () => _showWeekdayPicker(),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 2,
-                                  vertical: 2,
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                InkWell(
+                                  borderRadius: BorderRadius.circular(8),
+                                  onTap: widget.isLoading
+                                      ? null
+                                      : () => _showWeekdayPicker(),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 2,
+                                      vertical: 2,
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          weekdayCnLabel(weekday),
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                          ),
+                                        ),
+                                        Icon(
+                                          Icons.expand_more_rounded,
+                                          size: 20,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      weekdayCnLabel(weekday),
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color:
-                                            Theme.of(context).colorScheme.primary,
+                                const SizedBox(width: 6),
+                                Tooltip(
+                                  message: '在时间表展示',
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(20),
+                                    onTap: widget.isLoading
+                                        ? null
+                                        : () => _setShowInTimeline(
+                                            !showInTimeline),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(6),
+                                      child: Icon(
+                                        showInTimeline
+                                            ? Icons.timeline
+                                            : Icons.timeline_outlined,
+                                        size: 24,
+                                        color: showInTimeline
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .outline,
                                       ),
                                     ),
-                                    Icon(
-                                      Icons.expand_more_rounded,
-                                      size: 20,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            ),
-                            InkWell(
-                              borderRadius: BorderRadius.circular(8),
-                              onTap: widget.isLoading
-                                  ? null
-                                  : () => _setShowInTimeline(!showInTimeline),
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: Row(
-                                  children: [
-                                    const Expanded(
-                                      child: Text(
-                                        '在时间表展示',
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    Switch.adaptive(
-                                      value: showInTimeline,
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      onChanged: widget.isLoading
-                                          ? null
-                                          : (value) => _setShowInTimeline(value),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              ],
                             ),
                             SizedBox(height: 8),
                             Text(
