@@ -107,6 +107,24 @@ int dateStringToWeekday(String dateString) {
   }
 }
 
+const List<String> weekdayCnLabels = [
+  '星期一',
+  '星期二',
+  '星期三',
+  '星期四',
+  '星期五',
+  '星期六',
+  '星期日',
+];
+
+/// 星期数值（1 = 星期一）转中文标签
+String weekdayCnLabel(int weekday) {
+  if (weekday < 1 || weekday > 7) {
+    return weekdayCnLabels[0];
+  }
+  return weekdayCnLabels[weekday - 1];
+}
+
 String formatDate(String dateString) {
   try {
     final date = DateTime.parse(dateString);

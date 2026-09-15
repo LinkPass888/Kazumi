@@ -4,6 +4,7 @@ import 'package:kazumi/utils/anime_season.dart';
 import 'package:kazumi/repositories/collect_repository.dart';
 import 'package:kazumi/modules/collect/collect_type.dart';
 import 'package:kazumi/services/storage/storage.dart';
+import 'package:kazumi/services/storage/bangumi_timeline_store.dart';
 import 'package:mobx/mobx.dart';
 
 part 'timeline_controller.g.dart';
@@ -18,6 +19,9 @@ abstract class _TimelineController with Store {
   @observable
   ObservableList<List<BangumiItem>> bangumiCalendar =
       ObservableList<List<BangumiItem>>();
+
+  /// 接口返回的原始日历，详情页的自定义条目每次都从它重新合并
+  List<List<BangumiItem>> _baseBangumiCalendar = [];
 
   @observable
   String seasonString = '';
@@ -63,11 +67,13 @@ abstract class _TimelineController with Store {
     isTimeOut = false;
     bangumiCalendar.clear();
     final resBangumiCalendar = await BangumiApi.getCalendar();
-    bangumiCalendar.clear();
-    bangumiCalendar.addAll(resBangumiCalendar);
-    changeSortType(sortType);
+    _setBangumiCalendarBase(resBangumiCalendar);
     isLoading = false;
     isTimeOut = bangumiCalendar.isEmpty;
+    if (!isTimeOut) {
+      _applyCustomTimelineEntries();
+      changeSortType(sortType);
+    }
   }
 
   @action
@@ -79,11 +85,11 @@ abstract class _TimelineController with Store {
       final resBangumiCalendar =
           await BangumiApi.getBangumiMirrorSeasonCalendar(
               AnimeSeason(selectedDate).toSeasonStartAndEnd());
-      bangumiCalendar.clear();
-      bangumiCalendar.addAll(resBangumiCalendar);
+      _setBangumiCalendarBase(resBangumiCalendar);
       isLoading = false;
       isTimeOut = bangumiCalendar.every((innerList) => innerList.isEmpty);
       if (!isTimeOut) {
+        _applyCustomTimelineEntries();
         changeSortType(sortType);
       }
       return;
@@ -106,6 +112,7 @@ abstract class _TimelineController with Store {
       bangumiCalendar.clear();
       bangumiCalendar.addAll(resBangumiCalendar);
     }
+    _setBangumiCalendarBase(resBangumiCalendar);
     isLoading = false;
     if (bangumiCalendar.isEmpty) {
       isTimeOut = true;
@@ -113,8 +120,67 @@ abstract class _TimelineController with Store {
       isTimeOut = bangumiCalendar.every((innerList) => innerList.isEmpty);
     }
     if (!isTimeOut) {
+      _applyCustomTimelineEntries();
       changeSortType(sortType);
     }
+  }
+
+  /// 保存接口返回的原始日历，并把展示用日历重置为它的副本
+  void _setBangumiCalendarBase(List<List<BangumiItem>> calendar) {
+    _baseBangumiCalendar =
+        calendar.map((dayList) => List<BangumiItem>.from(dayList)).toList();
+    _resetBangumiCalendarFromBase();
+  }
+
+  void _resetBangumiCalendarFromBase() {
+    bangumiCalendar.clear();
+    bangumiCalendar.addAll(
+      _baseBangumiCalendar
+          .map((dayList) => List<BangumiItem>.from(dayList))
+          .toList(),
+    );
+  }
+
+  /// 把番剧详情页设置的「在时间表展示」条目合并进日历
+  void _applyCustomTimelineEntries() {
+    if (bangumiCalendar.isEmpty) {
+      return;
+    }
+    final weekdays = BangumiTimelineStore.loadShownWeekdays();
+    if (weekdays.isEmpty) {
+      return;
+    }
+    final items = <int, BangumiItem>{};
+    for (final collectible in GStorage.collectibles.values) {
+      final bangumiItem = collectible.bangumiItem;
+      if (!weekdays.containsKey(bangumiItem.id)) {
+        continue;
+      }
+      if (!bangumiKeepsTimelineEntry(collectible.type)) {
+        continue;
+      }
+      items[bangumiItem.id] = bangumiItem;
+    }
+    if (items.isEmpty) {
+      return;
+    }
+    final merged = mergeBangumiTimelineEntries(
+      base: bangumiCalendar,
+      weekdays: weekdays,
+      items: items,
+    );
+    bangumiCalendar.clear();
+    bangumiCalendar.addAll(merged);
+  }
+
+  /// 详情页修改自定义条目后刷新时间表
+  void refreshCustomTimelineEntries() {
+    if (_baseBangumiCalendar.isEmpty) {
+      return;
+    }
+    _resetBangumiCalendarFromBase();
+    _applyCustomTimelineEntries();
+    changeSortType(sortType);
   }
 
   void tryEnterSeason(DateTime date) {
