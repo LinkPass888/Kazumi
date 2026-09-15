@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kazumi/bean/dialog/dialog_helper.dart';
 import 'package:kazumi/services/sync/bangumi_sync_service.dart';
+import 'package:kazumi/services/sync/danmaku_shield_sync_service.dart';
 import 'package:kazumi/services/logging/logger.dart';
 import 'package:kazumi/services/storage/storage.dart';
 import 'package:kazumi/services/sync/webdav.dart';
@@ -19,6 +20,7 @@ class _PlayerSettingsPageState extends State<WebDavSettingsPage> {
   late bool webDavEnable;
   late bool webDavEnableHistory;
   late bool webDavEnableCollect;
+  late bool webDavEnableDanmakuShield;
   late bool enableGitProxy;
   late bool enableBangumiProxy;
   late bool bangumiSyncEnable;
@@ -29,6 +31,8 @@ class _PlayerSettingsPageState extends State<WebDavSettingsPage> {
     webDavEnable = GStorage.getSetting(SettingsKeys.webDavEnable);
     webDavEnableHistory = GStorage.getSetting(SettingsKeys.webDavEnableHistory);
     webDavEnableCollect = GStorage.getSetting(SettingsKeys.webDavEnableCollect);
+    webDavEnableDanmakuShield =
+        GStorage.getSetting(SettingsKeys.webDavEnableDanmakuShield);
     enableGitProxy = GStorage.getSetting(SettingsKeys.enableGitProxy);
     enableBangumiProxy = GStorage.getSetting(SettingsKeys.enableBangumiProxy);
     bangumiSyncEnable = GStorage.getSetting(SettingsKeys.bangumiSyncEnable);
@@ -129,7 +133,7 @@ class _PlayerSettingsPageState extends State<WebDavSettingsPage> {
                       } else {
                         if (!bangumi.initialized) {
                           try {
-                            await bangumi.init();
+                            await bangumi.ping();
                           } catch (e) {
                             KazumiDialog.showToast(
                                 message: "Bangumi 初始化失败，请稍后再试");
@@ -180,10 +184,13 @@ class _PlayerSettingsPageState extends State<WebDavSettingsPage> {
                     if (!webDavEnable) {
                       webDavEnableHistory = false;
                       webDavEnableCollect = false;
+                      webDavEnableDanmakuShield = false;
                       await GStorage.putSetting(
                           SettingsKeys.webDavEnableHistory, false);
                       await GStorage.putSetting(
                           SettingsKeys.webDavEnableCollect, false);
+                      await GStorage.putSetting(
+                          SettingsKeys.webDavEnableDanmakuShield, false);
                     }
                     await GStorage.putSetting(
                         SettingsKeys.webDavEnable, webDavEnable);
@@ -225,6 +232,29 @@ class _PlayerSettingsPageState extends State<WebDavSettingsPage> {
                   title: Text('收藏同步'),
                   description: Text('允许 WebDAV 参与追番状态同步'),
                   initialValue: webDavEnableCollect,
+                ),
+                SettingsTile.switchTile(
+                  leading: Icons.comment_rounded,
+                  onToggle: (value) async {
+                    if (!webDavEnable) {
+                      KazumiDialog.showToast(message: '请先开启WEBDAV同步');
+                      return;
+                    }
+                    webDavEnableDanmakuShield =
+                        value ?? !webDavEnableDanmakuShield;
+                    await GStorage.putSetting(
+                        SettingsKeys.webDavEnableDanmakuShield,
+                        webDavEnableDanmakuShield);
+                    if (webDavEnableDanmakuShield) {
+                      await inject<DanmakuShieldSyncService>().syncIfEnabled();
+                    }
+                    if (mounted) {
+                      setState(() {});
+                    }
+                  },
+                  title: Text('弹幕屏蔽规则同步'),
+                  description: Text('在多设备之间合并弹幕屏蔽关键词'),
+                  initialValue: webDavEnableDanmakuShield,
                 ),
                 SettingsTile(
                   leading: Icons.tune_rounded,

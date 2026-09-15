@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kazumi/bean/dialog/dialog_helper.dart';
 import 'package:kazumi/bean/settings/settings_list.dart';
-import 'package:kazumi/bean/widget/split_list_row.dart';
 import 'package:kazumi/services/network/metered_network_service.dart';
 import 'package:kazumi/services/player/low_memory_mode.dart';
 
@@ -41,7 +40,7 @@ class _LowMemoryModeDialogState extends State<_LowMemoryModeDialog> {
     try {
       await mode.save();
       if (!mounted) return;
-      KazumiDialog.dismiss(context: context);
+      KazumiDialog.dismiss();
     } catch (_) {
       if (!mounted) return;
       setState(() => _saving = false);
@@ -100,7 +99,7 @@ class _LowMemoryModeDialogState extends State<_LowMemoryModeDialog> {
               RadioGroup<LowMemoryMode>(
                 groupValue: mode,
                 onChanged: _selectMode,
-                child: SplitListGroup(
+                child: Column(
                   children: [
                     for (final option in LowMemoryMode.values)
                       SettingsTile<LowMemoryMode>.radioTile(
@@ -127,7 +126,7 @@ class _LowMemoryModeDialogState extends State<_LowMemoryModeDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: () => KazumiDialog.dismiss(context: context),
+          onPressed: () => KazumiDialog.dismiss(),
           child: const Text('取消'),
         ),
       ],

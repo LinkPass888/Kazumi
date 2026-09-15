@@ -261,7 +261,7 @@ class _BangumiEditorPageState extends State<BangumiEditorPage> {
 
                   KazumiDialog.showToast(message: '正在测试 Bangumi Token...');
                   try {
-                    await bangumi.init();
+                    await bangumi.ping();
                   } catch (e) {
                     KazumiDialog.showToast(message: '验证失败：${e.toString()}');
                     await GStorage.putSetting(

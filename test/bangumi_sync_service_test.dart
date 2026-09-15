@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:kazumi/pages/collect/collect_controller.dart';
 import 'package:kazumi/repositories/collect_crud_repository.dart';
+import 'package:kazumi/repositories/collect_repository.dart';
 import 'package:kazumi/request/clients/bangumi_client.dart';
 import 'package:kazumi/request/core/dio_factory.dart';
 import 'package:kazumi/request/core/network_exception.dart';
@@ -207,13 +208,12 @@ void main() {
     adapter.respond = (request) async => request.uri.path == '/v0/me'
         ? _user()
         : _json({'data': [], 'total': 0, 'limit': 50});
-    final errors = <String>[];
-    final controller = CollectController(CollectCrudRepository());
+    final controller = CollectController(
+        CollectCrudRepository(), CollectRepository());
     expect(
         await controller.syncCollectiblesBangumi(
-            onProgress: (message, current, total) {}, onError: errors.add),
+            onProgress: (message, current, total) {}),
         isTrue);
-    expect(errors, isEmpty);
     expect(bangumi.initialized, isTrue);
   });
 

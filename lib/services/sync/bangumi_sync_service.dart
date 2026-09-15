@@ -30,13 +30,16 @@ class BangumiSyncService extends ChangeNotifier {
   static final BangumiSyncService _instance = BangumiSyncService._internal();
   factory BangumiSyncService() => _instance;
 
-  @visibleForTesting
-  void resetForTesting() {
+  /// Drops the cached connection state, e.g. after the stored token changes.
+  void reset() {
     _verifiedToken = null;
     _username = '';
     _lastError = null;
     notifyListeners();
   }
+
+  @visibleForTesting
+  void resetForTesting() => reset();
 
   Future<void> ping() => _operations.run(_connectConfiguredToken);
 

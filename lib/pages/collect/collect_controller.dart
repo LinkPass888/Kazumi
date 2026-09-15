@@ -354,12 +354,9 @@ abstract class _CollectController with Store {
     try {
       await BangumiSyncService().ping();
       try {
-        final hasChanges =
-            await BangumiSyncService().syncCollectibles(onProgress: onProgress);
+        await BangumiSyncService().syncCollectibles(onProgress: onProgress);
         if (showSuccessToast) {
-          KazumiDialog.showToast(
-            message: hasChanges ? 'Bangumi同步完成' : '未发现状态差异，无需同步',
-          );
+          KazumiDialog.showToast(message: 'Bangumi同步完成');
         }
       } catch (e) {
         KazumiDialog.showToast(message: 'Bangumi同步失败 $e');
