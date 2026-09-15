@@ -190,7 +190,13 @@ class AutoUpdater {
   }
 
   Future<Map<String, dynamic>> _latestRelease() async {
-    final raw = await _downloadClient.getPlain(ApiEndpoints.latestAppMirror);
+    final raw = await _downloadClient.getPlain(
+      ApiEndpoints.latestApp,
+      headers: {
+        'accept': 'application/vnd.github+json',
+        'user-agent': 'Kazumi/${ApiEndpoints.version}',
+      },
+    );
     final data = json.decode(raw);
     if (data is! Map) {
       throw Exception('Invalid update response');
