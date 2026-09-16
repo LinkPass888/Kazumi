@@ -66,33 +66,19 @@ class _TimelinePageState extends State<TimelinePage>
     }
   }
 
-  /// 一颗小玻璃按钮：玻璃里面再铺一层选中填充，填满整块玻璃。
+  /// 一颗小玻璃按钮，选中填充与点按反馈都和玻璃同尺寸。
   Widget _glassPill({required int index, required String label}) {
-    final ColorScheme scheme = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 3),
-      child: AnimatedBuilder(
-        animation: tabController!,
-        builder: (context, _) {
-          final bool selected = tabController!.index == index;
-          return KazumiGlass.glassSurface(
-            shape: KazumiGlass.circleShape,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 160),
-              curve: Curves.easeOut,
-              alignment: Alignment.center,
-              decoration: ShapeDecoration(
-                shape: const StadiumBorder(),
-                color: selected
-                    ? scheme.primary.withValues(alpha: 0.30)
-                    : Colors.transparent,
-              ),
-              child: Text(label),
-            ),
-          );
-        },
-      ),
+    return AnimatedBuilder(
+      animation: tabController!,
+      builder: (context, _) {
+        return KazumiGlass.glassButton(
+          context: context,
+          selected: tabController!.index == index,
+          onTap: () => tabController!.animateTo(index),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: Text(label),
+        );
+      },
     );
   }
 
@@ -714,26 +700,20 @@ class _TimelinePageState extends State<TimelinePage>
           preferredSize: const Size.fromHeight(56),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
-            child: SizedBox(
-              height: 40,
-              // 每个星期各自一块小玻璃，不是一整条。选中态不走 TabBar 的
-              // indicator（它按标签区域画，会比玻璃大一圈），而是画在玻璃里面。
-              child: TabBar(
-                controller: tabController,
-                tabs: [
-                  for (int i = 0; i < tabs.length; i++)
-                    Tab(
-                      height: 40,
-                      child: _glassPill(
-                        index: i,
-                        label: tabs[i].text ?? '',
-                      ),
+            // 自己排一行玻璃按钮：TabBar 的选中填充和点击水波纹都按
+            // 「标签区域」画，和玻璃不是一个尺寸，会大一圈也对不上形。
+            child: Row(
+              children: [
+                for (int i = 0; i < tabs.length; i++) ...[
+                  if (i > 0) const SizedBox(width: 6),
+                  Expanded(
+                    child: _glassPill(
+                      index: i,
+                      label: tabs[i].text ?? '',
                     ),
+                  ),
                 ],
-                dividerHeight: 0,
-                indicator: const BoxDecoration(color: Colors.transparent),
-                labelPadding: EdgeInsets.zero,
-              ),
+              ],
             ),
           ),
         ),

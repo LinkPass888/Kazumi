@@ -66,7 +66,53 @@ abstract final class KazumiGlass {
     );
   }
 
-  /// 一块玻璃表面，[child] 画在玻璃之上。
+  /// 一颗可点的小玻璃按钮（放送星期、追番分类这类标签）。
+  ///
+  /// 选中填充画在玻璃**内部**，尺寸和玻璃完全一致；点按反馈交给原生玻璃
+  /// 自己的高光，不用 Material 的水波纹 —— 后者按标签区域画，会比玻璃大一圈。
+  static Widget glassButton({
+    required BuildContext context,
+    required Widget child,
+    required VoidCallback? onTap,
+    bool selected = false,
+    EdgeInsetsGeometry padding =
+        const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+  }) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    if (!enabled) {
+      return InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: padding,
+          child: DefaultTextStyle.merge(
+            style: TextStyle(color: selected ? scheme.primary : null),
+            child: child,
+          ),
+        ),
+      );
+    }
+    return LiquidGlassContainer(
+      shape: circleShape,
+      style: LiquidGlassStyle.regular,
+      interactive: true,
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        curve: Curves.easeOut,
+        alignment: Alignment.center,
+        padding: padding,
+        decoration: ShapeDecoration(
+          shape: const StadiumBorder(),
+          color: selected
+              ? scheme.primary.withValues(alpha: 0.30)
+              : Colors.transparent,
+        ),
+        child: child,
+      ),
+    );
+  }
+
+  /// 浮动按钮垫的玻璃，配合 [floatingButton] 用。
   ///
   /// 关闭液态玻璃时原样返回 [child]，由调用方自己决定原来的外观。
   static Widget glassSurface({
