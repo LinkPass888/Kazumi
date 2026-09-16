@@ -94,23 +94,15 @@ class CustomDropdownMenu extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final itemValue = items[index];
                         final displayText = itemBuilder(itemValue);
-                        // 条目本身也是玻璃：点按反馈用原生玻璃自己的高光，
-                        // 不是 Material 的水波纹（它的形状和条目对不上）
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 2),
-                          child: KazumiGlass.glassButton(
-                            context: context,
-                            onTap: () => Navigator.pop(context, itemValue),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 10,
-                            ),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                displayText,
-                                style: const TextStyle(fontSize: 14),
-                              ),
+                        // 整块菜单是一块大玻璃，条目只做按下时的圆角高亮
+                        return KazumiGlass.menuItem(
+                          context: context,
+                          onTap: () => Navigator.pop(context, itemValue),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              displayText,
+                              style: const TextStyle(fontSize: 14),
                             ),
                           ),
                         );

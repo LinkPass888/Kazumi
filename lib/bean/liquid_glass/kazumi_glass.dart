@@ -79,35 +79,82 @@ abstract final class KazumiGlass {
         const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
   }) {
     final ColorScheme scheme = Theme.of(context).colorScheme;
-    if (!enabled) {
-      return InkWell(
+    // 触摸交给 Flutter 的 InkWell：平台视图只当背景（interactive: false），
+    // 这样一定点得到；按下时是圆角高亮，不是 Material 的水波纹。
+    final Widget tappable = Material(
+      type: MaterialType.transparency,
+      child: InkWell(
         onTap: onTap,
-        child: Padding(
-          padding: padding,
-          child: DefaultTextStyle.merge(
-            style: TextStyle(color: selected ? scheme.primary : null),
-            child: child,
-          ),
-        ),
-      );
+        customBorder: const StadiumBorder(),
+        splashFactory: NoSplash.splashFactory,
+        highlightColor: scheme.primary.withValues(alpha: 0.16),
+        child: Padding(padding: padding, child: child),
+      ),
+    );
+    final Widget filled = AnimatedContainer(
+      duration: const Duration(milliseconds: 160),
+      curve: Curves.easeOut,
+      alignment: Alignment.center,
+      decoration: ShapeDecoration(
+        shape: const StadiumBorder(),
+        color: selected
+            ? scheme.primary.withValues(alpha: 0.30)
+            : Colors.transparent,
+      ),
+      child: tappable,
+    );
+    if (!enabled) {
+      return filled;
     }
     return LiquidGlassContainer(
       shape: circleShape,
       style: LiquidGlassStyle.regular,
-      interactive: true,
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 160),
-        curve: Curves.easeOut,
-        alignment: Alignment.center,
-        padding: padding,
-        decoration: ShapeDecoration(
-          shape: const StadiumBorder(),
-          color: selected
-              ? scheme.primary.withValues(alpha: 0.30)
-              : Colors.transparent,
+      // 装饰用，不拦触摸
+      interactive: false,
+      child: filled,
+    );
+  }
+
+  /// 玻璃面板里的一个可点条目。
+  ///
+  /// 不额外铺玻璃（苹果不建议玻璃叠玻璃，实测也会点不动），整块菜单还是一块
+  /// 大玻璃；条目只负责按下时的圆角高亮。
+  static Widget menuItem({
+    required BuildContext context,
+    required Widget child,
+    required VoidCallback? onTap,
+    bool selected = false,
+    EdgeInsetsGeometry padding =
+        const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+    double radius = 12,
+  }) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: onTap,
+          customBorder: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(radius)),
+          ),
+          splashFactory: NoSplash.splashFactory,
+          highlightColor: scheme.primary.withValues(alpha: 0.16),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 160),
+            curve: Curves.easeOut,
+            padding: padding,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(radius)),
+              ),
+              color: selected
+                  ? scheme.primary.withValues(alpha: 0.22)
+                  : Colors.transparent,
+            ),
+            child: child,
+          ),
         ),
-        child: child,
       ),
     );
   }

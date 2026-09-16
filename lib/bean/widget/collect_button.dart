@@ -149,10 +149,7 @@ class _CollectButtonState extends State<CollectButton> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: List<Widget>.generate(
                 6,
-                (int index) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2),
-                  // 条目自己就是玻璃：点按反馈用原生玻璃的高光，不是水波纹
-                  child: KazumiGlass.glassButton(
+                (int index) => KazumiGlass.menuItem(
                     context: context,
                     selected: index == collectType,
                     onTap: () async {
@@ -186,7 +183,6 @@ class _CollectButtonState extends State<CollectButton> {
                       ],
                     ),
                   ),
-                ),
               ),
             ),
           ),
