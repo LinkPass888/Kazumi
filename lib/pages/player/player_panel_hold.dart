@@ -84,6 +84,7 @@ class PlayerPanelHoldMenuAnchor extends StatefulWidget {
     required this.builder,
     required this.menuChildren,
     this.consumeOutsideTap = false,
+    this.style,
   });
 
   final PlayerPanelHold Function() acquirePlayerPanelHold;
@@ -95,6 +96,9 @@ class PlayerPanelHoldMenuAnchor extends StatefulWidget {
   ) builder;
   final List<Widget> menuChildren;
   final bool consumeOutsideTap;
+
+  /// 菜单面板的样式，需要指定宽高（例如倍速菜单）时传进来。
+  final MenuStyle? style;
 
   @override
   State<PlayerPanelHoldMenuAnchor> createState() =>
@@ -135,6 +139,7 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
   @override
   Widget build(BuildContext context) {
     return MenuAnchor(
+      style: widget.style,
       consumeOutsideTap: widget.consumeOutsideTap,
       onOpen: _handleOpen,
       onClose: _handleClose,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 
 /// A custom dropdown menu widget that provides smooth animations without flickering.
 ///
@@ -55,55 +56,58 @@ class CustomDropdownMenu extends StatelessWidget {
           Positioned(
             left: offset.dx,
             top: offset.dy + buttonSize.height + gap,
-            child: Material(
-              elevation: 6,
-              borderRadius: BorderRadius.circular(8),
-              color: theme.colorScheme.surface,
-              surfaceTintColor: Colors.transparent,
-              shadowColor: Colors.black26,
-              child: AnimatedBuilder(
-                animation: animation,
-                builder: (context, child) {
-                  final curvedValue =
-                      Curves.easeOutCubic.transform(animation.value);
-                  return ClipRect(
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      heightFactor: curvedValue,
-                      child: Opacity(
-                        opacity: curvedValue,
-                        child: child,
-                      ),
-                    ),
-                  );
-                },
-                child: Container(
-                  constraints: BoxConstraints(
-                    maxHeight: maxHeight ?? 350,
-                    minWidth: normalizedMinWidth,
-                    maxWidth: normalizedMaxWidth,
-                  ),
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    shrinkWrap: true,
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      final itemValue = items[index];
-                      final displayText = itemBuilder(itemValue);
-                      return InkWell(
-                        onTap: () => Navigator.pop(context, itemValue),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                          child: Text(
-                            displayText,
-                            style: const TextStyle(fontSize: 14),
-                          ),
+            child: KazumiGlass.glassSurface(shape: KazumiGlass.panelShape, child: Material(
+                elevation: 0,
+                clipBehavior: Clip.antiAlias,
+                borderRadius: BorderRadius.circular(16),
+                color: KazumiGlass.enabled
+                    ? Colors.transparent
+                    : theme.colorScheme.surface,
+                surfaceTintColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                child: AnimatedBuilder(
+                  animation: animation,
+                  builder: (context, child) {
+                    final curvedValue =
+                        Curves.easeOutCubic.transform(animation.value);
+                    return ClipRect(
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        heightFactor: curvedValue,
+                        child: Opacity(
+                          opacity: curvedValue,
+                          child: child,
                         ),
-                      );
-                    },
+                      ),
+                    );
+                  },
+                  child: Container(
+                    constraints: BoxConstraints(
+                      maxHeight: maxHeight ?? 350,
+                      minWidth: normalizedMinWidth,
+                      maxWidth: normalizedMaxWidth,
+                    ),
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      shrinkWrap: true,
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        final itemValue = items[index];
+                        final displayText = itemBuilder(itemValue);
+                        // 整块菜单是一块大玻璃，条目只做按下时的圆角高亮
+                        return KazumiGlass.menuItem(
+                          context: context,
+                          onTap: () => Navigator.pop(context, itemValue),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              displayText,
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),

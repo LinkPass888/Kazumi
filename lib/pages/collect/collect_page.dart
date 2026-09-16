@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:kazumi/bean/dialog/dialog_helper.dart';
+import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 import 'package:kazumi/modules/bangumi/bangumi_item.dart';
 import 'package:kazumi/modules/collect/collect_module.dart';
 import 'package:kazumi/modules/collect/collect_type.dart';
@@ -165,32 +166,51 @@ class _CollectPageState extends State<CollectPage>
     return counts;
   }
 
-  Widget _buildTab(String label, int? count) {
-    if (count == null) {
-      return Tab(text: label);
+  /// 取某个分类的番剧数量，未开启统计时返回 null。
+  int? _countAt(List<int>? counts, int index) {
+    if (counts == null || index >= counts.length) {
+      return null;
     }
+    return counts[index];
+  }
+
+  Widget _buildTab(int index, String label, int? count) {
     final ThemeData theme = Theme.of(context);
-    return Tab(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(label),
-          const SizedBox(width: 6),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.secondaryContainer,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              '$count',
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: theme.colorScheme.onSecondaryContainer,
+    final Widget content = count == null
+        ? Text(label)
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(label),
+              const SizedBox(width: 6),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.secondaryContainer,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '$count',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.onSecondaryContainer,
+                  ),
+                ),
               ),
-            ),
-          ),
-        ],
-      ),
+            ],
+          );
+    // 每个分类各自一块小玻璃，选中填充与点按反馈都和玻璃同尺寸；
+    // 玻璃左右留 16 的内边距，按钮不至于挤着文字。
+    return AnimatedBuilder(
+      animation: tabController!,
+      builder: (context, _) {
+        return KazumiGlass.glassButton(
+          context: context,
+          selected: tabController!.index == index,
+          onTap: () => tabController!.animateTo(index),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: content,
+        );
+      },
     );
   }
 
@@ -217,16 +237,32 @@ class _CollectPageState extends State<CollectPage>
                       MediaQuery.textScalerOf(context)
                               .scale(_countedTabMinWidth) *
                           _tabTypes.length;
-              return TabBar(
-                controller: tabController,
-                isScrollable: scrollable,
-                tabAlignment:
-                    scrollable ? TabAlignment.start : TabAlignment.fill,
-                tabs: [
-                  for (int i = 0; i < _tabTypes.length; i++)
-                    _buildTab(_tabTypes[i].label, counts?[i]),
-                ],
-                indicatorColor: Theme.of(context).colorScheme.primary,
+              // 自己排一行玻璃按钮：TabBar 的选中填充和点击水波纹都按
+              // 「标签区域」画，和玻璃不是一个尺寸，会大一圈也对不上形。
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+                child: SizedBox(
+                  height: 40,
+                  child: scrollable
+                      ? ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _tabTypes.length,
+                          separatorBuilder: (_, __) => const SizedBox(width: 6),
+                          itemBuilder: (context, i) =>
+                              _buildTab(i, _tabTypes[i].label, _countAt(counts, i)),
+                        )
+                      : Row(
+                          children: [
+                            for (int i = 0; i < _tabTypes.length; i++) ...[
+                              if (i > 0) const SizedBox(width: 6),
+                              Expanded(
+                                child: _buildTab(
+                                    i, _tabTypes[i].label, _countAt(counts, i)),
+                              ),
+                            ],
+                          ],
+                        ),
+                ),
               );
             });
           }),
@@ -244,49 +280,52 @@ class _CollectPageState extends State<CollectPage>
                   : const Icon(Icons.edit))
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          bool webDavenable =
-              await GStorage.getSetting(SettingsKeys.webDavEnable);
-          bool webDavCollectEnable =
-              GStorage.getSetting(SettingsKeys.webDavEnableCollect);
-          bool bgmSyncEnable =
-              GStorage.getSetting(SettingsKeys.bangumiSyncEnable);
-          final syncPlan = CollectSyncPlan(
-            webDavEnabled: webDavenable,
-            webDavCollectiblesEnabled: webDavCollectEnable,
-            bangumiEnabled: bgmSyncEnable,
-          );
-          if (!syncPlan.canSync) {
-            KazumiDialog.showToast(message: '同步功能不可用，请至少开启一个同步功能');
-            return;
-          }
-          if (showDelete) {
-            KazumiDialog.showToast(message: '编辑模式无法执行同步');
-            return;
-          }
-          if (syncCollectiblesing) {
-            return;
-          }
-          setState(() {
-            syncCollectiblesing = true;
-          });
-          try {
-            await _runFullSync(
-              plan: syncPlan,
+      floatingActionButton: KazumiGlass.floatingButton(
+        context: context,
+        child: FloatingActionButton(
+          onPressed: () async {
+            bool webDavenable =
+                await GStorage.getSetting(SettingsKeys.webDavEnable);
+            bool webDavCollectEnable =
+                GStorage.getSetting(SettingsKeys.webDavEnableCollect);
+            bool bgmSyncEnable =
+                GStorage.getSetting(SettingsKeys.bangumiSyncEnable);
+            final syncPlan = CollectSyncPlan(
+              webDavEnabled: webDavenable,
+              webDavCollectiblesEnabled: webDavCollectEnable,
+              bangumiEnabled: bgmSyncEnable,
             );
-          } finally {
-            if (mounted) {
-              setState(() {
-                syncCollectiblesing = false;
-              });
+            if (!syncPlan.canSync) {
+              KazumiDialog.showToast(message: '同步功能不可用，请至少开启一个同步功能');
+              return;
             }
-          }
-        },
-        child: syncCollectiblesing
-            ? const SizedBox(
-                width: 32, height: 32, child: CircularProgressIndicator())
-            : const Icon(Icons.sync_rounded),
+            if (showDelete) {
+              KazumiDialog.showToast(message: '编辑模式无法执行同步');
+              return;
+            }
+            if (syncCollectiblesing) {
+              return;
+            }
+            setState(() {
+              syncCollectiblesing = true;
+            });
+            try {
+              await _runFullSync(
+                plan: syncPlan,
+              );
+            } finally {
+              if (mounted) {
+                setState(() {
+                  syncCollectiblesing = false;
+                });
+              }
+            }
+          },
+          child: syncCollectiblesing
+              ? const SizedBox(
+                  width: 32, height: 32, child: CircularProgressIndicator())
+              : const Icon(Icons.sync_rounded),
+        ),
       ),
       body: Observer(builder: (context) {
         return renderBody;
@@ -334,8 +373,9 @@ class _CollectPageState extends State<CollectPage>
         CustomScrollView(
           slivers: [
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(StyleString.cardSpace,
-                  StyleString.cardSpace, StyleString.cardSpace, 0),
+              padding: EdgeInsets.fromLTRB(StyleString.cardSpace,
+                  StyleString.cardSpace, StyleString.cardSpace,
+                  KazumiGlass.bottomInset(context)),
               sliver: SliverGrid(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   mainAxisSpacing: StyleString.cardSpace - 2,

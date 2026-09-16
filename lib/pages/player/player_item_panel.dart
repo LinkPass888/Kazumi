@@ -830,6 +830,15 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
                     onVisibilityChanged: widget.onMenuVisibilityChanged,
                     consumeOutsideTap: true,
+                    // 要收的是宽度：面板宽度由 fixedSize 定住，条目自身的最小
+                    // 宽度和左右内边距都要压小，否则内容会把面板撑开。
+                    style: const MenuStyle(
+                      fixedSize: WidgetStatePropertyAll(Size(112, 264)),
+                      minimumSize: WidgetStatePropertyAll(Size(112, 264)),
+                      maximumSize: WidgetStatePropertyAll(Size(112, 264)),
+                      padding: WidgetStatePropertyAll(EdgeInsets.zero),
+                      elevation: WidgetStatePropertyAll(0),
+                    ),
                     builder: (BuildContext context, MenuController controller,
                         Widget? child) {
                       return TextButton(
@@ -855,9 +864,17 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                           onPressed: () async {
                             await widget.setPlaybackSpeed(i);
                           },
-                          child: Container(
-                            height: 48,
-                            constraints: BoxConstraints(minWidth: 112),
+                          // 右侧多留 20：滚动条画在面板右边缘，不留通道会压住数值
+                          style: const ButtonStyle(
+                            padding: WidgetStatePropertyAll(
+                              EdgeInsets.only(left: 14, right: 20),
+                            ),
+                          ),
+                          // 宽度撑满面板：这样滚动条才贴着面板右边缘，
+                          // 文字靠左，右边留出的通道正好给滚动条
+                          child: SizedBox(
+                            height: 40,
+                            width: double.infinity,
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(

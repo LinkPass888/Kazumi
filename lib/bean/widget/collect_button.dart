@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 import 'package:kazumi/modules/bangumi/bangumi_item.dart';
 import 'package:kazumi/pages/collect/collect_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -42,6 +43,9 @@ class _CollectButtonState extends State<CollectButton> {
   // 5. 抛弃
   late int collectType;
   final CollectController collectController = inject<CollectController>();
+  // menuChildren 是在 build 里构造的，拿不到 builder 的 controller 参数，
+  // 所以自己建一个交给 MenuAnchor 用
+  final MenuController menuController = MenuController();
 
   @override
   void initState() {
@@ -86,10 +90,23 @@ class _CollectButtonState extends State<CollectButton> {
   Widget build(BuildContext context) {
     collectType = collectController.getCollectType(widget.bangumiItem);
     return MenuAnchor(
+      controller: menuController,
       consumeOutsideTap: true,
       onClose: widget.onClose,
       onOpen: widget.onOpen,
       crossAxisUnconstrained: false,
+      // 面板本身画不了玻璃（框架自己画 Material），所以把它整块变透明，
+      // 再在 menuChildren 里放一块玻璃顶上去。
+      style: const MenuStyle(
+        backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+        elevation: WidgetStatePropertyAll(0),
+        padding: WidgetStatePropertyAll(EdgeInsets.zero),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(18)),
+          ),
+        ),
+      ),
       builder: (_, MenuController controller, __) {
         if (widget.isExtended) {
           return FilledButton.icon(
@@ -120,49 +137,58 @@ class _CollectButtonState extends State<CollectButton> {
           );
         }
       },
-      menuChildren: List<MenuItemButton>.generate(
-        6,
-        (int index) => MenuItemButton(
-          onPressed: () async {
-            if (index != collectType && mounted) {
-              await collectController.addCollect(widget.bangumiItem,
-                  type: index);
-              // 防止状态错误刷新
-              if (!mounted) {
-                return;
-              }
-              setState(() {});
-            }
-          },
-          child: Container(
-            height: 48,
-            constraints: BoxConstraints(minWidth: 112),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    getIconByInt(index),
-                    color: index == collectType
-                        ? Theme.of(context).colorScheme.primary
-                        : null,
-                  ),
-                  SizedBox(width: 4),
-                  Text(
-                    ' ${getTypeStringByInt(index)}',
-                    style: TextStyle(
-                      color: index == collectType
-                          ? Theme.of(context).colorScheme.primary
-                          : null,
+      // 面板整块用玻璃画：框架的菜单面板本身画不了玻璃，所以先把它的背景
+      // 变透明，再把这一块玻璃当作唯一的面板内容顶上去。
+      menuChildren: [
+        KazumiGlass.glassSurface(
+          shape: KazumiGlass.panelShape,
+          child: SizedBox(
+            width: 176,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: List<Widget>.generate(
+                6,
+                (int index) => KazumiGlass.menuItem(
+                    context: context,
+                    selected: index == collectType,
+                    onTap: () async {
+                      menuController.close();
+                      if (index != collectType && mounted) {
+                        await collectController.addCollect(widget.bangumiItem,
+                            type: index);
+                        // 防止状态错误刷新
+                        if (!mounted) {
+                          return;
+                        }
+                        setState(() {});
+                      }
+                    },
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          getIconByInt(index),
+                          size: 20,
+                          color: index == collectType
+                              ? Theme.of(context).colorScheme.primary
+                              : null,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(getTypeStringByInt(index)),
+                      ],
                     ),
                   ),
-                ],
               ),
             ),
           ),
         ),
-      ),
+      ],
     );
   }
+
 }

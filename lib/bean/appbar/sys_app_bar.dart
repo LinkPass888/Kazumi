@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 import 'package:kazumi/bean/widget/embedded_native_control_area.dart';
 import 'package:kazumi/services/storage/storage.dart';
 import 'package:window_manager/window_manager.dart';
@@ -47,6 +47,7 @@ class SysAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool glass = KazumiGlass.enabled;
     List<Widget> acs = [];
     if (actions != null) {
       acs.addAll(actions!);
@@ -57,6 +58,58 @@ class SysAppBar extends StatelessWidget implements PreferredSizeWidget {
         acs.add(CloseButton(onPressed: () => windowManager.close()));
       }
       acs.add(const SizedBox(width: 8));
+    }
+    // 顶栏不再整条铺玻璃（那会在别的页面盖过来时透出一道光边），改成
+    // iOS 26 的软渐进模糊，按钮各自带一层玻璃。
+    // 返回键与右侧按钮统一成同样大小的圆形玻璃，图标居中，离边缘留白
+    Widget? leadingWidget;
+    if (leading != null) {
+      leadingWidget = Center(
+        child: KazumiGlass.buttonGlass(
+          child: SizedBox(
+            width: KazumiGlass.barButtonSize,
+            height: KazumiGlass.barButtonSize,
+            child: EmbeddedNativeControlArea(
+              requireOffset: needTopOffset,
+              child: leading!,
+            ),
+          ),
+        ),
+      );
+    } else if (ModalRoute.of(context)?.impliesAppBarDismissal ?? false) {
+      leadingWidget = Center(
+        child: KazumiGlass.iconButton(
+          context: context,
+          icon: const Icon(Icons.arrow_back, size: 22),
+          onPressed: () => context.maybePop(),
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+        ),
+      );
+    }
+    final List<Widget> actionWidgets = <Widget>[];
+    for (final Widget action in acs) {
+      if (action is SizedBox) {
+        actionWidgets.add(action);
+        continue;
+      }
+      if (actionWidgets.isNotEmpty) {
+        actionWidgets.add(const SizedBox(width: KazumiGlass.barButtonGap));
+      }
+      actionWidgets.add(
+        KazumiGlass.buttonGlass(
+          child: SizedBox(
+            width: KazumiGlass.barButtonSize,
+            height: KazumiGlass.barButtonSize,
+            child: EmbeddedNativeControlArea(
+              requireOffset: needTopOffset,
+              child: action,
+            ),
+          ),
+        ),
+      );
+    }
+    if (actionWidgets.isNotEmpty) {
+      actionWidgets.add(const SizedBox(width: KazumiGlass.barEdgeInset));
     }
     return GestureDetector(
       onPanStart: (_) => (isDesktop()) ? windowManager.startDragging() : null,
@@ -69,44 +122,17 @@ class SysAppBar extends StatelessWidget implements PreferredSizeWidget {
                 child: title!,
               )
             : null,
-        centerTitle: Platform.isIOS ? true : false,
-        actions: acs.map((e) {
-          return EmbeddedNativeControlArea(
-            requireOffset: needTopOffset,
-            child: e,
-          );
-        }).toList(),
-        leading: leading != null
-            ? EmbeddedNativeControlArea(
-                requireOffset: needTopOffset,
-                child: leading!,
-              )
-            : (ModalRoute.of(context)?.impliesAppBarDismissal ?? false)
-                ? EmbeddedNativeControlArea(
-                    requireOffset: needTopOffset,
-                    child: IconButton(
-                      onPressed: () {
-                        context.maybePop();
-                      },
-                      icon: Icon(Icons.arrow_back),
-                    ),
-                  )
-                : null,
-        leadingWidth: leadingWidth,
-        backgroundColor: backgroundColor,
-        elevation: elevation,
+        centerTitle: false,
+        actions: actionWidgets,
+        leading: leadingWidget,
+        leadingWidth: leadingWidth ?? KazumiGlass.barLeadingWidth,
+        backgroundColor: glass ? Colors.transparent : backgroundColor,
+        elevation: glass ? 0 : elevation,
         shape: shape,
         bottom: bottom,
+        flexibleSpace: KazumiGlass.softHeader(context),
         automaticallyImplyLeading: false,
-        systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness:
-              Theme.of(context).brightness == Brightness.light
-                  ? Brightness.dark
-                  : Brightness.light,
-          systemNavigationBarColor: Colors.transparent,
-          systemNavigationBarDividerColor: Colors.transparent,
-        ),
+        systemOverlayStyle: KazumiGlass.overlayStyle(context),
       ),
     );
   }

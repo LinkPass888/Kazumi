@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:kazumi/modules/bangumi/bangumi_item.dart';
 import 'package:kazumi/pages/timeline/timeline_controller.dart';
 import 'package:kazumi/bean/dialog/adaptive_bottom_sheet.dart';
+import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 import 'package:kazumi/bean/dialog/material_bottom_sheet.dart';
 import 'package:kazumi/bean/card/bangumi_timeline_card.dart';
 import 'package:kazumi/utils/constants.dart';
@@ -63,6 +64,22 @@ class _TimelinePageState extends State<TimelinePage>
       default:
         return DateTime.now();
     }
+  }
+
+  /// 一颗小玻璃按钮，选中填充与点按反馈都和玻璃同尺寸。
+  Widget _glassPill({required int index, required String label}) {
+    return AnimatedBuilder(
+      animation: tabController!,
+      builder: (context, _) {
+        return KazumiGlass.glassButton(
+          context: context,
+          selected: tabController!.index == index,
+          onTap: () => tabController!.animateTo(index),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: Text(label),
+        );
+      },
+    );
   }
 
   final List<Tab> tabs = const <Tab>[
@@ -176,7 +193,7 @@ class _TimelinePageState extends State<TimelinePage>
               header: buildSeasonSheetHeader(sheetContext),
               body: ListView.separated(
                 controller: scrollController,
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
+                padding: EdgeInsets.fromLTRB(16, 8, 16, 28 + KazumiGlass.bottomInset(context)),
                 itemCount: yearSeasons.keys.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
@@ -663,7 +680,7 @@ class _TimelinePageState extends State<TimelinePage>
       header: buildTimelineOptionsSheetHeader(context),
       body: ListView(
         shrinkWrap: true,
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
+        padding: EdgeInsets.fromLTRB(16, 8, 16, 28 + KazumiGlass.bottomInset(context)),
         children: [
           showSortSwitcher(),
           const SizedBox(height: 12),
@@ -679,10 +696,26 @@ class _TimelinePageState extends State<TimelinePage>
       appBar: SysAppBar(
         needTopOffset: false,
         toolbarHeight: 104,
-        bottom: TabBar(
-          controller: tabController,
-          tabs: tabs,
-          indicatorColor: Theme.of(context).colorScheme.primary,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(56),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
+            // 自己排一行玻璃按钮：TabBar 的选中填充和点击水波纹都按
+            // 「标签区域」画，和玻璃不是一个尺寸，会大一圈也对不上形。
+            child: Row(
+              children: [
+                for (int i = 0; i < tabs.length; i++) ...[
+                  if (i > 0) const SizedBox(width: 6),
+                  Expanded(
+                    child: _glassPill(
+                      index: i,
+                      label: tabs[i].text ?? '',
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
         ),
         title: InkWell(
           borderRadius: BorderRadius.circular(8),
@@ -694,27 +727,30 @@ class _TimelinePageState extends State<TimelinePage>
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          KazumiDialog.showBottomSheet(
-            backgroundColor: Theme.of(context).colorScheme.surface,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-            ),
-            isScrollControlled: true,
-            constraints: buildTimelineBottomSheetConstraints(
-              context,
-              compactHeightFactor: 2 / 3,
-            ),
-            clipBehavior: Clip.antiAlias,
-            useSafeArea: true,
-            context: context,
-            builder: (context) {
-              return buildTimelineOptionsSheet(context);
-            },
-          );
-        },
-        child: const Icon(Icons.tune),
+      floatingActionButton: KazumiGlass.floatingButton(
+        context: context,
+        child: FloatingActionButton(
+          onPressed: () {
+            KazumiDialog.showBottomSheet(
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              ),
+              isScrollControlled: true,
+              constraints: buildTimelineBottomSheetConstraints(
+                context,
+                compactHeightFactor: 2 / 3,
+              ),
+              clipBehavior: Clip.antiAlias,
+              useSafeArea: true,
+              context: context,
+              builder: (context) {
+                return buildTimelineOptionsSheet(context);
+              },
+            );
+          },
+          child: const Icon(Icons.tune),
+        ),
       ),
       body: Observer(builder: (context) {
         if (timelineController.isLoading &&
@@ -788,7 +824,7 @@ class _TimelinePageState extends State<TimelinePage>
         CustomScrollView(
           slivers: [
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+              padding: EdgeInsets.fromLTRB(8, 0, 8, KazumiGlass.bottomInset(context)),
               sliver: SliverGrid(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   mainAxisSpacing: StyleString.cardSpace - 2,
