@@ -20,7 +20,7 @@
 本仓库是 [Predidit/Kazumi](https://github.com/Predidit/Kazumi) 的 iOS 专用分支：在 2.3.0 的界面基础上做了 **iOS 26 液态玻璃（Liquid Glass）**适配，只提供 iOS 的未签名 ipa。
 
 - iOS 13 及以上（需要 [侧载](https://kazumi.app/docs/misc/how-to-install-in-ios)）
-- **液态玻璃界面**：iOS 26 上标签栏是原生 `UITabBar`，按钮、菜单、浮层用原生 `UIGlassEffect`，顶栏是软渐进模糊（对标 iOS 26 的 `scrollEdgeEffectStyle(.soft)`）；系统的「降低透明度」「增强对比度」「透明度」滑块会自动生效
+- **液态玻璃界面**：iOS 26 上标签栏是原生 `UITabBar`，按钮、菜单、浮层用原生 `UIGlassEffect`；系统的「降低透明度」「增强对比度」「透明度」滑块会自动生效
 - iOS 26 以下退回系统模糊材质；不想要的话可以在「设置 → 界面设置 → 液态玻璃」整体关掉
 
 ## 屏幕截图
