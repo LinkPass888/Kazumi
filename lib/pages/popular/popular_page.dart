@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 import 'package:kazumi/bean/widget/bangumi_mirror_error_widget.dart';
 import 'package:kazumi/bean/widget/custom_dropdown_menu.dart';
 import 'package:kazumi/modules/bangumi/bangumi_item.dart';
@@ -139,7 +140,8 @@ class _PopularPageState extends State<PopularPage> {
       crossCount = 6;
     }
     return SliverPadding(
-      padding: const EdgeInsets.all(8),
+      padding: EdgeInsets.fromLTRB(
+          8, 8, 8, 8 + KazumiGlass.bottomInset(context)),
       sliver: SliverGrid(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           // 行间距

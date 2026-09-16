@@ -71,7 +71,7 @@
         needs: [flutter-test, flutter-analyze]
         if: ${{ github.event_name == 'workflow_dispatch' || ! github.event.pull_request.draft }}
         name: "Build iOS ipa"
-        runs-on: "macos-latest"
+        runs-on: "macos-26"
         permissions:
           contents: read
         steps:

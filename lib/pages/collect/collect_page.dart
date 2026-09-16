@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:kazumi/bean/dialog/dialog_helper.dart';
+import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 import 'package:kazumi/modules/bangumi/bangumi_item.dart';
 import 'package:kazumi/modules/collect/collect_module.dart';
 import 'package:kazumi/modules/collect/collect_type.dart';
@@ -334,8 +335,9 @@ class _CollectPageState extends State<CollectPage>
         CustomScrollView(
           slivers: [
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(StyleString.cardSpace,
-                  StyleString.cardSpace, StyleString.cardSpace, 0),
+              padding: EdgeInsets.fromLTRB(StyleString.cardSpace,
+                  StyleString.cardSpace, StyleString.cardSpace,
+                  KazumiGlass.bottomInset(context)),
               sliver: SliverGrid(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   mainAxisSpacing: StyleString.cardSpace - 2,

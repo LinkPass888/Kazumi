@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter/services.dart';
 import 'package:kazumi/bean/dialog/dialog_helper.dart';
+import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 import 'package:kazumi/bean/widget/embedded_native_control_area.dart';
 import 'package:kazumi/navigation.dart';
 import 'package:kazumi/pages/menu/route_visibility.dart';
 import 'package:kazumi/pages/router.dart';
+import 'package:real_liquid_glass/real_liquid_glass.dart';
 
 class ScaffoldMenu extends StatefulWidget {
   const ScaffoldMenu({super.key, required this.location});
@@ -137,9 +139,65 @@ class _ScaffoldMenu extends State<ScaffoldMenu> with RouteAware {
   }
 
   Widget _bottomMenu(BuildContext context, int selectedIndex) {
+    final useGlass = KazumiGlass.enabled;
     return Scaffold(
+      // 玻璃栏浮在内容之上，滚动时才有东西可以折光
+      extendBody: useGlass,
       body: _outlet(context),
-      bottomNavigationBar: NavigationBar(
+      bottomNavigationBar: useGlass
+          ? _glassBottomBar(context, selectedIndex)
+          : _materialBottomBar(context, selectedIndex),
+    );
+  }
+
+  /// iOS 26 的液态玻璃标签栏。
+  ///
+  /// iOS 上是原生 UITabBar：真正的 UIGlassEffect，选中胶囊、手势与无障碍
+  /// 都由系统接管，图标走 SF Symbols；其它平台由 real_liquid_glass 用 Flutter
+  /// 画一份相同的外观。
+  Widget _glassBottomBar(BuildContext context, int selectedIndex) {
+    return SafeArea(
+      top: false,
+      child: LiquidGlassBottomBar(
+        items: const <LiquidGlassBarItem>[
+          LiquidGlassBarItem(
+            icon: Icons.home_outlined,
+            selectedIcon: Icons.home,
+            sfSymbol: 'house',
+            selectedSfSymbol: 'house.fill',
+            label: '推荐',
+          ),
+          LiquidGlassBarItem(
+            icon: Icons.timeline_outlined,
+            selectedIcon: Icons.timeline,
+            sfSymbol: 'calendar',
+            label: '时间表',
+          ),
+          LiquidGlassBarItem(
+            icon: Icons.favorite_outline,
+            selectedIcon: Icons.favorite,
+            sfSymbol: 'heart',
+            selectedSfSymbol: 'heart.fill',
+            label: '追番',
+          ),
+          LiquidGlassBarItem(
+            icon: Icons.settings_outlined,
+            selectedIcon: Icons.settings,
+            sfSymbol: 'gearshape',
+            selectedSfSymbol: 'gearshape.fill',
+            label: '我的',
+          ),
+        ],
+        height: KazumiGlass.bottomBarHeight,
+        currentIndex: selectedIndex,
+        onTap: _selectDestination,
+        tint: Theme.of(context).colorScheme.primary,
+      ),
+    );
+  }
+
+  Widget _materialBottomBar(BuildContext context, int selectedIndex) {
+    return NavigationBar(
         destinations: const <Widget>[
           NavigationDestination(
             selectedIcon: Icon(Icons.home),

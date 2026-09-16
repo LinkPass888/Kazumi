@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 import 'package:kazumi/bean/widget/embedded_native_control_area.dart';
 import 'package:kazumi/services/storage/storage.dart';
 import 'package:window_manager/window_manager.dart';
@@ -93,10 +94,12 @@ class SysAppBar extends StatelessWidget implements PreferredSizeWidget {
                   )
                 : null,
         leadingWidth: leadingWidth,
-        backgroundColor: backgroundColor,
-        elevation: elevation,
+        backgroundColor:
+            KazumiGlass.enabled ? Colors.transparent : backgroundColor,
+        elevation: KazumiGlass.enabled ? 0 : elevation,
         shape: shape,
         bottom: bottom,
+        flexibleSpace: KazumiGlass.header(),
         automaticallyImplyLeading: false,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,

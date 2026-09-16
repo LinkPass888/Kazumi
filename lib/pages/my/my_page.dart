@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kazumi/bean/appbar/sys_app_bar.dart';
+import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 import 'package:kazumi/bean/settings/settings_list.dart';
 import 'package:kazumi/modules/collect/collect_type.dart';
 import 'package:kazumi/modules/my/watch_stats.dart';
@@ -79,7 +80,7 @@ class _MyPageState extends State<MyPage> {
           builder: (context) {
             final stats = myController.watchStats;
             return SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+              padding: EdgeInsets.fromLTRB(16, 8, 16, 24 + KazumiGlass.bottomInset(context)),
               child: Center(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: wide ? 1400 : 1100),

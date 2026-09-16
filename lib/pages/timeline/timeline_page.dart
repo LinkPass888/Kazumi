@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:kazumi/modules/bangumi/bangumi_item.dart';
 import 'package:kazumi/pages/timeline/timeline_controller.dart';
 import 'package:kazumi/bean/dialog/adaptive_bottom_sheet.dart';
+import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 import 'package:kazumi/bean/dialog/material_bottom_sheet.dart';
 import 'package:kazumi/bean/card/bangumi_timeline_card.dart';
 import 'package:kazumi/utils/constants.dart';
@@ -176,7 +177,7 @@ class _TimelinePageState extends State<TimelinePage>
               header: buildSeasonSheetHeader(sheetContext),
               body: ListView.separated(
                 controller: scrollController,
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
+                padding: EdgeInsets.fromLTRB(16, 8, 16, 28 + KazumiGlass.bottomInset(context)),
                 itemCount: yearSeasons.keys.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
@@ -663,7 +664,7 @@ class _TimelinePageState extends State<TimelinePage>
       header: buildTimelineOptionsSheetHeader(context),
       body: ListView(
         shrinkWrap: true,
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
+        padding: EdgeInsets.fromLTRB(16, 8, 16, 28 + KazumiGlass.bottomInset(context)),
         children: [
           showSortSwitcher(),
           const SizedBox(height: 12),
@@ -788,7 +789,7 @@ class _TimelinePageState extends State<TimelinePage>
         CustomScrollView(
           slivers: [
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+              padding: EdgeInsets.fromLTRB(8, 0, 8, KazumiGlass.bottomInset(context)),
               sliver: SliverGrid(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   mainAxisSpacing: StyleString.cardSpace - 2,
