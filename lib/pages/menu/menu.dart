@@ -222,8 +222,7 @@ class _ScaffoldMenu extends State<ScaffoldMenu> with RouteAware {
         ],
         selectedIndex: selectedIndex,
         onDestinationSelected: _selectDestination,
-      ),
-    );
+      );
   }
 
   Widget _sideMenu(BuildContext context, int selectedIndex) {
