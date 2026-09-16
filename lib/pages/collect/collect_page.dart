@@ -166,7 +166,7 @@ class _CollectPageState extends State<CollectPage>
     return counts;
   }
 
-  Widget _buildTab(String label, int? count) {
+  Widget _buildTab(int index, String label, int? count) {
     final ThemeData theme = Theme.of(context);
     final Widget content = count == null
         ? Text(label)
@@ -190,12 +190,34 @@ class _CollectPageState extends State<CollectPage>
               ),
             ],
           );
-    // 每个分类各自一块小玻璃，选中时的填充铺满整块按钮
+    // 每个分类各自一块小玻璃。选中态画在玻璃里面，填满整块玻璃；
+    // 玻璃左右各留 16 的内边距，按钮不至于挤着文字。
     return Tab(
       height: 40,
-      child: KazumiGlass.glassSurface(
-        shape: KazumiGlass.circleShape,
-        child: Center(child: content),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 3),
+        child: AnimatedBuilder(
+          animation: tabController,
+          builder: (context, _) {
+            final bool selected = tabController.index == index;
+            return KazumiGlass.glassSurface(
+              shape: KazumiGlass.circleShape,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 160),
+                curve: Curves.easeOut,
+                alignment: Alignment.center,
+                decoration: ShapeDecoration(
+                  shape: const StadiumBorder(),
+                  color: selected
+                      ? theme.colorScheme.primary.withValues(alpha: 0.30)
+                      : Colors.transparent,
+                ),
+                child: content,
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -234,18 +256,11 @@ class _CollectPageState extends State<CollectPage>
                         scrollable ? TabAlignment.start : TabAlignment.fill,
                     tabs: [
                       for (int i = 0; i < _tabTypes.length; i++)
-                        _buildTab(_tabTypes[i].label, counts?[i]),
+                        _buildTab(i, _tabTypes[i].label, counts?[i]),
                     ],
                     dividerHeight: 0,
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    indicator: ShapeDecoration(
-                      shape: const StadiumBorder(),
-                      color: Theme.of(context)
-                          .colorScheme
-                          .primary
-                          .withValues(alpha: 0.30),
-                    ),
-                    labelPadding: const EdgeInsets.symmetric(horizontal: 6),
+                    indicator: const BoxDecoration(color: Colors.transparent),
+                    labelPadding: EdgeInsets.zero,
                   ),
                 ),
               );

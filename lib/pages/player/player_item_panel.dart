@@ -830,11 +830,12 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
                     onVisibilityChanged: widget.onMenuVisibilityChanged,
                     consumeOutsideTap: true,
-                    // 面板收到刚好放得下数值的宽度，高度压低后滚动条也跟着变短
+                    // 要收的是宽度：面板宽度由 fixedSize 定住，条目自身的最小
+                    // 宽度和左右内边距都要压小，否则内容会把面板撑开。
                     style: const MenuStyle(
-                      fixedSize: WidgetStatePropertyAll(Size(140, 200)),
-                      minimumSize: WidgetStatePropertyAll(Size(140, 200)),
-                      maximumSize: WidgetStatePropertyAll(Size(140, 200)),
+                      fixedSize: WidgetStatePropertyAll(Size(104, 264)),
+                      minimumSize: WidgetStatePropertyAll(Size(104, 264)),
+                      maximumSize: WidgetStatePropertyAll(Size(104, 264)),
                       padding: WidgetStatePropertyAll(EdgeInsets.zero),
                       elevation: WidgetStatePropertyAll(0),
                     ),
@@ -863,9 +864,14 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                           onPressed: () async {
                             await widget.setPlaybackSpeed(i);
                           },
-                          child: Container(
+                          style: const ButtonStyle(
+                            padding: WidgetStatePropertyAll(
+                              EdgeInsets.symmetric(horizontal: 14),
+                            ),
+                          ),
+                          child: SizedBox(
                             height: 40,
-                            constraints: BoxConstraints(minWidth: 96),
+                            width: 64,
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(

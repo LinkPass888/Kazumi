@@ -66,6 +66,36 @@ class _TimelinePageState extends State<TimelinePage>
     }
   }
 
+  /// 一颗小玻璃按钮：玻璃里面再铺一层选中填充，填满整块玻璃。
+  Widget _glassPill({required int index, required String label}) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 3),
+      child: AnimatedBuilder(
+        animation: tabController!,
+        builder: (context, _) {
+          final bool selected = tabController!.index == index;
+          return KazumiGlass.glassSurface(
+            shape: KazumiGlass.circleShape,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 160),
+              curve: Curves.easeOut,
+              alignment: Alignment.center,
+              decoration: ShapeDecoration(
+                shape: const StadiumBorder(),
+                color: selected
+                    ? scheme.primary.withValues(alpha: 0.30)
+                    : Colors.transparent,
+              ),
+              child: Text(label),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   final List<Tab> tabs = const <Tab>[
     Tab(text: '一'),
     Tab(text: '二'),
@@ -686,29 +716,23 @@ class _TimelinePageState extends State<TimelinePage>
             padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
             child: SizedBox(
               height: 40,
-              // 每个星期各自一块小玻璃，不是一整条；选中时的填充铺满整块按钮
+              // 每个星期各自一块小玻璃，不是一整条。选中态不走 TabBar 的
+              // indicator（它按标签区域画，会比玻璃大一圈），而是画在玻璃里面。
               child: TabBar(
                 controller: tabController,
                 tabs: [
-                  for (final Tab tab in tabs)
+                  for (int i = 0; i < tabs.length; i++)
                     Tab(
                       height: 40,
-                      child: KazumiGlass.glassSurface(
-                        shape: KazumiGlass.circleShape,
-                        child: Center(child: Text(tab.text ?? '')),
+                      child: _glassPill(
+                        index: i,
+                        label: tabs[i].text ?? '',
                       ),
                     ),
                 ],
                 dividerHeight: 0,
-                indicatorSize: TabBarIndicatorSize.tab,
-                indicator: ShapeDecoration(
-                  shape: const StadiumBorder(),
-                  color: Theme.of(context)
-                      .colorScheme
-                      .primary
-                      .withValues(alpha: 0.30),
-                ),
-                labelPadding: const EdgeInsets.symmetric(horizontal: 6),
+                indicator: const BoxDecoration(color: Colors.transparent),
+                labelPadding: EdgeInsets.zero,
               ),
             ),
           ),

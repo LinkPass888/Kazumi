@@ -72,6 +72,7 @@ abstract final class KazumiGlass {
   static Widget glassSurface({
     required Widget child,
     LiquidGlassShape shape = circleShape,
+    EdgeInsetsGeometry? padding,
   }) {
     if (!enabled) {
       return child;
@@ -79,6 +80,7 @@ abstract final class KazumiGlass {
     return LiquidGlassContainer(
       shape: shape,
       style: LiquidGlassStyle.regular,
+      padding: padding,
       child: child,
     );
   }
