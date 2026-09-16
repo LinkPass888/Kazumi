@@ -166,6 +166,14 @@ class _CollectPageState extends State<CollectPage>
     return counts;
   }
 
+  /// 取某个分类的番剧数量，未开启统计时返回 null。
+  int? _countAt(List<int>? counts, int index) {
+    if (counts == null || index >= counts.length) {
+      return null;
+    }
+    return counts[index];
+  }
+
   Widget _buildTab(int index, String label, int? count) {
     final ThemeData theme = Theme.of(context);
     final Widget content = count == null
@@ -241,7 +249,7 @@ class _CollectPageState extends State<CollectPage>
                           itemCount: _tabTypes.length,
                           separatorBuilder: (_, __) => const SizedBox(width: 6),
                           itemBuilder: (context, i) =>
-                              _buildTab(i, _tabTypes[i].label, counts?[i]),
+                              _buildTab(i, _tabTypes[i].label, _countAt(counts, i)),
                         )
                       : Row(
                           children: [
@@ -249,7 +257,7 @@ class _CollectPageState extends State<CollectPage>
                               if (i > 0) const SizedBox(width: 6),
                               Expanded(
                                 child: _buildTab(
-                                    i, _tabTypes[i].label, counts?[i]),
+                                    i, _tabTypes[i].label, _countAt(counts, i)),
                               ),
                             ],
                           ],

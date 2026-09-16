@@ -195,9 +195,4 @@ class _CollectButtonState extends State<CollectButton> {
     );
   }
 
-  @override
-  void dispose() {
-    menuController.dispose();
-    super.dispose();
-  }
 }
