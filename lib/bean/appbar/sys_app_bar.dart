@@ -62,22 +62,45 @@ class SysAppBar extends StatelessWidget implements PreferredSizeWidget {
     }
     // 顶栏不再整条铺玻璃（那会在别的页面盖过来时透出一道光边），改成
     // iOS 26 的软渐进模糊，按钮各自带一层玻璃。
-    final Widget? leadingWidget = leading != null
-        ? EmbeddedNativeControlArea(
+    Widget? leadingWidget;
+    if (leading != null) {
+      leadingWidget = KazumiGlass.buttonGlass(
+        child: EmbeddedNativeControlArea(
+          requireOffset: needTopOffset,
+          child: leading!,
+        ),
+      );
+    } else if (ModalRoute.of(context)?.impliesAppBarDismissal ?? false) {
+      // 返回键固定 44 的圆形玻璃，图标居中在玻璃正中
+      leadingWidget = KazumiGlass.iconButton(
+        context: context,
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () => context.maybePop(),
+        tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+      );
+    }
+    // 顶栏按钮之间留出间距，最右边不要贴着屏幕边
+    final List<Widget> actionWidgets = <Widget>[];
+    for (final Widget action in acs) {
+      if (action is SizedBox) {
+        actionWidgets.add(action);
+        continue;
+      }
+      if (actionWidgets.isNotEmpty) {
+        actionWidgets.add(const SizedBox(width: 4));
+      }
+      actionWidgets.add(
+        KazumiGlass.buttonGlass(
+          child: EmbeddedNativeControlArea(
             requireOffset: needTopOffset,
-            child: leading!,
-          )
-        : (ModalRoute.of(context)?.impliesAppBarDismissal ?? false)
-            ? EmbeddedNativeControlArea(
-                requireOffset: needTopOffset,
-                child: IconButton(
-                  onPressed: () {
-                    context.maybePop();
-                  },
-                  icon: Icon(Icons.arrow_back),
-                ),
-              )
-            : null;
+            child: action,
+          ),
+        ),
+      );
+    }
+    if (actionWidgets.isNotEmpty) {
+      actionWidgets.add(const SizedBox(width: 8));
+    }
     return GestureDetector(
       onPanStart: (_) => (isDesktop()) ? windowManager.startDragging() : null,
       child: AppBar(
@@ -89,21 +112,9 @@ class SysAppBar extends StatelessWidget implements PreferredSizeWidget {
                 child: title!,
               )
             : null,
-        centerTitle: Platform.isIOS ? true : false,
-        actions: acs.map((e) {
-          if (e is SizedBox) {
-            return e;
-          }
-          return KazumiGlass.buttonGlass(
-            child: EmbeddedNativeControlArea(
-              requireOffset: needTopOffset,
-              child: e,
-            ),
-          );
-        }).toList(),
-        leading: leadingWidget == null
-            ? null
-            : KazumiGlass.buttonGlass(child: leadingWidget),
+        centerTitle: false,
+        actions: actionWidgets,
+        leading: leadingWidget,
         leadingWidth: leadingWidth,
         backgroundColor: glass ? Colors.transparent : backgroundColor,
         elevation: glass ? 0 : elevation,

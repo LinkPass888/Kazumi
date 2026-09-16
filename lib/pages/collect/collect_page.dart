@@ -218,16 +218,28 @@ class _CollectPageState extends State<CollectPage>
                       MediaQuery.textScalerOf(context)
                               .scale(_countedTabMinWidth) *
                           _tabTypes.length;
-              return TabBar(
-                controller: tabController,
-                isScrollable: scrollable,
-                tabAlignment:
-                    scrollable ? TabAlignment.start : TabAlignment.fill,
-                tabs: [
-                  for (int i = 0; i < _tabTypes.length; i++)
-                    _buildTab(_tabTypes[i].label, counts?[i]),
-                ],
-                indicatorColor: Theme.of(context).colorScheme.primary,
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+                child: KazumiGlass.glassSurface(
+                  shape: KazumiGlass.pillShape,
+                  child: SizedBox(
+                    height: 40,
+                    child: TabBar(
+                      controller: tabController,
+                      isScrollable: scrollable,
+                      tabAlignment: scrollable
+                          ? TabAlignment.start
+                          : TabAlignment.fill,
+                      tabs: [
+                        for (int i = 0; i < _tabTypes.length; i++)
+                          _buildTab(_tabTypes[i].label, counts?[i]),
+                      ],
+                      dividerHeight: 0,
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      indicatorColor: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
               );
             });
           }),

@@ -680,10 +680,25 @@ class _TimelinePageState extends State<TimelinePage>
       appBar: SysAppBar(
         needTopOffset: false,
         toolbarHeight: 104,
-        bottom: TabBar(
-          controller: tabController,
-          tabs: tabs,
-          indicatorColor: Theme.of(context).colorScheme.primary,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(56),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
+            child: KazumiGlass.glassSurface(
+              shape: KazumiGlass.pillShape,
+              child: SizedBox(
+                height: 44,
+                child: TabBar(
+                  controller: tabController,
+                  tabs: tabs,
+                  dividerHeight: 0,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  labelPadding: const EdgeInsets.symmetric(horizontal: 10),
+                  indicatorColor: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+          ),
         ),
         title: InkWell(
           borderRadius: BorderRadius.circular(8),

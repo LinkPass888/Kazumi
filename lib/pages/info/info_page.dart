@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:kazumi/bean/dialog/adaptive_bottom_sheet.dart';
 import 'package:kazumi/bean/dialog/dialog_helper.dart';
+import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 import 'package:kazumi/pages/info/rating_review_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -500,27 +501,35 @@ class _InfoPageState extends State<InfoPage> with TickerProviderStateMixin {
             }),
           ),
           floatingActionButton: showRatingFab
-              ? FloatingActionButton.extended(
-                  tooltip: '吐槽',
-                  onPressed: onBangumiRatingTap,
-                  label: const Text('发表吐槽'),
-                  icon: const Icon(Icons.rate_review_rounded),
+              ? KazumiGlass.floatingButton(
+                  context: context,
+                  aboveTabBar: false,
+                  child: FloatingActionButton.extended(
+                    tooltip: '吐槽',
+                    onPressed: onBangumiRatingTap,
+                    label: const Text('发表吐槽'),
+                    icon: const Icon(Icons.rate_review_rounded),
+                  ),
                 )
-              : FloatingActionButton.extended(
-                  tooltip: '开始观看',
-                  onPressed: () {
-                    showAdaptiveBottomSheet<void>(
-                      backgroundColor:
-                          Theme.of(context).scaffoldBackgroundColor,
-                      context: context,
-                      builder: (context) {
-                        return SourceSheet(infoController: infoController);
-                      },
-                    );
-                  },
-                  label: const Text('开始观看'),
-                  icon: const Icon(Icons.play_arrow_rounded),
-                ),
+              : KazumiGlass.floatingButton(
+                  context: context,
+                  aboveTabBar: false,
+                  child: FloatingActionButton.extended(
+                    tooltip: '开始观看',
+                    onPressed: () {
+                      showAdaptiveBottomSheet<void>(
+                        backgroundColor:
+                            Theme.of(context).scaffoldBackgroundColor,
+                        context: context,
+                        builder: (context) {
+                          return SourceSheet(infoController: infoController);
+                        },
+                      );
+                    },
+                    label: const Text('开始观看'),
+                    icon: const Icon(Icons.play_arrow_rounded),
+                  ),
+                )
         ),
       ),
     );

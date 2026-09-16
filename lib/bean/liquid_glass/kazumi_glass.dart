@@ -16,6 +16,17 @@ abstract final class KazumiGlass {
   /// 安全区，所以这里包含安全区高度。
   static const double bottomBarHeight = 85;
 
+  /// 圆形按钮 / 浮动按钮的形状。
+  static const LiquidGlassShape circleShape = LiquidGlassShape.capsule();
+
+  /// 分组控件（放送星期、追番分类这类标签）的胶囊形状。
+  static const LiquidGlassShape pillShape =
+      LiquidGlassShape.roundedRectangle(22);
+
+  /// 菜单、面板用的圆角形状。
+  static const LiquidGlassShape panelShape =
+      LiquidGlassShape.roundedRectangle(16);
+
   /// 是否启用液态玻璃，可在「设置 - 界面设置」里关闭。
   static bool get enabled =>
       GStorage.getSetting(SettingsKeys.enableLiquidGlass);
@@ -44,6 +55,23 @@ abstract final class KazumiGlass {
     );
   }
 
+  /// 一块玻璃表面，[child] 画在玻璃之上。
+  ///
+  /// 关闭液态玻璃时原样返回 [child]，由调用方自己决定原来的外观。
+  static Widget glassSurface({
+    required Widget child,
+    LiquidGlassShape shape = circleShape,
+  }) {
+    if (!enabled) {
+      return child;
+    }
+    return LiquidGlassContainer(
+      shape: shape,
+      style: LiquidGlassStyle.regular,
+      child: child,
+    );
+  }
+
   /// 顶栏按钮的玻璃底。
   ///
   /// 只做装饰：`interactive` 保持 false，触摸照旧落到里面的按钮上。
@@ -52,54 +80,76 @@ abstract final class KazumiGlass {
       return child;
     }
     return LiquidGlassContainer(
-      shape: const LiquidGlassShape.capsule(),
+      shape: circleShape,
       style: LiquidGlassStyle.regular,
       child: child,
     );
   }
 
-  /// 浮动按钮垫的玻璃，配合 [floatingButton] 用。
-  static Widget glassSurface({required Widget child}) {
+  /// 圆形玻璃按钮：图标固定居中在玻璃正中，点按区就是整块玻璃。
+  ///
+  /// 顶栏的返回键用它，避免出现「符号没在玻璃中间」的情况。
+  static Widget iconButton({
+    required BuildContext context,
+    required Widget icon,
+    required VoidCallback? onPressed,
+    String? tooltip,
+    double size = 44,
+  }) {
     if (!enabled) {
-      return child;
+      return IconButton(
+        onPressed: onPressed,
+        tooltip: tooltip,
+        icon: icon,
+      );
     }
-    return LiquidGlassContainer(
-      shape: const LiquidGlassShape.capsule(),
+    final Widget button = LiquidGlassContainer(
+      shape: circleShape,
       style: LiquidGlassStyle.regular,
-      child: child,
+      width: size,
+      height: size,
+      interactive: true,
+      onTap: onPressed,
+      child: Center(child: icon),
     );
+    if (tooltip == null) {
+      return button;
+    }
+    return Tooltip(message: tooltip, child: button);
   }
 
   /// 浮在玻璃标签栏之上的浮动按钮。
   ///
-  /// 顺手把原 Material FAB 的表面变透明、去掉阴影并改成圆形，让玻璃透出来；
-  /// 点按与涟漪还是 FAB 自己的。
+  /// 顺手把 Material FAB 的表面变透明、去掉阴影并改成胶囊（圆形按钮就是圆，
+  /// 扩展按钮就是药丸），让玻璃透出来；点按与涟漪还是 FAB 自己的。
   static Widget floatingButton({
     required BuildContext context,
     required Widget child,
+    bool aboveTabBar = true,
   }) {
     if (!enabled) {
       return child;
     }
     final ColorScheme scheme = Theme.of(context).colorScheme;
-    return Padding(
-      padding: EdgeInsets.only(bottom: bottomInset(context)),
-      child: glassSurface(
-        child: Theme(
-          data: Theme.of(context).copyWith(
-            floatingActionButtonTheme: FloatingActionButtonThemeData(
-              backgroundColor: Colors.transparent,
-              foregroundColor: scheme.primary,
-              elevation: 0,
-              focusElevation: 0,
-              hoverElevation: 0,
-              highlightElevation: 0,
-              shape: const CircleBorder(),
-            ),
-          ),
-          child: child,
+    final Widget themed = Theme(
+      data: Theme.of(context).copyWith(
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: Colors.transparent,
+          foregroundColor: scheme.primary,
+          elevation: 0,
+          focusElevation: 0,
+          hoverElevation: 0,
+          highlightElevation: 0,
+          shape: const StadiumBorder(),
         ),
       ),
+      child: child,
+    );
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: aboveTabBar ? bottomInset(context) : 0,
+      ),
+      child: glassSurface(child: themed),
     );
   }
 }

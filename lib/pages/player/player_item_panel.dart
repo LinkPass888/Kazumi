@@ -830,6 +830,12 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
                     onVisibilityChanged: widget.onMenuVisibilityChanged,
                     consumeOutsideTap: true,
+                    // 面板收到刚好放得下数值的宽度，滚动条也跟着变短
+                    style: const MenuStyle(
+                      fixedSize: WidgetStatePropertyAll(Size(120, 264)),
+                      padding: WidgetStatePropertyAll(EdgeInsets.zero),
+                      elevation: WidgetStatePropertyAll(0),
+                    ),
                     builder: (BuildContext context, MenuController controller,
                         Widget? child) {
                       return TextButton(
@@ -856,8 +862,8 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                             await widget.setPlaybackSpeed(i);
                           },
                           child: Container(
-                            height: 48,
-                            constraints: BoxConstraints(minWidth: 112),
+                            height: 40,
+                            constraints: BoxConstraints(minWidth: 96),
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
