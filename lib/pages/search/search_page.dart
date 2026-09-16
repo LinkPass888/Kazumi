@@ -221,9 +221,6 @@ class _SearchPageState extends State<SearchPage> {
     final normalizedValue = SearchParser.fromFilterState(parsed);
     _setSearchText(normalizedValue);
     await searchPageController.searchBangumi(normalizedValue, type: 'init');
-    if (searchController.isOpen) {
-      searchController.closeView(normalizedValue);
-    }
   }
 
   @override
@@ -242,22 +239,14 @@ class _SearchPageState extends State<SearchPage> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-            child: FocusScope(
-              descendantsAreFocusable: false,
-              child: SearchAnchor.bar(
-                searchController: searchController,
-                barElevation: WidgetStateProperty<double>.fromMap(
-                  <WidgetStatesConstraint, double>{WidgetState.any: 0},
-                ),
-                viewElevation: 0,
-                viewLeading: IconButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  icon: const Icon(Icons.arrow_back),
-                ),
-                barTrailing: [
-                  IconButton(
+            child: TextField(
+                controller: searchController,
+                textInputAction: TextInputAction.search,
+                onSubmitted: _submitSearch,
+                decoration: InputDecoration(
+                  hintText: '搜索番剧',
+                  prefixIcon: const Icon(Icons.search),
+                  suffixIcon: IconButton(
                     tooltip: '图片搜索',
                     onPressed: () async {
                       final result = await context.pushNamed('/search/image');
@@ -270,49 +259,55 @@ class _SearchPageState extends State<SearchPage> {
                     },
                     icon: const Icon(Icons.image_search_rounded),
                   ),
-                ],
-                isFullScreen: MediaQuery.sizeOf(context).width <
-                    LayoutBreakpoint.compact['width']!,
-                suggestionsBuilder: (context, controller) => [
-                  Observer(
-                    builder: (context) {
-                      if (controller.text.isNotEmpty) {
-                        return const SizedBox(
-                          height: 400,
-                          child: Center(
-                            child: Text("暂无搜索建议，按回车直接检索"),
-                          ),
-                        );
-                      } else {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            for (var history in searchPageController
-                                .searchHistories
-                                .take(10))
-                              ListTile(
-                                title: Text(history.keyword),
-                                onTap: () {
-                                  controller.text = history.keyword;
-                                  _submitSearch(controller.text);
-                                },
-                                trailing: IconButton(
-                                  icon: const Icon(Icons.close),
-                                  onPressed: () {
-                                    searchPageController
-                                        .deleteSearchHistory(history);
-                                  },
-                                ),
-                              ),
-                          ],
-                        );
-                      }
-                    },
+                  filled: true,
+                  isDense: true,
+                  fillColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(26),
+                    borderSide: BorderSide.none,
                   ),
-                ],
-                onSubmitted: _submitSearch,
+                ),
               ),
-            ),
+          ),
+          // 搜索历史就地展示：原来在弹出来的搜索视图里，现在不弹视图了
+          ValueListenableBuilder<TextEditingValue>(
+            valueListenable: searchController,
+            builder: (context, value, _) {
+              if (value.text.isNotEmpty) {
+                return const SizedBox.shrink();
+              }
+              return Observer(
+                builder: (context) {
+                  final histories =
+                      searchPageController.searchHistories.take(10).toList();
+                  if (histories.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (final history in histories)
+                        ListTile(
+                          dense: true,
+                          leading: const Icon(Icons.history_rounded, size: 20),
+                          title: Text(history.keyword),
+                          onTap: () {
+                            searchController.text = history.keyword;
+                            _submitSearch(history.keyword);
+                          },
+                          trailing: IconButton(
+                            icon: const Icon(Icons.close, size: 18),
+                            onPressed: () {
+                              searchPageController.deleteSearchHistory(history);
+                            },
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              );
+            },
           ),
           Observer(
             builder: (_) {

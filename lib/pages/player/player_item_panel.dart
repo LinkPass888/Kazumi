@@ -833,9 +833,9 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     // 要收的是宽度：面板宽度由 fixedSize 定住，条目自身的最小
                     // 宽度和左右内边距都要压小，否则内容会把面板撑开。
                     style: const MenuStyle(
-                      fixedSize: WidgetStatePropertyAll(Size(104, 264)),
-                      minimumSize: WidgetStatePropertyAll(Size(104, 264)),
-                      maximumSize: WidgetStatePropertyAll(Size(104, 264)),
+                      fixedSize: WidgetStatePropertyAll(Size(112, 264)),
+                      minimumSize: WidgetStatePropertyAll(Size(112, 264)),
+                      maximumSize: WidgetStatePropertyAll(Size(112, 264)),
                       padding: WidgetStatePropertyAll(EdgeInsets.zero),
                       elevation: WidgetStatePropertyAll(0),
                     ),
@@ -864,9 +864,10 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                           onPressed: () async {
                             await widget.setPlaybackSpeed(i);
                           },
+                          // 右侧多留 20：滚动条画在面板右边缘，不留通道会压住数值
                           style: const ButtonStyle(
                             padding: WidgetStatePropertyAll(
-                              EdgeInsets.symmetric(horizontal: 14),
+                              EdgeInsets.only(left: 14, right: 20),
                             ),
                           ),
                           child: SizedBox(

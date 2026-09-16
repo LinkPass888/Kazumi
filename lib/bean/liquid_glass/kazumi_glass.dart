@@ -226,14 +226,25 @@ abstract final class KazumiGlass {
         icon: icon,
       );
     }
+    // 触摸交给 Flutter 的 InkWell：平台视图自己接管触摸时，回调偶尔传不回来，
+    // 表现就是「返回键点了没反应」。
     final Widget button = LiquidGlassContainer(
       shape: circleShape,
       style: LiquidGlassStyle.regular,
       width: size,
       height: size,
-      interactive: true,
-      onTap: onPressed,
-      child: Center(child: icon),
+      interactive: false,
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: onPressed,
+          customBorder: const CircleBorder(),
+          splashFactory: NoSplash.splashFactory,
+          highlightColor:
+              Theme.of(context).colorScheme.primary.withValues(alpha: 0.16),
+          child: Center(child: icon),
+        ),
+      ),
     );
     if (tooltip == null) {
       return button;
