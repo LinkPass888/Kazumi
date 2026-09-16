@@ -197,9 +197,9 @@ class _CollectPageState extends State<CollectPage>
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 3),
         child: AnimatedBuilder(
-          animation: tabController,
+          animation: tabController!,
           builder: (context, _) {
-            final bool selected = tabController.index == index;
+            final bool selected = tabController!.index == index;
             return KazumiGlass.glassSurface(
               shape: KazumiGlass.circleShape,
               padding: const EdgeInsets.symmetric(horizontal: 16),
