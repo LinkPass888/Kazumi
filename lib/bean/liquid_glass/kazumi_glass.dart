@@ -19,6 +19,17 @@ abstract final class KazumiGlass {
   /// 圆形按钮 / 浮动按钮的形状。
   static const LiquidGlassShape circleShape = LiquidGlassShape.capsule();
 
+  /// 顶栏按钮的统一尺寸。
+  ///
+  /// 左右两侧（返回键与功能按钮）用同一个尺寸，[barButtonGap] 是按钮之间的
+  /// 间距，[barEdgeInset] 是离屏幕边缘的距离。
+  static const double barButtonSize = 40;
+  static const double barButtonGap = 6;
+  static const double barEdgeInset = 10;
+
+  /// 顶栏按钮占位宽度：按钮 + 两侧留白。
+  static const double barLeadingWidth = barButtonSize + barEdgeInset * 2;
+
   /// 分组控件（放送星期、追番分类这类标签）的胶囊形状。
   static const LiquidGlassShape pillShape =
       LiquidGlassShape.roundedRectangle(22);
@@ -94,7 +105,7 @@ abstract final class KazumiGlass {
     required Widget icon,
     required VoidCallback? onPressed,
     String? tooltip,
-    double size = 44,
+    double size = barButtonSize,
   }) {
     if (!enabled) {
       return IconButton(

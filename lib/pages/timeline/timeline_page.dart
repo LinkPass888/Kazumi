@@ -684,18 +684,31 @@ class _TimelinePageState extends State<TimelinePage>
           preferredSize: const Size.fromHeight(56),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
-            child: KazumiGlass.glassSurface(
-              shape: KazumiGlass.pillShape,
-              child: SizedBox(
-                height: 44,
-                child: TabBar(
-                  controller: tabController,
-                  tabs: tabs,
-                  dividerHeight: 0,
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  labelPadding: const EdgeInsets.symmetric(horizontal: 10),
-                  indicatorColor: Theme.of(context).colorScheme.primary,
+            child: SizedBox(
+              height: 40,
+              // 每个星期各自一块小玻璃，不是一整条；选中时的填充铺满整块按钮
+              child: TabBar(
+                controller: tabController,
+                tabs: [
+                  for (final Tab tab in tabs)
+                    Tab(
+                      height: 40,
+                      child: KazumiGlass.glassSurface(
+                        shape: KazumiGlass.circleShape,
+                        child: Center(child: Text(tab.text ?? '')),
+                      ),
+                    ),
+                ],
+                dividerHeight: 0,
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicator: ShapeDecoration(
+                  shape: const StadiumBorder(),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .primary
+                      .withValues(alpha: 0.30),
                 ),
+                labelPadding: const EdgeInsets.symmetric(horizontal: 6),
               ),
             ),
           ),

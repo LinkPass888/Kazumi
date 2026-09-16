@@ -371,25 +371,27 @@ class _InfoPageState extends State<InfoPage> with TickerProviderStateMixin {
                     ),
                     automaticallyImplyLeading: false,
                     scrolledUnderElevation: 0.0,
-                    leading: EmbeddedNativeControlArea(
-                      child: IconButton(
-                        onPressed: () {
-                          context.maybePop();
-                        },
-                        icon: Icon(Icons.arrow_back),
+                    leadingWidth: KazumiGlass.barLeadingWidth,
+                    leading: Center(
+                      child: KazumiGlass.iconButton(
+                        context: context,
+                        icon: const Icon(Icons.arrow_back, size: 22),
+                        onPressed: () => context.maybePop(),
+                        tooltip:
+                            MaterialLocalizations.of(context).backButtonTooltip,
                       ),
                     ),
                     actions: [
                       if (innerBoxIsScrolled)
-                        EmbeddedNativeControlArea(
-                          child: CollectButton(
+                        _barButton(
+                          CollectButton(
                             bangumiItem: infoController.bangumiItem,
                             color:
                                 Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
-                      EmbeddedNativeControlArea(
-                        child: IconButton(
+                      _barButton(
+                        IconButton(
                           onPressed: () {
                             launchUrl(
                               Uri.parse(
@@ -397,12 +399,13 @@ class _InfoPageState extends State<InfoPage> with TickerProviderStateMixin {
                               mode: LaunchMode.externalApplication,
                             );
                           },
-                          icon: const Icon(Icons.open_in_browser_rounded),
+                          icon: const Icon(Icons.open_in_browser_rounded,
+                              size: 22),
                         ),
                       ),
                       if (!showWindowButton && isDesktop())
                         CloseButton(onPressed: () => windowManager.close()),
-                      SizedBox(width: 8),
+                      const SizedBox(width: KazumiGlass.barEdgeInset),
                     ],
                     toolbarHeight: (Platform.isMacOS && showWindowButton)
                         ? kToolbarHeight + 22
@@ -536,15 +539,24 @@ class _InfoPageState extends State<InfoPage> with TickerProviderStateMixin {
   }
 }
 
+/// 详情页顶栏按钮：尺寸统一的圆形玻璃，图标居中。
+Widget _barButton(Widget child) {
+  return KazumiGlass.buttonGlass(
+    child: SizedBox(
+      width: KazumiGlass.barButtonSize,
+      height: KazumiGlass.barButtonSize,
+      child: child,
+    ),
+  );
+}
+
 class _InfoHeaderBackground extends StatelessWidget {
   const _InfoHeaderBackground({
     required this.imageUrl,
   });
 
-  static const double _downsample = 0.5;
   static const double _blurSigma = 15.0;
   static const double _opacity = 0.4;
-  static const double _edgeBleed = 32.0;
   static const double _bottomFeatherHeight = 48.0;
 
   final String imageUrl;
@@ -555,19 +567,17 @@ class _InfoHeaderBackground extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
+    final Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        final width = constraints.maxWidth;
-        final height = constraints.maxHeight;
+        final double width = constraints.maxWidth;
+        final double height = constraints.maxHeight;
         if (width <= 0 || height <= 0) {
           return const SizedBox.shrink();
         }
-
-        final rasterWidth = width * _downsample;
-        final rasterHeight = (height + _edgeBleed) * _downsample;
-
-        final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
-
+        // 按整块区域直接画：不再降采样后 Transform 放大 —— 那条路径会在
+        // 屏幕上留下一条竖着的接缝（放送开始那一行的高度上看得最清楚）。
         return ClipRect(
           child: Stack(
             fit: StackFit.expand,
@@ -584,34 +594,20 @@ class _InfoHeaderBackground extends StatelessWidget {
                     stops: [0.8, 1],
                   ).createShader(bounds);
                 },
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: RepaintBoundary(
-                    child: Transform.scale(
-                      scale: 1 / _downsample,
-                      alignment: Alignment.topCenter,
-                      filterQuality: FilterQuality.low,
-                      child: SizedBox(
-                        width: rasterWidth,
-                        height: rasterHeight,
-                        child: ImageFiltered(
-                          imageFilter: ImageFilter.blur(
-                            sigmaX: _blurSigma * _downsample,
-                            sigmaY: _blurSigma * _downsample,
-                          ),
-                          child: NetworkImgLayer(
-                            src: imageUrl,
-                            width: rasterWidth,
-                            height: rasterHeight,
-                            fadeInDuration: Duration.zero,
-                            fadeOutDuration: Duration.zero,
-                            filterQuality: FilterQuality.low,
-                            color: Colors.white.withValues(alpha: _opacity),
-                            colorBlendMode: BlendMode.modulate,
-                          ),
-                        ),
-                      ),
-                    ),
+                child: ImageFiltered(
+                  imageFilter: ImageFilter.blur(
+                    sigmaX: _blurSigma,
+                    sigmaY: _blurSigma,
+                  ),
+                  child: NetworkImgLayer(
+                    src: imageUrl,
+                    width: width,
+                    height: height,
+                    fadeInDuration: Duration.zero,
+                    fadeOutDuration: Duration.zero,
+                    filterQuality: FilterQuality.medium,
+                    color: Colors.white.withValues(alpha: _opacity),
+                    colorBlendMode: BlendMode.modulate,
                   ),
                 ),
               ),

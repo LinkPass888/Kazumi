@@ -167,30 +167,35 @@ class _CollectPageState extends State<CollectPage>
   }
 
   Widget _buildTab(String label, int? count) {
-    if (count == null) {
-      return Tab(text: label);
-    }
     final ThemeData theme = Theme.of(context);
-    return Tab(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(label),
-          const SizedBox(width: 6),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.secondaryContainer,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              '$count',
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: theme.colorScheme.onSecondaryContainer,
+    final Widget content = count == null
+        ? Text(label)
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(label),
+              const SizedBox(width: 6),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.secondaryContainer,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '$count',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.onSecondaryContainer,
+                  ),
+                ),
               ),
-            ),
-          ),
-        ],
+            ],
+          );
+    // 每个分类各自一块小玻璃，选中时的填充铺满整块按钮
+    return Tab(
+      height: 40,
+      child: KazumiGlass.glassSurface(
+        shape: KazumiGlass.circleShape,
+        child: Center(child: content),
       ),
     );
   }
@@ -220,24 +225,27 @@ class _CollectPageState extends State<CollectPage>
                           _tabTypes.length;
               return Padding(
                 padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
-                child: KazumiGlass.glassSurface(
-                  shape: KazumiGlass.pillShape,
-                  child: SizedBox(
-                    height: 40,
-                    child: TabBar(
-                      controller: tabController,
-                      isScrollable: scrollable,
-                      tabAlignment: scrollable
-                          ? TabAlignment.start
-                          : TabAlignment.fill,
-                      tabs: [
-                        for (int i = 0; i < _tabTypes.length; i++)
-                          _buildTab(_tabTypes[i].label, counts?[i]),
-                      ],
-                      dividerHeight: 0,
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      indicatorColor: Theme.of(context).colorScheme.primary,
+                child: SizedBox(
+                  height: 40,
+                  child: TabBar(
+                    controller: tabController,
+                    isScrollable: scrollable,
+                    tabAlignment:
+                        scrollable ? TabAlignment.start : TabAlignment.fill,
+                    tabs: [
+                      for (int i = 0; i < _tabTypes.length; i++)
+                        _buildTab(_tabTypes[i].label, counts?[i]),
+                    ],
+                    dividerHeight: 0,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    indicator: ShapeDecoration(
+                      shape: const StadiumBorder(),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withValues(alpha: 0.30),
                     ),
+                    labelPadding: const EdgeInsets.symmetric(horizontal: 6),
                   ),
                 ),
               );

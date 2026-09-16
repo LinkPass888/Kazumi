@@ -830,9 +830,11 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
                     onVisibilityChanged: widget.onMenuVisibilityChanged,
                     consumeOutsideTap: true,
-                    // 面板收到刚好放得下数值的宽度，滚动条也跟着变短
+                    // 面板收到刚好放得下数值的宽度，高度压低后滚动条也跟着变短
                     style: const MenuStyle(
-                      fixedSize: WidgetStatePropertyAll(Size(120, 264)),
+                      fixedSize: WidgetStatePropertyAll(Size(140, 200)),
+                      minimumSize: WidgetStatePropertyAll(Size(140, 200)),
+                      maximumSize: WidgetStatePropertyAll(Size(140, 200)),
                       padding: WidgetStatePropertyAll(EdgeInsets.zero),
                       elevation: WidgetStatePropertyAll(0),
                     ),
