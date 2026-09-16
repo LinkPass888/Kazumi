@@ -43,6 +43,9 @@ class _CollectButtonState extends State<CollectButton> {
   // 5. 抛弃
   late int collectType;
   final CollectController collectController = inject<CollectController>();
+  // menuChildren 是在 build 里构造的，拿不到 builder 的 controller 参数，
+  // 所以自己建一个交给 MenuAnchor 用
+  final MenuController menuController = MenuController();
 
   @override
   void initState() {
@@ -87,6 +90,7 @@ class _CollectButtonState extends State<CollectButton> {
   Widget build(BuildContext context) {
     collectType = collectController.getCollectType(widget.bangumiItem);
     return MenuAnchor(
+      controller: menuController,
       consumeOutsideTap: true,
       onClose: widget.onClose,
       onOpen: widget.onOpen,
@@ -152,7 +156,7 @@ class _CollectButtonState extends State<CollectButton> {
                     context: context,
                     selected: index == collectType,
                     onTap: () async {
-                      controller.close();
+                      menuController.close();
                       if (index != collectType && mounted) {
                         await collectController.addCollect(widget.bangumiItem,
                             type: index);
@@ -189,5 +193,11 @@ class _CollectButtonState extends State<CollectButton> {
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    menuController.dispose();
+    super.dispose();
   }
 }
