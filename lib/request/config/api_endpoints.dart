@@ -26,7 +26,7 @@ class ApiEndpoints {
 
   /// 在线升级（本仓库 Release）
   static const String latestApp =
-      'https://api.github.com/repos/LinkPass888/Kazumi/releases/latest';
+      'https://api.github.com/repos/LinkPass888/Kazumi-LiquidGlass-iOS/releases/latest';
 
   /// Bangumi 镜像测试后端
   static const String bangumiMirrorDomain = 'https://api.kazumi.fyi';

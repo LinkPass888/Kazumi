@@ -17,22 +17,24 @@
 
 ## 支持平台
 
-本仓库是 [Predidit/Kazumi](https://github.com/Predidit/Kazumi) 的 iOS 专用分支：界面回退到 2.3.0，只提供 iOS 的未签名 ipa。
+本仓库是 [Predidit/Kazumi](https://github.com/Predidit/Kazumi) 的 iOS 专用分支：在 2.3.0 的界面基础上做了 **iOS 26 液态玻璃（Liquid Glass）**适配，只提供 iOS 的未签名 ipa。
 
 - iOS 13 及以上（需要 [侧载](https://kazumi.app/docs/misc/how-to-install-in-ios)）
+- **液态玻璃界面**：iOS 26 上标签栏是原生 `UITabBar`，按钮、菜单、浮层用原生 `UIGlassEffect`，顶栏是软渐进模糊（对标 iOS 26 的 `scrollEdgeEffectStyle(.soft)`）；系统的「降低透明度」「增强对比度」「透明度」滑块会自动生效
+- iOS 26 以下退回系统模糊材质；不想要的话可以在「设置 → 界面设置 → 液态玻璃」整体关掉
 
 ## 屏幕截图
 
 <table>
   <tr>
-    <td><img alt="homepage" src="static/screenshot/img_1.png"></td>
-    <td><img alt="timetable" src="static/screenshot/img_2.png"></td>
-    <td><img alt="details" src="static/screenshot/img_3.png"></td>
+    <td><img alt="推荐" src="static/screenshot/img_1.jpg"></td>
+    <td><img alt="时间表" src="static/screenshot/img_2.jpg"></td>
+    <td><img alt="追番" src="static/screenshot/img_3.jpg"></td>
   <tr>
   <tr>
-    <td><img alt="selection-page" src="static/screenshot/img_4.png"></td>
-    <td><img alt="rules-mange" src="static/screenshot/img_5.png"></td>
-    <td><img alt="rules-edit" src="static/screenshot/img_6.png"></td>
+    <td><img alt="番剧详情" src="static/screenshot/img_4.jpg"></td>
+    <td><img alt="搜索" src="static/screenshot/img_5.jpg"></td>
+    <td><img alt="我的" src="static/screenshot/img_6.jpg"></td>
   <tr>
 </table>
 
@@ -67,9 +69,9 @@
 
 ## 下载
 
-通过本仓库 [Releases](https://github.com/LinkPass888/Kazumi/releases/latest) 选项卡下载：
+通过本仓库 [Releases](https://github.com/LinkPass888/Kazumi-LiquidGlass-iOS/releases/latest) 选项卡下载：
 
-<a href="https://github.com/LinkPass888/Kazumi/releases">
+<a href="https://github.com/LinkPass888/Kazumi-LiquidGlass-iOS/releases">
   <img src="static/svg/get_it_on_github.svg" alt="Get it on Github" width="200"/>
 </a>
 
@@ -165,7 +167,7 @@ A: 本项目编译需要良好的网络环境, 除了由 Google 托管的 Flutte
 
 特别感谢 [SyncPlay](https://github.com/Syncplay/syncplay) 本项目使用 SyncPlay 协议并通过 SyncPlay 公共服务器实现一起看功能。
 
-特别感谢 [所有贡献者](https://github.com/LinkPass888/Kazumi/graphs/contributors) 本项目因为你们变得更好。
+特别感谢 [所有贡献者](https://github.com/LinkPass888/Kazumi-LiquidGlass-iOS/graphs/contributors) 本项目因为你们变得更好。
 
 特别感谢 [trace.moe](https://trace.moe) 本项目使用了 trace.moe 提供的图片识别番剧功能。
 
