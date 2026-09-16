@@ -870,9 +870,11 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                               EdgeInsets.only(left: 14, right: 20),
                             ),
                           ),
+                          // 宽度撑满面板：这样滚动条才贴着面板右边缘，
+                          // 文字靠左，右边留出的通道正好给滚动条
                           child: SizedBox(
                             height: 40,
-                            width: 64,
+                            width: double.infinity,
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(

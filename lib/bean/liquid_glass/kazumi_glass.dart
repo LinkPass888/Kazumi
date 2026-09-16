@@ -20,17 +20,6 @@ abstract final class KazumiGlass {
   /// 圆形按钮 / 浮动按钮的形状。
   static const LiquidGlassShape circleShape = LiquidGlassShape.capsule();
 
-  /// 顶栏按钮的统一尺寸。
-  ///
-  /// 左右两侧（返回键与功能按钮）用同一个尺寸，[barButtonGap] 是按钮之间的
-  /// 间距，[barEdgeInset] 是离屏幕边缘的距离。
-  static const double barButtonSize = 40;
-  static const double barButtonGap = 6;
-  static const double barEdgeInset = 10;
-
-  /// 顶栏按钮占位宽度：按钮 + 两侧留白。
-  static const double barLeadingWidth = barButtonSize + barEdgeInset * 2;
-
   /// 分组控件（放送星期、追番分类这类标签）的胶囊形状。
   static const LiquidGlassShape pillShape =
       LiquidGlassShape.roundedRectangle(22);
@@ -39,13 +28,19 @@ abstract final class KazumiGlass {
   static const LiquidGlassShape panelShape =
       LiquidGlassShape.roundedRectangle(16);
 
+  /// 顶栏按钮的统一尺寸。
+  static const double barButtonSize = 40;
+  static const double barButtonGap = 6;
+  static const double barEdgeInset = 10;
+
+  /// 顶栏按钮占位宽度：按钮 + 两侧留白。
+  static const double barLeadingWidth = barButtonSize + barEdgeInset * 2;
+
   /// 是否启用液态玻璃，可在「设置 - 界面设置」里关闭。
   static bool get enabled =>
       GStorage.getSetting(SettingsKeys.enableLiquidGlass);
 
   /// 页面为了让开浮动的玻璃标签栏，需要额外留出的底部内边距。
-  ///
-  /// 关闭液态玻璃时返回 0，页面恢复原来的间距。
   static double bottomInset(BuildContext context) {
     if (!enabled) {
       return 0;
@@ -55,8 +50,6 @@ abstract final class KazumiGlass {
   }
 
   /// 顶栏的软渐进模糊（iOS 26 的 `scrollEdgeEffectStyle(.soft)`）。
-  ///
-  /// 关掉液态玻璃时返回 null，由 AppBar 自己画原来的背景色。
   static Widget? softHeader(BuildContext context, {double height = 104}) {
     if (!enabled) {
       return null;
@@ -67,104 +60,12 @@ abstract final class KazumiGlass {
     );
   }
 
-  /// 一颗可点的小玻璃按钮（放送星期、追番分类这类标签）。
-  ///
-  /// 选中填充画在玻璃**内部**，尺寸和玻璃完全一致；点按反馈交给原生玻璃
-  /// 自己的高光，不用 Material 的水波纹 —— 后者按标签区域画，会比玻璃大一圈。
-  static Widget glassButton({
-    required BuildContext context,
-    required Widget child,
-    required VoidCallback? onTap,
-    bool selected = false,
-    EdgeInsetsGeometry padding =
-        const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-  }) {
-    final ColorScheme scheme = Theme.of(context).colorScheme;
-    // 触摸交给 Flutter 的 InkWell：平台视图只当背景（interactive: false），
-    // 这样一定点得到；按下时是圆角高亮，不是 Material 的水波纹。
-    final Widget tappable = Material(
-      type: MaterialType.transparency,
-      child: InkWell(
-        onTap: onTap,
-        customBorder: const StadiumBorder(),
-        splashFactory: NoSplash.splashFactory,
-        highlightColor: scheme.primary.withValues(alpha: 0.16),
-        child: Padding(padding: padding, child: child),
-      ),
-    );
-    final Widget filled = AnimatedContainer(
-      duration: const Duration(milliseconds: 160),
-      curve: Curves.easeOut,
-      alignment: Alignment.center,
-      decoration: ShapeDecoration(
-        shape: const StadiumBorder(),
-        color: selected
-            ? scheme.primary.withValues(alpha: 0.30)
-            : Colors.transparent,
-      ),
-      child: tappable,
-    );
-    if (!enabled) {
-      return filled;
-    }
-    return LiquidGlassContainer(
-      shape: circleShape,
-      style: LiquidGlassStyle.regular,
-      // 装饰用，不拦触摸
-      interactive: false,
-      child: filled,
-    );
-  }
-
-  /// 玻璃面板里的一个可点条目。
-  ///
-  /// 不额外铺玻璃（苹果不建议玻璃叠玻璃，实测也会点不动），整块菜单还是一块
-  /// 大玻璃；条目只负责按下时的圆角高亮。
-  static Widget menuItem({
-    required BuildContext context,
-    required Widget child,
-    required VoidCallback? onTap,
-    bool selected = false,
-    EdgeInsetsGeometry padding =
-        const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-    double radius = 12,
-  }) {
-    final ColorScheme scheme = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      child: Material(
-        type: MaterialType.transparency,
-        child: InkWell(
-          onTap: onTap,
-          customBorder: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(radius)),
-          ),
-          splashFactory: NoSplash.splashFactory,
-          highlightColor: scheme.primary.withValues(alpha: 0.16),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 160),
-            curve: Curves.easeOut,
-            padding: padding,
-            decoration: ShapeDecoration(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(radius)),
-              ),
-              color: selected
-                  ? scheme.primary.withValues(alpha: 0.22)
-                  : Colors.transparent,
-            ),
-            child: child,
-          ),
-        ),
-      ),
-    );
-  }
-
   /// 顶栏用的系统状态栏样式：透明背景 + 跟随主题明暗的图标。
   ///
   /// 顶栏背景一旦设成透明，AppBar 自己推断出来的样式会把状态栏图标定成白色
-  /// 并一直留着，所以这里显式给一份。iOS 看的是 [SystemUiOverlayStyle.statusBarBrightness]
-  /// （状态栏背景的明暗），安卓看的是 `statusBarIconBrightness`，两个都要给。
+  /// 并一直留着，所以这里显式给一份。iOS 看的是
+  /// [SystemUiOverlayStyle.statusBarBrightness]（状态栏背景的明暗），
+  /// 安卓看的是 `statusBarIconBrightness`，两个都要给。
   static SystemUiOverlayStyle overlayStyle(BuildContext context) {
     final bool light = Theme.of(context).brightness == Brightness.light;
     return SystemUiOverlayStyle(
@@ -197,7 +98,7 @@ abstract final class KazumiGlass {
 
   /// 顶栏按钮的玻璃底。
   ///
-  /// 只做装饰：`interactive` 保持 false，触摸照旧落到里面的按钮上。
+  /// 只做装饰：触摸照旧落到里面的按钮上。
   static Widget buttonGlass({required Widget child}) {
     if (!enabled) {
       return child;
@@ -210,8 +111,6 @@ abstract final class KazumiGlass {
   }
 
   /// 圆形玻璃按钮：图标固定居中在玻璃正中，点按区就是整块玻璃。
-  ///
-  /// 顶栏的返回键用它，避免出现「符号没在玻璃中间」的情况。
   static Widget iconButton({
     required BuildContext context,
     required Widget icon,
@@ -219,37 +118,63 @@ abstract final class KazumiGlass {
     String? tooltip,
     double size = barButtonSize,
   }) {
-    if (!enabled) {
-      return IconButton(
-        onPressed: onPressed,
-        tooltip: tooltip,
-        icon: icon,
-      );
-    }
-    // 触摸交给 Flutter 的 InkWell：平台视图自己接管触摸时，回调偶尔传不回来，
-    // 表现就是「返回键点了没反应」。
-    final Widget button = LiquidGlassContainer(
+    final Widget button = _GlassTapTarget(
+      onTap: onPressed,
       shape: circleShape,
-      style: LiquidGlassStyle.regular,
+      padding: EdgeInsets.zero,
       width: size,
       height: size,
-      interactive: false,
-      child: Material(
-        type: MaterialType.transparency,
-        child: InkWell(
-          onTap: onPressed,
-          customBorder: const CircleBorder(),
-          splashFactory: NoSplash.splashFactory,
-          highlightColor:
-              Theme.of(context).colorScheme.primary.withValues(alpha: 0.16),
-          child: Center(child: icon),
-        ),
-      ),
+      child: icon,
     );
     if (tooltip == null) {
       return button;
     }
     return Tooltip(message: tooltip, child: button);
+  }
+
+  /// 一颗可点的小玻璃按钮（放送星期、追番分类这类标签）。
+  static Widget glassButton({
+    required BuildContext context,
+    required Widget child,
+    required VoidCallback? onTap,
+    bool selected = false,
+    EdgeInsetsGeometry padding =
+        const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+  }) {
+    return _GlassTapTarget(
+      onTap: onTap,
+      shape: circleShape,
+      padding: padding,
+      selected: selected,
+      child: child,
+    );
+  }
+
+  /// 玻璃面板里的一个可点条目。
+  ///
+  /// 不额外铺玻璃（苹果不建议玻璃叠玻璃，实测也会点不动），整块菜单还是一块
+  /// 大玻璃；条目只负责按下时的圆角高亮。
+  static Widget menuItem({
+    required BuildContext context,
+    required Widget child,
+    required VoidCallback? onTap,
+    bool selected = false,
+    EdgeInsetsGeometry padding =
+        const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+    double radius = 12,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      child: _GlassTapTarget(
+        onTap: onTap,
+        shape: panelShape,
+        padding: padding,
+        selected: selected,
+        radius: radius,
+        wrapInGlass: false,
+        child: child,
+      ),
+    );
   }
 
   /// 浮在玻璃标签栏之上的浮动按钮。
@@ -284,6 +209,97 @@ abstract final class KazumiGlass {
         bottom: aboveTabBar ? bottomInset(context) : 0,
       ),
       child: glassSurface(child: themed),
+    );
+  }
+}
+
+/// 玻璃底 + 按下反馈画在同一个盒子里的小按钮。
+///
+/// 关键点：按下时的高亮和选中填充都由**同一个容器的装饰**画出来，和玻璃共用
+/// 同一个矩形，所以形状、大小必然一致。之前用 Material 的 InkWell，它的水波纹
+/// 和高亮是按 Material 自己的盒子算的，和玻璃是两套几何，怎么调都会有出入。
+class _GlassTapTarget extends StatefulWidget {
+  const _GlassTapTarget({
+    required this.child,
+    required this.onTap,
+    required this.shape,
+    required this.padding,
+    this.selected = false,
+    this.width,
+    this.height,
+    this.radius,
+    this.wrapInGlass = true,
+  });
+
+  final Widget child;
+  final VoidCallback? onTap;
+
+  /// 玻璃的形状（[wrapInGlass] 为 false 时不用）。
+  final LiquidGlassShape shape;
+  final EdgeInsetsGeometry padding;
+  final bool selected;
+  final double? width;
+  final double? height;
+
+  /// 高亮形状的圆角；为 null 时用胶囊（StadiumBorder）。
+  final double? radius;
+
+  /// 是否在盒子后面铺一层玻璃。菜单条目不需要，因为整块菜单已经是一块玻璃。
+  final bool wrapInGlass;
+
+  @override
+  State<_GlassTapTarget> createState() => _GlassTapTargetState();
+}
+
+class _GlassTapTargetState extends State<_GlassTapTarget> {
+  bool _pressed = false;
+
+  void _setPressed(bool value) {
+    if (mounted && _pressed != value) {
+      setState(() => _pressed = value);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final Color base = widget.selected
+        ? scheme.primary.withValues(alpha: 0.30)
+        : Colors.transparent;
+    final Color color = _pressed
+        ? scheme.primary
+            .withValues(alpha: widget.selected ? 0.46 : 0.18)
+        : base;
+    final ShapeBorder border = widget.radius == null
+        ? const StadiumBorder()
+        : RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(widget.radius!)),
+          );
+    final Widget box = GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapDown: (_) => _setPressed(true),
+      onTapUp: (_) => _setPressed(false),
+      onTapCancel: () => _setPressed(false),
+      onTap: widget.onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 120),
+        curve: Curves.easeOut,
+        width: widget.width,
+        height: widget.height,
+        alignment: Alignment.center,
+        decoration: ShapeDecoration(shape: border, color: color),
+        child: Padding(padding: widget.padding, child: widget.child),
+      ),
+    );
+    if (!KazumiGlass.enabled || !widget.wrapInGlass) {
+      return box;
+    }
+    return LiquidGlassContainer(
+      shape: widget.shape,
+      style: LiquidGlassStyle.regular,
+      // 装饰用：触摸交给上面的 GestureDetector，玻璃自己不接管触摸
+      interactive: false,
+      child: box,
     );
   }
 }
