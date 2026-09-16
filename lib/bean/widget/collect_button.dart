@@ -143,242 +143,48 @@ class _CollectButtonState extends State<CollectButton> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                    MenuItemButton(
-                      onPressed: () async {
-                        if (index != 0 && mounted) {
-                          await collectController.addCollect(widget.bangumiItem,
-                              type: index);
-                          // 防止状态错误刷新
-                          if (!mounted) {
-                            return;
-                          }
-                          setState(() {});
-                        }
-                      },
-                      child: Container(
-                        height: 44,
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                getIconByInt(index),
-                                color: index == collectType
-                                    ? Theme.of(context).colorScheme.primary
-                                    : null,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                ' ${getTypeStringByInt(index)}',
-                                style: TextStyle(
-                                  color: index == collectType
-                                      ? Theme.of(context).colorScheme.primary
-                                      : null,
-                                ),
-                              ),
-                            ],
+              children: List<MenuItemButton>.generate(
+                6,
+                (int index) => MenuItemButton(
+                  onPressed: () async {
+                    if (index != collectType && mounted) {
+                      await collectController.addCollect(widget.bangumiItem,
+                          type: index);
+                      // 防止状态错误刷新
+                      if (!mounted) {
+                        return;
+                      }
+                      setState(() {});
+                    }
+                  },
+                  child: Container(
+                    height: 44,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            getIconByInt(index),
+                            color: index == collectType
+                                ? Theme.of(context).colorScheme.primary
+                                : null,
                           ),
-                        ),
+                          const SizedBox(width: 4),
+                          Text(
+                            ' ${getTypeStringByInt(index)}',
+                            style: TextStyle(
+                              color: index == collectType
+                                  ? Theme.of(context).colorScheme.primary
+                                  : null,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    MenuItemButton(
-                      onPressed: () async {
-                        if (index != 1 && mounted) {
-                          await collectController.addCollect(widget.bangumiItem,
-                              type: index);
-                          // 防止状态错误刷新
-                          if (!mounted) {
-                            return;
-                          }
-                          setState(() {});
-                        }
-                      },
-                      child: Container(
-                        height: 44,
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                getIconByInt(index),
-                                color: index == collectType
-                                    ? Theme.of(context).colorScheme.primary
-                                    : null,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                ' ${getTypeStringByInt(index)}',
-                                style: TextStyle(
-                                  color: index == collectType
-                                      ? Theme.of(context).colorScheme.primary
-                                      : null,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    MenuItemButton(
-                      onPressed: () async {
-                        if (index != 2 && mounted) {
-                          await collectController.addCollect(widget.bangumiItem,
-                              type: index);
-                          // 防止状态错误刷新
-                          if (!mounted) {
-                            return;
-                          }
-                          setState(() {});
-                        }
-                      },
-                      child: Container(
-                        height: 44,
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                getIconByInt(index),
-                                color: index == collectType
-                                    ? Theme.of(context).colorScheme.primary
-                                    : null,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                ' ${getTypeStringByInt(index)}',
-                                style: TextStyle(
-                                  color: index == collectType
-                                      ? Theme.of(context).colorScheme.primary
-                                      : null,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    MenuItemButton(
-                      onPressed: () async {
-                        if (index != 3 && mounted) {
-                          await collectController.addCollect(widget.bangumiItem,
-                              type: index);
-                          // 防止状态错误刷新
-                          if (!mounted) {
-                            return;
-                          }
-                          setState(() {});
-                        }
-                      },
-                      child: Container(
-                        height: 44,
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                getIconByInt(index),
-                                color: index == collectType
-                                    ? Theme.of(context).colorScheme.primary
-                                    : null,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                ' ${getTypeStringByInt(index)}',
-                                style: TextStyle(
-                                  color: index == collectType
-                                      ? Theme.of(context).colorScheme.primary
-                                      : null,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    MenuItemButton(
-                      onPressed: () async {
-                        if (index != 4 && mounted) {
-                          await collectController.addCollect(widget.bangumiItem,
-                              type: index);
-                          // 防止状态错误刷新
-                          if (!mounted) {
-                            return;
-                          }
-                          setState(() {});
-                        }
-                      },
-                      child: Container(
-                        height: 44,
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                getIconByInt(index),
-                                color: index == collectType
-                                    ? Theme.of(context).colorScheme.primary
-                                    : null,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                ' ${getTypeStringByInt(index)}',
-                                style: TextStyle(
-                                  color: index == collectType
-                                      ? Theme.of(context).colorScheme.primary
-                                      : null,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    MenuItemButton(
-                      onPressed: () async {
-                        if (index != 5 && mounted) {
-                          await collectController.addCollect(widget.bangumiItem,
-                              type: index);
-                          // 防止状态错误刷新
-                          if (!mounted) {
-                            return;
-                          }
-                          setState(() {});
-                        }
-                      },
-                      child: Container(
-                        height: 44,
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                getIconByInt(index),
-                                color: index == collectType
-                                    ? Theme.of(context).colorScheme.primary
-                                    : null,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                ' ${getTypeStringByInt(index)}',
-                                style: TextStyle(
-                                  color: index == collectType
-                                      ? Theme.of(context).colorScheme.primary
-                                      : null,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-              ],
+                  ),
+                ),
+              ),
             ),
           ),
         ),
