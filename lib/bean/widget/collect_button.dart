@@ -157,7 +157,7 @@ class _CollectButtonState extends State<CollectButton> {
                       setState(() {});
                     }
                   },
-                  child: Container(
+                  child: SizedBox(
                     height: 44,
                     child: Align(
                       alignment: Alignment.centerLeft,
