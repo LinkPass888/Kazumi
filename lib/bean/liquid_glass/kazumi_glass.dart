@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:kazumi/bean/liquid_glass/soft_progressive_blur.dart';
 import 'package:kazumi/services/storage/storage.dart';
 import 'package:real_liquid_glass/real_liquid_glass.dart';
@@ -159,7 +160,23 @@ abstract final class KazumiGlass {
     );
   }
 
-  /// 浮动按钮垫的玻璃，配合 [floatingButton] 用。
+  /// 顶栏用的系统状态栏样式：透明背景 + 跟随主题明暗的图标。
+  ///
+  /// 顶栏背景一旦设成透明，AppBar 自己推断出来的样式会把状态栏图标定成白色
+  /// 并一直留着，所以这里显式给一份。iOS 看的是 [SystemUiOverlayStyle.statusBarBrightness]
+  /// （状态栏背景的明暗），安卓看的是 `statusBarIconBrightness`，两个都要给。
+  static SystemUiOverlayStyle overlayStyle(BuildContext context) {
+    final bool light = Theme.of(context).brightness == Brightness.light;
+    return SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: light ? Brightness.dark : Brightness.light,
+      statusBarBrightness: light ? Brightness.light : Brightness.dark,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
+    );
+  }
+
+  /// 一块玻璃表面，[child] 画在玻璃之上。
   ///
   /// 关闭液态玻璃时原样返回 [child]，由调用方自己决定原来的外观。
   static Widget glassSurface({

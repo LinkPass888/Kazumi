@@ -133,15 +133,7 @@ class SysAppBar extends StatelessWidget implements PreferredSizeWidget {
         bottom: bottom,
         flexibleSpace: KazumiGlass.softHeader(context),
         automaticallyImplyLeading: false,
-        systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness:
-              Theme.of(context).brightness == Brightness.light
-                  ? Brightness.dark
-                  : Brightness.light,
-          systemNavigationBarColor: Colors.transparent,
-          systemNavigationBarDividerColor: Colors.transparent,
-        ),
+        systemOverlayStyle: KazumiGlass.overlayStyle(context),
       ),
     );
   }
