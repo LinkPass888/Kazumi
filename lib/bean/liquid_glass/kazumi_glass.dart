@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kazumi/bean/liquid_glass/soft_progressive_blur.dart';
 import 'package:kazumi/services/storage/storage.dart';
 import 'package:real_liquid_glass/real_liquid_glass.dart';
 
@@ -9,11 +10,11 @@ import 'package:real_liquid_glass/real_liquid_glass.dart';
 /// 其它平台由 real_liquid_glass 自己画一层磨砂。所有玻璃表面都从这里出，
 /// 是为了只有一处开关、形状统一，也方便随时整体退回原来的 Material 外观。
 abstract final class KazumiGlass {
-  /// 底部玻璃标签栏的高度（不含底部安全区）。
+  /// 底部玻璃标签栏的高度。
   ///
-  /// 栏体浮在内容之上，所以滚动内容要让出这个高度 + 安全区，见
-  /// [bottomInset]。
-  static const double bottomBarHeight = 64;
+  /// iOS 上这是原生 `UITabBar` 的高度，栏体一直铺到屏幕底部并自己处理底部
+  /// 安全区，所以这里包含安全区高度。
+  static const double bottomBarHeight = 85;
 
   /// 是否启用液态玻璃，可在「设置 - 界面设置」里关闭。
   static bool get enabled =>
@@ -26,24 +27,79 @@ abstract final class KazumiGlass {
     if (!enabled) {
       return 0;
     }
-    return bottomBarHeight + MediaQuery.paddingOf(context).bottom;
+    // 栏体本身已经盖住底部安全区，这里再留一点余量，免得最后一行贴着玻璃。
+    return bottomBarHeight + 8;
   }
 
-  /// 通栏顶栏用的方角形状。
-  static const LiquidGlassShape headerShape =
-      LiquidGlassShape.roundedRectangle(0);
-
-  /// 通栏顶栏的玻璃表面，贴在 AppBar 的 `flexibleSpace` 里。
+  /// 顶栏的软渐进模糊（iOS 26 的 `scrollEdgeEffectStyle(.soft)`）。
   ///
-  /// 关闭液态玻璃时返回 null，由 AppBar 自己画原来的背景色。
-  static Widget? header({Key? key}) {
+  /// 关掉液态玻璃时返回 null，由 AppBar 自己画原来的背景色。
+  static Widget? softHeader(BuildContext context, {double height = 104}) {
     if (!enabled) {
       return null;
     }
+    return SoftProgressiveBlur(
+      height: height,
+      tint: Theme.of(context).colorScheme.surface,
+    );
+  }
+
+  /// 顶栏按钮的玻璃底。
+  ///
+  /// 只做装饰：`interactive` 保持 false，触摸照旧落到里面的按钮上。
+  static Widget buttonGlass({required Widget child}) {
+    if (!enabled) {
+      return child;
+    }
     return LiquidGlassContainer(
-      key: key,
+      shape: const LiquidGlassShape.capsule(),
       style: LiquidGlassStyle.regular,
-      shape: headerShape,
+      child: child,
+    );
+  }
+
+  /// 浮动按钮垫的玻璃，配合 [floatingButton] 用。
+  static Widget glassSurface({required Widget child}) {
+    if (!enabled) {
+      return child;
+    }
+    return LiquidGlassContainer(
+      shape: const LiquidGlassShape.capsule(),
+      style: LiquidGlassStyle.regular,
+      child: child,
+    );
+  }
+
+  /// 浮在玻璃标签栏之上的浮动按钮。
+  ///
+  /// 顺手把原 Material FAB 的表面变透明、去掉阴影并改成圆形，让玻璃透出来；
+  /// 点按与涟漪还是 FAB 自己的。
+  static Widget floatingButton({
+    required BuildContext context,
+    required Widget child,
+  }) {
+    if (!enabled) {
+      return child;
+    }
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: EdgeInsets.only(bottom: bottomInset(context)),
+      child: glassSurface(
+        child: Theme(
+          data: Theme.of(context).copyWith(
+            floatingActionButtonTheme: FloatingActionButtonThemeData(
+              backgroundColor: Colors.transparent,
+              foregroundColor: scheme.primary,
+              elevation: 0,
+              focusElevation: 0,
+              hoverElevation: 0,
+              highlightElevation: 0,
+              shape: const CircleBorder(),
+            ),
+          ),
+          child: child,
+        ),
+      ),
     );
   }
 }

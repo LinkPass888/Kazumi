@@ -245,49 +245,52 @@ class _CollectPageState extends State<CollectPage>
                   : const Icon(Icons.edit))
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          bool webDavenable =
-              await GStorage.getSetting(SettingsKeys.webDavEnable);
-          bool webDavCollectEnable =
-              GStorage.getSetting(SettingsKeys.webDavEnableCollect);
-          bool bgmSyncEnable =
-              GStorage.getSetting(SettingsKeys.bangumiSyncEnable);
-          final syncPlan = CollectSyncPlan(
-            webDavEnabled: webDavenable,
-            webDavCollectiblesEnabled: webDavCollectEnable,
-            bangumiEnabled: bgmSyncEnable,
-          );
-          if (!syncPlan.canSync) {
-            KazumiDialog.showToast(message: '同步功能不可用，请至少开启一个同步功能');
-            return;
-          }
-          if (showDelete) {
-            KazumiDialog.showToast(message: '编辑模式无法执行同步');
-            return;
-          }
-          if (syncCollectiblesing) {
-            return;
-          }
-          setState(() {
-            syncCollectiblesing = true;
-          });
-          try {
-            await _runFullSync(
-              plan: syncPlan,
+      floatingActionButton: KazumiGlass.floatingButton(
+        context: context,
+        child: FloatingActionButton(
+          onPressed: () async {
+            bool webDavenable =
+                await GStorage.getSetting(SettingsKeys.webDavEnable);
+            bool webDavCollectEnable =
+                GStorage.getSetting(SettingsKeys.webDavEnableCollect);
+            bool bgmSyncEnable =
+                GStorage.getSetting(SettingsKeys.bangumiSyncEnable);
+            final syncPlan = CollectSyncPlan(
+              webDavEnabled: webDavenable,
+              webDavCollectiblesEnabled: webDavCollectEnable,
+              bangumiEnabled: bgmSyncEnable,
             );
-          } finally {
-            if (mounted) {
-              setState(() {
-                syncCollectiblesing = false;
-              });
+            if (!syncPlan.canSync) {
+              KazumiDialog.showToast(message: '同步功能不可用，请至少开启一个同步功能');
+              return;
             }
-          }
-        },
-        child: syncCollectiblesing
-            ? const SizedBox(
-                width: 32, height: 32, child: CircularProgressIndicator())
-            : const Icon(Icons.sync_rounded),
+            if (showDelete) {
+              KazumiDialog.showToast(message: '编辑模式无法执行同步');
+              return;
+            }
+            if (syncCollectiblesing) {
+              return;
+            }
+            setState(() {
+              syncCollectiblesing = true;
+            });
+            try {
+              await _runFullSync(
+                plan: syncPlan,
+              );
+            } finally {
+              if (mounted) {
+                setState(() {
+                  syncCollectiblesing = false;
+                });
+              }
+            }
+          },
+          child: syncCollectiblesing
+              ? const SizedBox(
+                  width: 32, height: 32, child: CircularProgressIndicator())
+              : const Icon(Icons.sync_rounded),
+        ),
       ),
       body: Observer(builder: (context) {
         return renderBody;

@@ -5,7 +5,7 @@ import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 import 'package:kazumi/bean/widget/bangumi_mirror_error_widget.dart';
 import 'package:kazumi/bean/widget/custom_dropdown_menu.dart';
 import 'package:kazumi/modules/bangumi/bangumi_item.dart';
-import 'package:real_liquid_glass/real_liquid_glass.dart';
+import 'package:kazumi/bean/liquid_glass/soft_progressive_blur.dart';
 import 'package:kazumi/pages/popular/popular_controller.dart';
 import 'package:kazumi/bean/card/bangumi_card.dart';
 import 'package:kazumi/utils/constants.dart';
@@ -124,10 +124,13 @@ class _PopularPageState extends State<PopularPage> {
               })),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => scrollController.animateTo(0,
-            duration: const Duration(milliseconds: 350), curve: Curves.easeOut),
-        child: const Icon(Icons.arrow_upward),
+      floatingActionButton: KazumiGlass.floatingButton(
+        context: context,
+        child: FloatingActionButton(
+          onPressed: () => scrollController.animateTo(0,
+              duration: const Duration(milliseconds: 350), curve: Curves.easeOut),
+          child: const Icon(Icons.arrow_upward),
+        ),
       ),
     );
   }
@@ -185,9 +188,9 @@ class _PopularPageState extends State<PopularPage> {
         fit: StackFit.expand,
         children: [
           if (KazumiGlass.enabled)
-            LiquidGlassContainer(
-              style: LiquidGlassStyle.regular,
-              shape: KazumiGlass.headerShape,
+            SoftProgressiveBlur(
+              height: 140,
+              tint: Theme.of(context).colorScheme.surface,
             ),
           SafeArea(
             child: dtb.DragToMoveArea(

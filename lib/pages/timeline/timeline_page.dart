@@ -695,27 +695,30 @@ class _TimelinePageState extends State<TimelinePage>
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          KazumiDialog.showBottomSheet(
-            backgroundColor: Theme.of(context).colorScheme.surface,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-            ),
-            isScrollControlled: true,
-            constraints: buildTimelineBottomSheetConstraints(
-              context,
-              compactHeightFactor: 2 / 3,
-            ),
-            clipBehavior: Clip.antiAlias,
-            useSafeArea: true,
-            context: context,
-            builder: (context) {
-              return buildTimelineOptionsSheet(context);
-            },
-          );
-        },
-        child: const Icon(Icons.tune),
+      floatingActionButton: KazumiGlass.floatingButton(
+        context: context,
+        child: FloatingActionButton(
+          onPressed: () {
+            KazumiDialog.showBottomSheet(
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              ),
+              isScrollControlled: true,
+              constraints: buildTimelineBottomSheetConstraints(
+                context,
+                compactHeightFactor: 2 / 3,
+              ),
+              clipBehavior: Clip.antiAlias,
+              useSafeArea: true,
+              context: context,
+              builder: (context) {
+                return buildTimelineOptionsSheet(context);
+              },
+            );
+          },
+          child: const Icon(Icons.tune),
+        ),
       ),
       body: Observer(builder: (context) {
         if (timelineController.isLoading &&

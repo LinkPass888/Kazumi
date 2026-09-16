@@ -48,6 +48,7 @@ class SysAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool glass = KazumiGlass.enabled;
     List<Widget> acs = [];
     if (actions != null) {
       acs.addAll(actions!);
@@ -59,6 +60,24 @@ class SysAppBar extends StatelessWidget implements PreferredSizeWidget {
       }
       acs.add(const SizedBox(width: 8));
     }
+    // 顶栏不再整条铺玻璃（那会在别的页面盖过来时透出一道光边），改成
+    // iOS 26 的软渐进模糊，按钮各自带一层玻璃。
+    final Widget? leadingWidget = leading != null
+        ? EmbeddedNativeControlArea(
+            requireOffset: needTopOffset,
+            child: leading!,
+          )
+        : (ModalRoute.of(context)?.impliesAppBarDismissal ?? false)
+            ? EmbeddedNativeControlArea(
+                requireOffset: needTopOffset,
+                child: IconButton(
+                  onPressed: () {
+                    context.maybePop();
+                  },
+                  icon: Icon(Icons.arrow_back),
+                ),
+              )
+            : null;
     return GestureDetector(
       onPanStart: (_) => (isDesktop()) ? windowManager.startDragging() : null,
       child: AppBar(
@@ -72,34 +91,25 @@ class SysAppBar extends StatelessWidget implements PreferredSizeWidget {
             : null,
         centerTitle: Platform.isIOS ? true : false,
         actions: acs.map((e) {
-          return EmbeddedNativeControlArea(
-            requireOffset: needTopOffset,
-            child: e,
+          if (e is SizedBox) {
+            return e;
+          }
+          return KazumiGlass.buttonGlass(
+            child: EmbeddedNativeControlArea(
+              requireOffset: needTopOffset,
+              child: e,
+            ),
           );
         }).toList(),
-        leading: leading != null
-            ? EmbeddedNativeControlArea(
-                requireOffset: needTopOffset,
-                child: leading!,
-              )
-            : (ModalRoute.of(context)?.impliesAppBarDismissal ?? false)
-                ? EmbeddedNativeControlArea(
-                    requireOffset: needTopOffset,
-                    child: IconButton(
-                      onPressed: () {
-                        context.maybePop();
-                      },
-                      icon: Icon(Icons.arrow_back),
-                    ),
-                  )
-                : null,
+        leading: leadingWidget == null
+            ? null
+            : KazumiGlass.buttonGlass(child: leadingWidget),
         leadingWidth: leadingWidth,
-        backgroundColor:
-            KazumiGlass.enabled ? Colors.transparent : backgroundColor,
-        elevation: KazumiGlass.enabled ? 0 : elevation,
+        backgroundColor: glass ? Colors.transparent : backgroundColor,
+        elevation: glass ? 0 : elevation,
         shape: shape,
         bottom: bottom,
-        flexibleSpace: KazumiGlass.header(),
+        flexibleSpace: KazumiGlass.softHeader(context),
         automaticallyImplyLeading: false,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,

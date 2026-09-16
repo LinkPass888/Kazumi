@@ -156,46 +156,44 @@ class _ScaffoldMenu extends State<ScaffoldMenu> with RouteAware {
   /// 都由系统接管，图标走 SF Symbols；其它平台由 real_liquid_glass 用 Flutter
   /// 画一份相同的外观。
   Widget _glassBottomBar(BuildContext context, int selectedIndex) {
-    return SafeArea(
-      top: false,
-      child: LiquidGlassBottomBar(
-        items: const <LiquidGlassBarItem>[
-          LiquidGlassBarItem(
-            icon: Icons.home_outlined,
-            selectedIcon: Icons.home,
-            sfSymbol: 'house',
-            selectedSfSymbol: 'house.fill',
-            label: '推荐',
-          ),
-          LiquidGlassBarItem(
-            icon: Icons.timeline_outlined,
-            selectedIcon: Icons.timeline,
-            sfSymbol: 'calendar',
-            label: '时间表',
-          ),
-          LiquidGlassBarItem(
-            icon: Icons.favorite_outline,
-            selectedIcon: Icons.favorite,
-            sfSymbol: 'heart',
-            selectedSfSymbol: 'heart.fill',
-            label: '追番',
-          ),
-          LiquidGlassBarItem(
-            icon: Icons.settings_outlined,
-            selectedIcon: Icons.settings,
-            sfSymbol: 'gearshape',
-            selectedSfSymbol: 'gearshape.fill',
-            label: '我的',
-          ),
-        ],
-        height: KazumiGlass.bottomBarHeight,
-        currentIndex: selectedIndex,
-        onTap: _selectDestination,
-        tint: Theme.of(context).colorScheme.primary,
-      ),
+    // 高度和位置都交给原生 UITabBar：栏体一直铺到屏幕底部，底部安全区由它
+    // 自己处理，这样浮动胶囊的位置就是 iOS 原生的位置。
+    return LiquidGlassBottomBar(
+      items: const <LiquidGlassBarItem>[
+        LiquidGlassBarItem(
+          icon: Icons.home_outlined,
+          selectedIcon: Icons.home,
+          sfSymbol: 'house',
+          selectedSfSymbol: 'house.fill',
+          label: '推荐',
+        ),
+        LiquidGlassBarItem(
+          icon: Icons.timeline_outlined,
+          selectedIcon: Icons.timeline,
+          sfSymbol: 'calendar',
+          label: '时间表',
+        ),
+        LiquidGlassBarItem(
+          icon: Icons.favorite_outline,
+          selectedIcon: Icons.favorite,
+          sfSymbol: 'heart',
+          selectedSfSymbol: 'heart.fill',
+          label: '追番',
+        ),
+        LiquidGlassBarItem(
+          icon: Icons.settings_outlined,
+          selectedIcon: Icons.settings,
+          sfSymbol: 'gearshape',
+          selectedSfSymbol: 'gearshape.fill',
+          label: '我的',
+        ),
+      ],
+      height: KazumiGlass.bottomBarHeight,
+      currentIndex: selectedIndex,
+      onTap: _selectDestination,
+      tint: Theme.of(context).colorScheme.primary,
     );
   }
-
   Widget _materialBottomBar(BuildContext context, int selectedIndex) {
     return NavigationBar(
         destinations: const <Widget>[
