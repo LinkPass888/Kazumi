@@ -143,44 +143,43 @@ class _CollectButtonState extends State<CollectButton> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: List<MenuItemButton>.generate(
+              children: List<Widget>.generate(
                 6,
-                (int index) => MenuItemButton(
-                  onPressed: () async {
-                    if (index != collectType && mounted) {
-                      await collectController.addCollect(widget.bangumiItem,
-                          type: index);
-                      // 防止状态错误刷新
-                      if (!mounted) {
-                        return;
+                (int index) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  // 条目自己就是玻璃：点按反馈用原生玻璃的高光，不是水波纹
+                  child: KazumiGlass.glassButton(
+                    context: context,
+                    selected: index == collectType,
+                    onTap: () async {
+                      controller.close();
+                      if (index != collectType && mounted) {
+                        await collectController.addCollect(widget.bangumiItem,
+                            type: index);
+                        // 防止状态错误刷新
+                        if (!mounted) {
+                          return;
+                        }
+                        setState(() {});
                       }
-                      setState(() {});
-                    }
-                  },
-                  child: SizedBox(
-                    height: 44,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            getIconByInt(index),
-                            color: index == collectType
-                                ? Theme.of(context).colorScheme.primary
-                                : null,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            ' ${getTypeStringByInt(index)}',
-                            style: TextStyle(
-                              color: index == collectType
-                                  ? Theme.of(context).colorScheme.primary
-                                  : null,
-                            ),
-                          ),
-                        ],
-                      ),
+                    },
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          getIconByInt(index),
+                          size: 20,
+                          color: index == collectType
+                              ? Theme.of(context).colorScheme.primary
+                              : null,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(getTypeStringByInt(index)),
+                      ],
                     ),
                   ),
                 ),
