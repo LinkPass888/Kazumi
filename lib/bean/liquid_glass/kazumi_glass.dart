@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:kazumi/bean/liquid_glass/soft_progressive_blur.dart';
 import 'package:kazumi/services/storage/storage.dart';
 import 'package:real_liquid_glass/real_liquid_glass.dart';
 
@@ -47,17 +46,6 @@ abstract final class KazumiGlass {
     }
     // 栏体本身已经盖住底部安全区，这里再留一点余量，免得最后一行贴着玻璃。
     return bottomBarHeight + 8;
-  }
-
-  /// 顶栏的软渐进模糊（iOS 26 的 `scrollEdgeEffectStyle(.soft)`）。
-  static Widget? softHeader(BuildContext context, {double height = 104}) {
-    if (!enabled) {
-      return null;
-    }
-    return SoftProgressiveBlur(
-      height: height,
-      tint: Theme.of(context).colorScheme.surface,
-    );
   }
 
   /// 顶栏用的系统状态栏样式：透明背景 + 跟随主题明暗的图标。

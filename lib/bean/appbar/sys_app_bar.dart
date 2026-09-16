@@ -47,7 +47,6 @@ class SysAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool glass = KazumiGlass.enabled;
     List<Widget> acs = [];
     if (actions != null) {
       acs.addAll(actions!);
@@ -126,11 +125,10 @@ class SysAppBar extends StatelessWidget implements PreferredSizeWidget {
         actions: actionWidgets,
         leading: leadingWidget,
         leadingWidth: leadingWidth ?? KazumiGlass.barLeadingWidth,
-        backgroundColor: glass ? Colors.transparent : backgroundColor,
-        elevation: glass ? 0 : elevation,
+        backgroundColor: backgroundColor,
+        elevation: elevation,
         shape: shape,
         bottom: bottom,
-        flexibleSpace: KazumiGlass.softHeader(context),
         automaticallyImplyLeading: false,
         systemOverlayStyle: KazumiGlass.overlayStyle(context),
       ),
