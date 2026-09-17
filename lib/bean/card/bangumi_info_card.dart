@@ -86,24 +86,21 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
       builder: (context) {
         return AlertDialog(
           title: const Text('选择放送星期'),
-          content: KazumiGlass.glassSurface(
-            shape: KazumiGlass.panelShapeOf(context),
-            padding: KazumiGlass.menuPanelPadding,
-            child: Wrap(
+          content: Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
               for (int index = 1; index <= 7; index++)
-                ChoiceChip(
-                  label: Text(weekdayCnLabel(index)),
+                KazumiGlass.glassButton(
+                  context: context,
                   selected: index == weekday,
-                  onSelected: (_) {
+                  onTap: () {
                     KazumiDialog.dismiss<int>(popWith: index);
                   },
+                  child: Text(weekdayCnLabel(index)),
                 ),
               ],
             ),
-          ),
           // 按用户要求不留「取消」按钮：点外面即取消，弹窗也更紧凑。
           // 弹窗本体保持原来的不透明背景，标题不会再被挤出。
         );
