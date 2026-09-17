@@ -858,7 +858,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       );
                     },
                     menuChildren: <Widget>[
-                      ConstrainedBox(
+                  ConstrainedBox(
                       constraints: const BoxConstraints(maxHeight: 216.0),
                       child: SingleChildScrollView(
                         controller: ScrollController(
@@ -899,8 +899,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                         ),
                       ),
                     ),
-                  ),
-                    ],
+                ],
                   ),
                   PlayerPanelHoldMenuAnchor(
                     acquirePlayerPanelHold: widget.acquirePlayerPanelHold,

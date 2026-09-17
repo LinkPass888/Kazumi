@@ -670,7 +670,6 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                         ),
                       ),
                     ),
-                  ),
                 ],
               ),
               PlayerPanelHoldMenuAnchor(
