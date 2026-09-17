@@ -786,14 +786,13 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
                     onVisibilityChanged: widget.onMenuVisibilityChanged,
                     consumeOutsideTap: true,
-                    // 只挪横屏：横屏按钮挤在右下角，面板正对会被画面挡。
-                    // 竖屏保持框架默认位置（之前误改了竖屏，这里回退）。
-                    // 注意 dy 对竖向菜单没用 —— 框架在 parentOrientation 是
-                    // vertical 时会忽略 alignmentOffset.dy，所以只给 dx：
-                    // 这个方向上正数表示把面板再往左挪。
+                    // 只挪横屏（竖屏保持框架默认位置，之前误改过竖屏）。
+                    // 框架的算法是 desiredPosition += alignmentOffset，
+                    // 所以 dx 负=往左、dy 负=往上：往上顶回原来的位置，
+                    // 再往左挪 30。
                     alignmentOffset: MediaQuery.of(context).size.width >
                             MediaQuery.of(context).size.height
-                        ? const Offset(30, 0)
+                        ? const Offset(-30, -240)
                         : null,
                     builder: (BuildContext context, MenuController controller,
                         Widget? child) {

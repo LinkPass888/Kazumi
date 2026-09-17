@@ -242,12 +242,17 @@ abstract final class KazumiGlass {
         onTap: onTap == null
             ? null
             : () {
-                // 先跑条目自己的动作，再关菜单 —— 和 MenuItemButton 一个顺序。
-                // 反过来的话，一按就先关菜单，投屏/弹窗这类要先做事的条目
-                // 会像没反应一样。
+                // 先跑条目自己的动作，再把关菜单推到下一帧 —— 投屏 / 弹窗 /
+                // 跳详情这类「先做事」的条目不能被打断：同步关菜单会立刻重建
+                // 菜单树，动作就可能像没发生一样。
+                final MenuController? menu = closeMenu
+                    ? MenuController.maybeOf(context)
+                    : null;
                 onTap();
-                if (closeMenu) {
-                  MenuController.maybeOf(context)?.close();
+                if (menu != null) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    menu.close();
+                  });
                 }
               },
         shape: panelShape,
