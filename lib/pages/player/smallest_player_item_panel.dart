@@ -532,8 +532,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
             },
             menuChildren: <Widget>[
               SubmenuButton(
-                // 框架的箭头钉在条目最右边，离文字很远；这里藏掉它，
-                // 由 child 自己在文字后面画一个，位置才收得住。
+                // 不要右箭头：框架的那个藏掉，条目一律纯文字居中
                 submenuIcon: const WidgetStatePropertyAll<Widget>(
                   SizedBox.shrink(),
                 ),
@@ -648,28 +647,15 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   width: 150,
                   child: Align(
                     alignment: Alignment.center,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          "倍速",
-                          style: Theme.of(context).textTheme.labelLarge,
-                        ),
-                        const SizedBox(width: 2),
-                        Icon(
-                          Icons.chevron_right,
-                          size: 18,
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ],
+                    child: Text(
+                      "倍速",
+                      style: Theme.of(context).textTheme.labelLarge,
                     ),
                   ),
                 ),
               ),
               SubmenuButton(
-                // 框架的箭头钉在条目最右边，离文字很远；这里藏掉它，
-                // 由 child 自己在文字后面画一个，位置才收得住。
+                // 不要右箭头：框架的那个藏掉，条目一律纯文字居中
                 submenuIcon: const WidgetStatePropertyAll<Widget>(
                   SizedBox.shrink(),
                 ),
@@ -839,8 +825,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 ),
               ),
               SubmenuButton(
-                // 框架的箭头钉在条目最右边，离文字很远；这里藏掉它，
-                // 由 child 自己在文字后面画一个，位置才收得住。
+                // 不要右箭头：框架的那个藏掉，条目一律纯文字居中
                 submenuIcon: const WidgetStatePropertyAll<Widget>(
                   SizedBox.shrink(),
                 ),
