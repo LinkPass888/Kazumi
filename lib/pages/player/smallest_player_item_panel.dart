@@ -603,16 +603,23 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   onTap: () async {
                     final MenuController? parentMenu =
                         MenuController.maybeOf(speedContext);
-                    final double? chosen = await KazumiGlass.showSpeedPanel(
+                    final RenderBox? itemBox =
+                        speedContext.findRenderObject() as RenderBox?;
+                    // 这一项所在的那一列就是更多菜单的面板：
+                    // 点在这一列里 -> 只关倍速面板（和其它子菜单一样）；
+                    // 点在别处 -> 倍速面板和更多菜单一起关
+                    final bool closeAll =
+                        await KazumiGlass.showSpeedPanel(
                       context: speedContext,
                       currentSpeed: playerController.playback.playerSpeed,
                       setPlaybackSpeed: widget.setPlaybackSpeed,
                       // 让面板下沿和超分辨率菜单的下沿齐平（只影响横屏）
                       bottomGap: 18,
+                      menuLeft: itemBox != null && itemBox.hasSize
+                          ? itemBox.localToGlobal(Offset.zero).dx
+                          : null,
                     );
-                    // 只有真的选了倍速才连更多菜单一起收；点别处（或点更多菜单
-                    // 里别的项）只关倍速面板
-                    if (chosen != null) {
+                    if (closeAll) {
                       parentMenu?.close();
                     }
                   },

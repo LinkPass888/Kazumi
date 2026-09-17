@@ -302,12 +302,17 @@ abstract final class KazumiGlass {
   /// - 竖屏居中弹出（和其它弹窗一样）；横屏贴着按钮上方、再整体左移一点
   ///   （横屏按钮挤在右下角，居中会被画面挡住）。
   /// - 横屏屏幕矮，只露四行；打开时把当前倍速滚到第二行，上下都看得见。
-  static Future<double?> showSpeedPanel({
+  /// 返回值 = 要不要连同**上层菜单**一起关掉：
+  /// 点了面板里的倍速、或者在面板外点了一下 -> true（全关）；
+  /// 点在上层菜单自己那一列里 -> false（只关这个面板，菜单留着）。
+  static Future<bool> showSpeedPanel({
     required BuildContext context,
     required double currentSpeed,
     required Future<void> Function(double) setPlaybackSpeed,
     // 横屏时面板下沿离触发条目顶部的距离（用来和别的菜单下沿对齐）
     double bottomGap = 72,
+    // 上层菜单面板的左边界（横坐标）。落在它右边的点击算「在菜单里」。
+    double? menuLeft,
   }) {
     // 拿触发按钮的位置来定位面板（横屏用）
     Offset? anchorTopLeft;
@@ -324,9 +329,11 @@ abstract final class KazumiGlass {
     final ScrollController scrollController = ScrollController(
       initialScrollOffset: index <= 1 ? 0 : (index - 1) * rowHeight,
     );
-    return showDialog<double>(
+    return showDialog<bool>(
       context: context,
       barrierColor: Colors.black26,
+      // 点击自己处理：要区分「点在菜单里」还是「点在别处」
+      barrierDismissible: false,
       builder: (BuildContext ctx) {
         final TextTheme text = Theme.of(ctx).textTheme;
         final Size screen = MediaQuery.of(ctx).size;
@@ -354,6 +361,17 @@ abstract final class KazumiGlass {
           height: screen.height,
           child: Stack(
             children: <Widget>[
+              // 面板之外的所有点击都由这一层接住：
+              // 落在上层菜单那一列里 -> 只关这个面板；点在别处 -> 连菜单一起关
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTapUp: (TapUpDetails details) {
+                  final bool inMenu = menuLeft != null &&
+                      details.globalPosition.dx >= menuLeft;
+                  Navigator.of(ctx).pop(!inMenu);
+                },
+                child: const SizedBox.expand(),
+              ),
               Positioned(
                 left: left,
                 bottom: bottom,
@@ -379,9 +397,8 @@ abstract final class KazumiGlass {
                                       horizontal: 14),
                                   selected: i == currentSpeed,
                                   onTap: () async {
-                                    // 把选中的倍速带回去，调用方据此决定要不要
-                                    // 连更多菜单一起收
-                                    Navigator.of(ctx).pop(i);
+                                    // 选了倍速 = 全关（和子菜单里选中一项一样）
+                                    Navigator.of(ctx).pop(true);
                                     await setPlaybackSpeed(i);
                                   },
                                   child: SizedBox(
