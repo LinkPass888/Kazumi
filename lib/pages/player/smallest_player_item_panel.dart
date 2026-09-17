@@ -530,9 +530,9 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 ),
               );
             },
-            menuChildren: [
+            menuChildren: <Widget>[
               SubmenuButton(
-                menuChildren: [
+                menuChildren: <Widget>[
                   for (final aspectRatioMode in PlayerAspectRatio.values)
                     KazumiGlass.menuItem(
                       context: context,
@@ -567,7 +567,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 ),
               ),
               SubmenuButton(
-                menuChildren: [
+                menuChildren: <Widget>[
                   for (final double i
                       in defaultPlaySpeedList) ...<MenuItemButton>[
                     KazumiGlass.menuItem(
@@ -605,7 +605,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 ),
               ),
               SubmenuButton(
-                menuChildren: [
+                menuChildren: <Widget>[
                   for (final mode in SuperResolutionMode.values)
                     KazumiGlass.menuItem(
                       context: context,
@@ -753,7 +753,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 ),
               ),
               SubmenuButton(
-                menuChildren: [
+                menuChildren: <Widget>[
                   KazumiGlass.menuItem(
                     context: context,
                     // 四周等距：横向 14，纵向由条目高 48 撑开

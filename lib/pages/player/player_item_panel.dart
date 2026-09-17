@@ -802,7 +802,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                         ),
                       );
                     },
-                    menuChildren: [
+                    menuChildren: <Widget>[
                       for (final mode in SuperResolutionMode.values)
                         MenuItemButton(
                           onPressed: () =>
@@ -869,7 +869,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                         ),
                       );
                     },
-                    menuChildren: [
+                    menuChildren: <Widget>[
                       for (final double i
                           in defaultPlaySpeedList) ...<MenuItemButton>[
                         MenuItemButton(
@@ -950,7 +950,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                         tooltip: '视频比例',
                       );
                     },
-                    menuChildren: [
+                    menuChildren: <Widget>[
                       for (final aspectRatioMode in PlayerAspectRatio.values)
                         MenuItemButton(
                           onPressed: () => playerController
@@ -1099,7 +1099,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     ),
                   );
                 },
-                menuChildren: [
+                menuChildren: <Widget>[
                   KazumiGlass.menuItem(
                     context: context,
                     // 四周等距：横向 14，纵向由条目高 48 撑开
@@ -1174,7 +1174,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     ),
                   ),
                   SubmenuButton(
-                    menuChildren: [
+                    menuChildren: <Widget>[
                       MenuItemButton(
                         onPressed: () {
                           TimedShutdownService().cancel();

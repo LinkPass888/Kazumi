@@ -139,22 +139,22 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
 
   @override
   Widget build(BuildContext context) {
-    return MenuAnchor(
+    // 滚动条缩短并避开圆角（菜单面板由 MenuAnchor 在 overlay 里建，
+    // 继承的是这里的 Theme）
+    return ScrollbarTheme(
+      data: ScrollbarThemeData(
+        thickness: const WidgetStatePropertyAll(3),
+        mainAxisMargin: 14,
+        crossAxisMargin: 4,
+        radius: const Radius.circular(2),
+      ),
+      child: MenuAnchor(
       // 播放器的弹出菜单（倍速、超分辨率…）统一用和别的菜单一样的圆角
       style: (widget.style ?? const MenuStyle()).merge(
         MenuStyle(
           backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
           elevation: const WidgetStatePropertyAll(0),
           padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-          // 滚动条缩短并离开圆角，别贴着 R 角
-          scrollbarTheme: WidgetStatePropertyAll(
-            ScrollbarThemeData(
-              thickness: const WidgetStatePropertyAll(3),
-              mainAxisMargin: 14,
-              crossAxisMargin: 4,
-              radius: const Radius.circular(2),
-            ),
-          ),
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
@@ -181,6 +181,7 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
           ),
         ),
       ],
+      ),
     );
   }
 }
