@@ -532,6 +532,11 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
             },
             menuChildren: <Widget>[
               SubmenuButton(
+                // 框架的箭头钉在条目最右边，离文字很远；这里藏掉它，
+                // 由 child 自己在文字后面画一个，位置才收得住。
+                submenuIcon: const WidgetStatePropertyAll<Widget>(
+                  SizedBox.shrink(),
+                ),
                 menuStyle: MenuStyle(
                 backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
                 elevation: const WidgetStatePropertyAll(0),
@@ -566,14 +571,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                         constraints: BoxConstraints(minWidth: 112),
                         child: Align(
                           alignment: Alignment.center,
-                          child: Text(
-                            aspectRatioMode.label,
-                            style: TextStyle(
-                                color: aspectRatioMode ==
-                                        playerController.panel.aspectRatioMode
-                                    ? Theme.of(context).colorScheme.primary
-                                    : null),
-                          ),
+                          child: Text(aspectRatioMode.label),
                         ),
                       ),
                     ),
@@ -583,16 +581,31 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 child: Container(
                   height: 48,
                   constraints: BoxConstraints(minWidth: 112),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text("视频比例"),
+                  child: Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        const Text('视频比例'),
+                        const SizedBox(width: 2),
+                        Icon(
+                          Icons.chevron_right,
+                          size: 18,
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
               KazumiGlass.menuItem(
                 context: context,
                 padding: const EdgeInsets.symmetric(horizontal: 14),
-                onTap: () => _showSpeedDialog(context, widget.setPlaybackSpeed),
+                onTap: () => KazumiGlass.showSpeedPanel(
+                  context: context,
+                  currentSpeed: playerController.playback.playerSpeed,
+                  setPlaybackSpeed: widget.setPlaybackSpeed,
+                ),
                 child: SizedBox(
                   height: 48,
                   child: Align(
@@ -602,6 +615,11 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 ),
               ),
               SubmenuButton(
+                // 框架的箭头钉在条目最右边，离文字很远；这里藏掉它，
+                // 由 child 自己在文字后面画一个，位置才收得住。
+                submenuIcon: const WidgetStatePropertyAll<Widget>(
+                  SizedBox.shrink(),
+                ),
                 menuStyle: MenuStyle(
                 backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
                 elevation: const WidgetStatePropertyAll(0),
@@ -635,16 +653,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                         constraints: BoxConstraints(minWidth: 112),
                         child: Align(
                           alignment: Alignment.center,
-                          child: Text(
-                            mode.label,
-                            style: TextStyle(
-                              color: playerController
-                                          .playback.superResolutionMode ==
-                                      mode
-                                  ? Theme.of(context).colorScheme.primary
-                                  : null,
-                            ),
-                          ),
+                          child: Text(mode.label),
                         ),
                       ),
                     ),
@@ -654,9 +663,20 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 child: Container(
                   height: 48,
                   constraints: BoxConstraints(minWidth: 112),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text("超分辨率"),
+                  child: Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        const Text('超分辨率'),
+                        const SizedBox(width: 2),
+                        Icon(
+                          Icons.chevron_right,
+                          size: 18,
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -773,6 +793,11 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 ),
               ),
               SubmenuButton(
+                // 框架的箭头钉在条目最右边，离文字很远；这里藏掉它，
+                // 由 child 自己在文字后面画一个，位置才收得住。
+                submenuIcon: const WidgetStatePropertyAll<Widget>(
+                  SizedBox.shrink(),
+                ),
                 menuStyle: MenuStyle(
                 backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
                 elevation: const WidgetStatePropertyAll(0),
@@ -796,22 +821,16 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                     context: context,
                     // 四周等距：横向 14，纵向由条目高 48 撑开
                     padding: const EdgeInsets.symmetric(horizontal: 14),
+                    selected: !TimedShutdownService().isActive,
                     onTap: () {
                       TimedShutdownService().cancel();
                     },
                     child: Container(
                       height: 48,
                       constraints: BoxConstraints(minWidth: 112),
-                      child: Align(
+                      child: const Align(
                         alignment: Alignment.center,
-                        child: Text(
-                          "不开启",
-                          style: TextStyle(
-                            color: !TimedShutdownService().isActive
-                                ? Theme.of(context).colorScheme.primary
-                                : null,
-                          ),
-                        ),
+                        child: Text("不开启"),
                       ),
                     ),
                   ),
@@ -820,6 +839,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                       context: context,
                       // 四周等距：横向 14，纵向由条目高 48 撑开
                       padding: const EdgeInsets.symmetric(horizontal: 14),
+                      selected: TimedShutdownService().setMinutes == minutes,
                       onTap: () {
                         TimedShutdownService().start(minutes,
                             onExpired: widget.pauseForTimedShutdown);
@@ -832,15 +852,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                         constraints: BoxConstraints(minWidth: 112),
                         child: Align(
                           alignment: Alignment.center,
-                          child: Text(
-                            "$minutes 分钟",
-                            style: TextStyle(
-                              color:
-                                  TimedShutdownService().setMinutes == minutes
-                                      ? Theme.of(context).colorScheme.primary
-                                      : null,
-                            ),
-                          ),
+                          child: Text("$minutes 分钟"),
                         ),
                       ),
                     ),
@@ -874,10 +886,23 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                       valueListenable:
                           TimedShutdownService().remainingSecondsNotifier,
                       builder: (context, remainingSeconds, child) {
-                        return Text(
-                          remainingSeconds > 0
-                              ? "定时关闭 (${TimedShutdownService().formatRemainingTime()})"
-                              : "定时关闭",
+                        return Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text(
+                              remainingSeconds > 0
+                                  ? "定时关闭 (${TimedShutdownService().formatRemainingTime()})"
+                                  : "定时关闭",
+                            ),
+                            const SizedBox(width: 2),
+                            Icon(
+                              Icons.chevron_right,
+                              size: 18,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                            ),
+                          ],
                         );
                       },
                     ),
@@ -890,51 +915,4 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
       ),
     );
   }
-}
-
-
-/// 倍速改成原生 Flutter 弹窗（和上游 PlayerItemPanel 的 showSetSpeedSheet 一致）：
-/// 不滚动、没有玻璃面板，滚动条 / 跟随滚动的高光 / 深色填充贴合这三条都不存在。
-void _showSpeedDialog(
-  BuildContext context,
-  Future<void> Function(double) setSpeed,
-) {
-  final double currentSpeed = playerController.playback.playerSpeed;
-  showDialog<void>(
-    context: context,
-    builder: (BuildContext ctx) => AlertDialog(
-      title: const Text('播放速度'),
-      content: Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: <Widget>[
-          for (final double i in defaultPlaySpeedList)
-            i == currentSpeed
-                ? FilledButton(
-                    onPressed: () async {
-                      await setSpeed(i);
-                      Navigator.of(ctx).pop();
-                    },
-                    child: Text(i.toString()),
-                  )
-                : FilledButton.tonal(
-                    onPressed: () async {
-                      await setSpeed(i);
-                      Navigator.of(ctx).pop();
-                    },
-                    child: Text(i.toString()),
-                  ),
-        ],
-      ),
-      actions: <Widget>[
-        TextButton(
-          onPressed: () async {
-            await setSpeed(1.0);
-            Navigator.of(ctx).pop();
-          },
-          child: const Text('默认速度'),
-        ),
-      ],
-    ),
-  );
 }

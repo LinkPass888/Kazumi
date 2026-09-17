@@ -816,23 +816,18 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                             constraints: BoxConstraints(minWidth: 112),
                             child: Align(
                               alignment: Alignment.center,
-                              child: Text(
-                                mode.label,
-                                style: TextStyle(
-                                  color: playerController
-                                              .playback.superResolutionMode ==
-                                          mode
-                                      ? Theme.of(context).colorScheme.primary
-                                      : null,
-                                ),
-                              ),
+                              child: Text(mode.label),
                             ),
                           ),
                         ),
                     ],
                   ),
                   TextButton(
-                      onPressed: () => showSetSpeedSheet(),
+                      onPressed: () => KazumiGlass.showSpeedPanel(
+                        context: context,
+                        currentSpeed: playerController.playback.playerSpeed,
+                        setPlaybackSpeed: widget.setPlaybackSpeed,
+                      ),
                       child: Text(
                         playerController.playback.playerSpeed == 1.0
                             ? '倍速'
@@ -863,23 +858,20 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     },
                     menuChildren: <Widget>[
                       for (final aspectRatioMode in PlayerAspectRatio.values)
-                        MenuItemButton(
-                          onPressed: () => playerController
-                              .panel.aspectRatioMode = aspectRatioMode,
+                        KazumiGlass.menuItem(
+                          context: context,
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 14),
+                          selected: playerController.panel.aspectRatioMode ==
+                              aspectRatioMode,
+                          onTap: () => playerController.panel.aspectRatioMode =
+                              aspectRatioMode,
                           child: Container(
                             height: 48,
                             constraints: BoxConstraints(minWidth: 112),
                             child: Align(
                               alignment: Alignment.center,
-                              child: Text(
-                                aspectRatioMode.label,
-                                style: TextStyle(
-                                  color: aspectRatioMode ==
-                                          playerController.panel.aspectRatioMode
-                                      ? Theme.of(context).colorScheme.primary
-                                      : null,
-                                ),
-                              ),
+                              child: Text(aspectRatioMode.label),
                             ),
                           ),
                         ),
@@ -1085,6 +1077,9 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     ),
                   ),
                   SubmenuButton(
+                submenuIcon: const WidgetStatePropertyAll<Widget>(
+                  SizedBox.shrink(),
+                ),
                 menuStyle: MenuStyle(
                 backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
                 elevation: const WidgetStatePropertyAll(0),
@@ -1104,29 +1099,31 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                      MenuItemButton(
-                        onPressed: () {
+                      KazumiGlass.menuItem(
+                        context: context,
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 14),
+                        selected: !TimedShutdownService().isActive,
+                        onTap: () {
                           TimedShutdownService().cancel();
                         },
                         child: Container(
                           height: 48,
                           constraints: BoxConstraints(minWidth: 112),
-                          child: Align(
+                          child: const Align(
                             alignment: Alignment.center,
-                            child: Text(
-                              "不开启",
-                              style: TextStyle(
-                                color: !TimedShutdownService().isActive
-                                    ? Theme.of(context).colorScheme.primary
-                                    : null,
-                              ),
-                            ),
+                            child: Text("不开启"),
                           ),
                         ),
                       ),
                       for (final int minutes in [15, 30, 60])
-                        MenuItemButton(
-                          onPressed: () {
+                        KazumiGlass.menuItem(
+                          context: context,
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 14),
+                          selected:
+                              TimedShutdownService().setMinutes == minutes,
+                          onTap: () {
                             TimedShutdownService().start(minutes,
                                 onExpired: widget.pauseForTimedShutdown);
                             KazumiDialog.showToast(
@@ -1138,15 +1135,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                             constraints: BoxConstraints(minWidth: 112),
                             child: Align(
                               alignment: Alignment.center,
-                              child: Text(
-                                "$minutes 分钟",
-                                style: TextStyle(
-                                  color: TimedShutdownService().setMinutes ==
-                                          minutes
-                                      ? Theme.of(context).colorScheme.primary
-                                      : null,
-                                ),
-                              ),
+                              child: Text("$minutes 分钟"),
                             ),
                           ),
                         ),
@@ -1180,10 +1169,23 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                           valueListenable:
                               TimedShutdownService().remainingSecondsNotifier,
                           builder: (context, remainingSeconds, child) {
-                            return Text(
-                              remainingSeconds > 0
-                                  ? "定时关闭 (${TimedShutdownService().formatRemainingTime()})"
-                                  : "定时关闭",
+                            return Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text(
+                                  remainingSeconds > 0
+                                      ? "定时关闭 (${TimedShutdownService().formatRemainingTime()})"
+                                      : "定时关闭",
+                                ),
+                                const SizedBox(width: 2),
+                                Icon(
+                                  Icons.chevron_right,
+                                  size: 18,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
+                                ),
+                              ],
                             );
                           },
                         ),
