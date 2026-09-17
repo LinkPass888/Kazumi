@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 
 const double materialBottomSheetRadius = 24;
 const EdgeInsets materialBottomSheetContentPadding =
@@ -61,11 +62,19 @@ class MaterialBottomSheetHeader extends StatelessWidget {
                 trailing!,
               ] else if (onClose != null) ...[
                 const SizedBox(width: 12),
-                IconButton.filledTonal(
-                  onPressed: onClose,
-                  tooltip: '关闭',
-                  icon: const Icon(Icons.close_rounded),
-                ),
+                if (KazumiGlass.enabled)
+                  KazumiGlass.iconButton(
+                    context: context,
+                    icon: const Icon(Icons.close_rounded, size: 22),
+                    onPressed: onClose,
+                    tooltip: '关闭',
+                  )
+                else
+                  IconButton.filledTonal(
+                    onPressed: onClose,
+                    tooltip: '关闭',
+                    icon: const Icon(Icons.close_rounded),
+                  ),
               ],
             ],
           ),

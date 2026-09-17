@@ -7,6 +7,13 @@ import 'package:kazumi/services/storage/storage.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:kazumi/utils/device.dart';
 
+/// 顶栏大标题的样式：字号与字重和推荐页的「热门番组」保持一致。
+TextStyle appBarTitleStyle(BuildContext context) =>
+    Theme.of(context).textTheme.headlineMedium!.copyWith(
+          fontSize: 28,
+          fontWeight: FontWeight.w700,
+        );
+
 class SysAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double? toolbarHeight;
 

@@ -4,6 +4,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kazumi/bean/dialog/adaptive_bottom_sheet.dart';
 import 'package:kazumi/bean/dialog/material_bottom_sheet.dart';
 import 'package:kazumi/bean/appbar/sys_app_bar.dart';
+import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 import 'package:kazumi/bean/card/bangumi_card.dart';
 import 'package:kazumi/bean/widget/error_widget.dart';
 import 'package:kazumi/modules/bangumi/bangumi_item.dart';
@@ -230,10 +231,14 @@ class _SearchPageState extends State<SearchPage> {
         backgroundColor: Colors.transparent,
         title: const Text("搜索"),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: showWorkbench,
-        icon: const Icon(Icons.tune),
-        label: const Text("筛选"),
+      floatingActionButton: KazumiGlass.floatingButton(
+        context: context,
+        aboveTabBar: false,
+        child: FloatingActionButton.extended(
+          onPressed: showWorkbench,
+          icon: const Icon(Icons.tune),
+          label: const Text("筛选"),
+        ),
       ),
       body: Column(
         children: [

@@ -267,7 +267,7 @@ class _CollectPageState extends State<CollectPage>
             });
           }),
         ),
-        title: const Text('追番'),
+        title: Text('追番', style: appBarTitleStyle(context)),
         actions: [
           IconButton(
               onPressed: () {
