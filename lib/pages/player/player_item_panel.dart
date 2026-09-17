@@ -831,108 +831,15 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                         ),
                     ],
                   ),
-                  PlayerPanelHoldMenuAnchor(
-                    acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
-                    onVisibilityChanged: widget.onMenuVisibilityChanged,
-                    consumeOutsideTap: true,
-                    // 要收的是宽度：面板宽度由 fixedSize 定住，条目自身的最小
-                    // 宽度和左右内边距都要压小，否则内容会把面板撑开。
-                    style: MenuStyle(
-                      fixedSize: const WidgetStatePropertyAll(Size(112, 264)),
-                      minimumSize: const WidgetStatePropertyAll(Size(112, 264)),
-                      maximumSize: const WidgetStatePropertyAll(Size(112, 264)),
-                      // 上下留空：滚动条（框架画在内容区里）两端就不会顶到圆角
-                      padding: const WidgetStatePropertyAll(
-                        EdgeInsets.symmetric(vertical: 8),
-                      ),
-                      elevation: const WidgetStatePropertyAll(0),
-                      // 和其它弹出菜单同一个圆角
-                      shape: WidgetStatePropertyAll(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(KazumiGlass.panelRadiusOf(context)),
-                          ),
-                        ),
+                  TextButton(
+                      onPressed: () => showSetSpeedSheet(),
+                      child: Text(
+                        playerController.playback.playerSpeed == 1.0
+                            ? '倍速'
+                            : '${playerController.playback.playerSpeed}x',
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
-                    builder: (BuildContext context, MenuController controller,
-                        Widget? child) {
-                      return TextButton(
-                        onPressed: () {
-                          if (controller.isOpen) {
-                            controller.close();
-                          } else {
-                            controller.open();
-                          }
-                        },
-                        child: Text(
-                          playerController.playback.playerSpeed == 1.0
-                              ? '倍速'
-                              : '${playerController.playback.playerSpeed}x',
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      );
-                    },
-                    menuChildren: <Widget>[
-                      for (final double i
-                          in defaultPlaySpeedList) ...<Widget>[
-                        MenuItemButton(
-                          onPressed: () async {
-                            await widget.setPlaybackSpeed(i);
-                          },
-                          // 右侧多留 20：滚动条画在面板右边缘，不留通道会压住数值
-                          style: ButtonStyle(
-                            // 当前档位深色填充 + 按下深色（和收藏状态菜单同值）
-                            backgroundColor: WidgetStatePropertyAll(
-                              i == playerController.playback.playerSpeed
-                                  ? Theme.of(context)
-                                      .colorScheme
-                                      .primary
-                                      .withValues(alpha: 0.30)
-                                  : Colors.transparent,
-                            ),
-                            overlayColor: WidgetStatePropertyAll(
-                              Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withValues(alpha: 0.18),
-                            ),
-                            padding: const WidgetStatePropertyAll(
-                              EdgeInsets.only(left: 14, right: 20),
-                            ),
-                            // 选中/按下的深色范围和菜单条目同一个圆角
-                            shape: WidgetStatePropertyAll(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(
-                                    KazumiGlass.menuItemRadiusOf(context),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          // 宽度撑满面板：这样滚动条才贴着面板右边缘，
-                          // 文字靠左，右边留出的通道正好给滚动条
-                          child: SizedBox(
-                            height: 40,
-                            width: double.infinity,
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                '${i}x',
-                                style: TextStyle(
-                                  color: i ==
-                                          playerController.playback.playerSpeed
-                                      ? Theme.of(context).colorScheme.primary
-                                      : null,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
                   PlayerPanelHoldMenuAnchor(
                     acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
                     onVisibilityChanged: widget.onMenuVisibilityChanged,
