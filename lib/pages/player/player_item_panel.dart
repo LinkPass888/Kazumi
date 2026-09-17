@@ -877,15 +877,18 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                             await widget.setPlaybackSpeed(i);
                           },
                           // 右侧多留 20：滚动条画在面板右边缘，不留通道会压住数值
-                          // 和收藏状态菜单一样：当前档位深色填充 + 同心圆 R 角
-                          style: KazumiGlass.menuItemButtonStyle(
-                            context,
-                            selected: i ==
-                                playerController.playback.playerSpeed,
-                          ).merge(
-                            const ButtonStyle(
-                              padding: WidgetStatePropertyAll(
-                                EdgeInsets.only(left: 14, right: 20),
+                          style: ButtonStyle(
+                            padding: const WidgetStatePropertyAll(
+                              EdgeInsets.only(left: 14, right: 20),
+                            ),
+                            // 选中/按下的深色范围和菜单条目同一个圆角
+                            shape: WidgetStatePropertyAll(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(
+                                    KazumiGlass.menuItemRadiusOf(context),
+                                  ),
+                                ),
                               ),
                             ),
                           ),

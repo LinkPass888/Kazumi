@@ -195,24 +195,9 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
                       children: widget.menuChildren,
                     ),
                   )
-                : LayoutBuilder(
-                    // 关键：用框架传下来的高度约束，玻璃和“框架允许的高度”一样高。
-                    // 自己按屏幕百分比限高都不对——比可用高度大就被框架裁掉底部
-                    // （倍速弹窗“下面少一截”），比它小就会“被抬太高”。
-                    builder: (BuildContext context, BoxConstraints c) {
-                      return ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxHeight:
-                              c.maxHeight.isFinite ? c.maxHeight : 320,
-                        ),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: widget.menuChildren,
-                          ),
-                        ),
-                      );
-                    },
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: widget.menuChildren,
                   ),
           ),
         ),
