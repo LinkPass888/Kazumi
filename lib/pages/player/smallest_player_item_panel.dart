@@ -566,7 +566,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                               aspectRatioMode,
                       onTap: () => playerController.panel.aspectRatioMode =
                           aspectRatioMode,
-                      child: Container(
+                      child: SizedBox(
                         height: 48,
                         width: 150,
                         child: Align(
@@ -578,7 +578,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 ],),
                   ),
                 ],
-                child: Container(
+                child: SizedBox(
                   height: 48,
                   width: 150,
                   child: Align(
@@ -636,7 +636,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                             onTap: () async {
                               await widget.setPlaybackSpeed(i);
                             },
-                            child: Container(
+                            child: SizedBox(
                               height: 48,
                               width: 150,
                               child: Align(
@@ -653,7 +653,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                     ),
                   ),
                 ],
-                child: Container(
+                child: SizedBox(
                   height: 48,
                   width: 150,
                   child: Align(
@@ -711,7 +711,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                           playerController.playback.superResolutionMode ==
                               mode,
                       onTap: () => widget.handleSuperResolutionChange(mode),
-                      child: Container(
+                      child: SizedBox(
                         height: 48,
                         width: 150,
                         child: Align(
@@ -723,7 +723,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 ],),
                   ),
                 ],
-                child: Container(
+                child: SizedBox(
                   height: 48,
                   width: 150,
                   child: Align(
@@ -754,7 +754,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 onTap: () {
                   widget.showSyncPlayPanel();
                 },
-                child: Container(
+                child: SizedBox(
                   height: 48,
                   width: 150,
                   child: Align(
@@ -770,7 +770,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 onTap: () {
                   widget.showDanmakuSwitch();
                 },
-                child: Container(
+                child: SizedBox(
                   height: 48,
                   width: 150,
                   child: Align(
@@ -793,7 +793,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                         .danmaku.clearAndInvalidateScheduledDanmakus,
                   );
                 },
-                child: Container(
+                child: SizedBox(
                   height: 48,
                   width: 150,
                   child: Align(
@@ -809,7 +809,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 onTap: () {
                   widget.showVideoInfo();
                 },
-                child: Container(
+                child: SizedBox(
                   height: 48,
                   width: 150,
                   child: Align(
@@ -834,7 +834,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                     }
                   });
                 },
-                child: Container(
+                child: SizedBox(
                   height: 48,
                   width: 150,
                   child: Align(
@@ -850,7 +850,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 onTap: () {
                   playerController.launchExternalPlayer();
                 },
-                child: Container(
+                child: SizedBox(
                   height: 48,
                   width: 150,
                   child: Align(
@@ -892,7 +892,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                     onTap: () {
                       TimedShutdownService().cancel();
                     },
-                    child: Container(
+                    child: SizedBox(
                       height: 48,
                       width: 150,
                       child: const Align(
@@ -914,7 +914,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                             message:
                                 '已设置 ${TimedShutdownService().formatMinutesToDisplay(minutes)} 后定时关闭');
                       },
-                      child: Container(
+                      child: SizedBox(
                         height: 48,
                         width: 150,
                         child: Align(
@@ -932,7 +932,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                         onExpired: widget.pauseForTimedShutdown,
                       );
                     },
-                    child: Container(
+                    child: SizedBox(
                       height: 48,
                       width: 150,
                       child: Align(
@@ -944,7 +944,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 ],),
                   ),
                 ],
-                child: Container(
+                child: SizedBox(
                   height: 48,
                   width: 150,
                   child: Align(

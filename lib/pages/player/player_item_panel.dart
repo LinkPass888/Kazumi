@@ -811,7 +811,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                               mode,
                           onTap: () =>
                               widget.handleSuperResolutionChange(mode),
-                          child: Container(
+                          child: SizedBox(
                             height: 48,
                             width: 150,
                             child: Align(
@@ -862,7 +862,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                               aspectRatioMode,
                           onTap: () => playerController.panel.aspectRatioMode =
                               aspectRatioMode,
-                          child: Container(
+                          child: SizedBox(
                             height: 48,
                             width: 150,
                             child: Align(
@@ -1006,7 +1006,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     onTap: () {
                       widget.showDanmakuSwitch();
                     },
-                    child: Container(
+                    child: SizedBox(
                       height: 48,
                       width: 150,
                       child: Align(
@@ -1022,7 +1022,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     onTap: () {
                       widget.showVideoInfo();
                     },
-                    child: Container(
+                    child: SizedBox(
                       height: 48,
                       width: 150,
                       child: Align(
@@ -1047,7 +1047,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                         }
                       });
                     },
-                    child: Container(
+                    child: SizedBox(
                       height: 48,
                       width: 150,
                       child: Align(
@@ -1063,7 +1063,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     onTap: () {
                       playerController.launchExternalPlayer();
                     },
-                    child: Container(
+                    child: SizedBox(
                       height: 48,
                       width: 150,
                       child: Align(
@@ -1103,7 +1103,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                         onTap: () {
                           TimedShutdownService().cancel();
                         },
-                        child: Container(
+                        child: SizedBox(
                           height: 48,
                           width: 150,
                           child: const Align(
@@ -1126,7 +1126,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                                 message:
                                     '已设置 ${TimedShutdownService().formatMinutesToDisplay(minutes)} 后定时关闭');
                           },
-                          child: Container(
+                          child: SizedBox(
                             height: 48,
                             width: 150,
                             child: Align(
@@ -1144,7 +1144,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                             onExpired: widget.pauseForTimedShutdown,
                           );
                         },
-                        child: Container(
+                        child: SizedBox(
                           height: 48,
                           width: 150,
                           child: Align(
@@ -1156,7 +1156,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     ],),
                   ),
                 ],
-                    child: Container(
+                    child: SizedBox(
                       height: 48,
                       width: 150,
                       child: Align(
@@ -1197,7 +1197,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     onTap: () {
                       widget.showSyncPlayPanel();
                     },
-                    child: Container(
+                    child: SizedBox(
                       height: 48,
                       width: 150,
                       child: Align(

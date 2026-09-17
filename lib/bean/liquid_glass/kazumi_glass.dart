@@ -244,7 +244,7 @@ abstract final class KazumiGlass {
         // 同一块面板里的条目必须同一套字：菜单条目统一 labelLarge，
         // 免得「一起看」这类和「定时关闭」那类条目的字号字重不一样。
         child: DefaultTextStyle(
-          style: Theme.of(context).textTheme.labelLarge,
+          style: Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
           child: child,
         ),
       ),
