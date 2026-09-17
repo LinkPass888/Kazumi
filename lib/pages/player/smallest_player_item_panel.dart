@@ -532,7 +532,19 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
             },
             menuChildren: <Widget>[
               SubmenuButton(
-                                menuChildren: <Widget>[
+                menuStyle: MenuStyle(
+                backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+                elevation: const WidgetStatePropertyAll(0),
+                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(KazumiGlass.panelRadiusOf(context)),
+                    ),
+                  ),
+                ),
+              ),
+                              menuChildren: <Widget>[
                   KazumiGlass.glassSurface(
                     shape: KazumiGlass.panelShapeOf(context),
                     padding: KazumiGlass.menuPanelPadding,
@@ -578,7 +590,19 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 ),
               ),
               SubmenuButton(
-                                menuChildren: <Widget>[
+                menuStyle: MenuStyle(
+                backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+                elevation: const WidgetStatePropertyAll(0),
+                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(KazumiGlass.panelRadiusOf(context)),
+                    ),
+                  ),
+                ),
+              ),
+                              menuChildren: <Widget>[
                   KazumiGlass.glassSurface(
                     shape: KazumiGlass.panelShapeOf(context),
                     padding: KazumiGlass.menuPanelPadding,
@@ -626,7 +650,19 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 ),
               ),
               SubmenuButton(
-                                menuChildren: <Widget>[
+                menuStyle: MenuStyle(
+                backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+                elevation: const WidgetStatePropertyAll(0),
+                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(KazumiGlass.panelRadiusOf(context)),
+                    ),
+                  ),
+                ),
+              ),
+                              menuChildren: <Widget>[
                   KazumiGlass.glassSurface(
                     shape: KazumiGlass.panelShapeOf(context),
                     padding: KazumiGlass.menuPanelPadding,
@@ -785,7 +821,19 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 ),
               ),
               SubmenuButton(
-                                menuChildren: <Widget>[
+                menuStyle: MenuStyle(
+                backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+                elevation: const WidgetStatePropertyAll(0),
+                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(KazumiGlass.panelRadiusOf(context)),
+                    ),
+                  ),
+                ),
+              ),
+                              menuChildren: <Widget>[
                   KazumiGlass.glassSurface(
                     shape: KazumiGlass.panelShapeOf(context),
                     padding: KazumiGlass.menuPanelPadding,
