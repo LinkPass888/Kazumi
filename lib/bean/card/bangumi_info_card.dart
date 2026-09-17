@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:kazumi/bean/dialog/dialog_helper.dart';
@@ -85,7 +86,14 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
       builder: (context) {
         return AlertDialog(
           title: const Text('选择放送星期'),
-          content: Wrap(
+          // 弹窗自己变透明，玻璃画在选项这一块上
+          backgroundColor: KazumiGlass.enabled ? Colors.transparent : null,
+          surfaceTintColor: Colors.transparent,
+          elevation: KazumiGlass.enabled ? 0 : null,
+          content: KazumiGlass.glassSurface(
+            shape: KazumiGlass.panelShapeOf(context),
+            padding: KazumiGlass.menuPanelPadding,
+            child: Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
@@ -97,16 +105,10 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
                     KazumiDialog.dismiss<int>(popWith: index);
                   },
                 ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                KazumiDialog.dismiss();
-              },
-              child: const Text('取消'),
+              ],
             ),
-          ],
+          ),
+          // 不留「取消」按钮：点外面就是取消，弹窗也能收窄
         );
       },
     );

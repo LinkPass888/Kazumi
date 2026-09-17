@@ -141,7 +141,20 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
   Widget build(BuildContext context) {
     final MenuStyle base = widget.style ?? const MenuStyle();
     final Size? fixed = base.fixedSize?.resolve(const <WidgetState>{});
-    return MenuAnchor(
+    return MenuTheme(
+      // 条目按下/选中的高亮形状统一注入，和面板圆角成同心圆
+      data: MenuThemeData(
+        style: MenuStyle(
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(KazumiGlass.menuItemRadiusOf(context)),
+              ),
+            ),
+          ),
+        ),
+      ),
+      child: MenuAnchor(
       // 播放器的弹出菜单（倍速、超分辨率…）和别的菜单一样：面板透明、圆角一致，
       // 真正的面板由下面那块玻璃画。
       style: base.merge(
@@ -189,7 +202,8 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
           ),
         ),
       ],
-    );
+    ),
+    )
   }
 }
 
