@@ -614,7 +614,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                     KazumiGlass.menuItem(
                       context: context,
                       // 四周等距：横向 14，纵向由条目高 48 撑开
-                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      padding: const EdgeInsets.all(14),
                       selected:
                           i == playerController.playback.playerSpeed,
                       onTap: () async {
@@ -622,7 +622,6 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                       },
                       child: Container(
                         height: 48,
-                        constraints: BoxConstraints(minWidth: 112),
                         child: Align(
                           alignment: Alignment.center,
                           child: Text(
