@@ -165,6 +165,7 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
       menuChildren: [
         KazumiGlass.glassSurface(
           shape: KazumiGlass.panelShapeOf(context),
+          padding: const EdgeInsets.all(KazumiGlass.menuPanelInset),
           child: SizedBox(
             width: fixed?.width,
             height: fixed?.height,

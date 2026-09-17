@@ -89,7 +89,7 @@ class CustomDropdownMenu extends StatelessWidget {
                       maxWidth: normalizedMaxWidth,
                     ),
                     child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      padding: KazumiGlass.menuPanelPadding,
                       shrinkWrap: true,
                       itemCount: items.length,
                       itemBuilder: (context, index) {

@@ -37,9 +37,19 @@ abstract final class KazumiGlass {
     return (shortest * 16.0 / 393.0).clamp(13.0, 22.0);
   }
 
-  /// 菜单条目的高亮/选中圆角：比面板小一档，跟着面板一起变。
+  /// 菜单内容离面板内边的距离。
+  ///
+  /// 这是「同心圆」的关键：条目高亮圆角恒等于 面板圆角 − 这个值，两个圆角的
+  /// 圆心就落在同一点，看起来才是 iOS 那种同心圆。所有菜单都从这里取，
+  /// 不要各处自己写数字。
+  static const double menuPanelInset = 6;
+
+  /// 条目自身还带了 2 的外边距（见 [menuItem]），面板再补 4 就正好 6。
+  static const EdgeInsets menuPanelPadding = EdgeInsets.all(4);
+
+  /// 菜单条目的高亮/选中圆角：= 面板圆角 − [menuPanelInset]。
   static double menuItemRadiusOf(BuildContext context) =>
-      (panelRadiusOf(context) - 6).clamp(6.0, 18.0);
+      (panelRadiusOf(context) - menuPanelInset).clamp(6.0, 18.0);
 
   /// 菜单、面板用的圆角形状。
   static LiquidGlassShape panelShapeOf(BuildContext context) =>
@@ -174,7 +184,7 @@ abstract final class KazumiGlass {
     double? radius,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
       child: _GlassTapTarget(
         onTap: onTap,
         shape: panelShape,
