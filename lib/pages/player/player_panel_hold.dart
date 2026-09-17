@@ -170,20 +170,12 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
             height: fixed?.height,
             child: fixed?.height != null
                 // 定高面板（倍速菜单）：条目在里面滚，滚动条两端避开圆角
-                ? ScrollbarTheme(
-                    // 滚动条两端避开圆角（这个版本 Scrollbar 没有 padding 参数）
-                    data: ScrollbarTheme.of(context).copyWith(
-                      mainAxisMargin: 8,
-                      crossAxisMargin: 2,
-                    ),
-                    child: Scrollbar(
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Column(
+                ? SingleChildScrollView(
+                    // 内边距必须是 0：面板高度是定死的，再加内边距内容就少一截
+                    padding: EdgeInsets.zero,
+                    child: Column(
                         mainAxisSize: MainAxisSize.min,
-                          children: widget.menuChildren,
-                        ),
-                      ),
+                      children: widget.menuChildren,
                     ),
                   )
                 : Column(

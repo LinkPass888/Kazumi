@@ -150,10 +150,11 @@ class _CollectButtonState extends State<CollectButton> {
         KazumiGlass.glassSurface(
           shape: KazumiGlass.panelShapeOf(context),
           // 上下留空，和热门番组的菜单一致：条目高亮的圆角才和面板平行
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          // 上下留空取「面板圆角 - 条目圆角」，两个圆角正好同心
+          padding: const EdgeInsets.symmetric(vertical: 6),
           child: SizedBox(
             // 和详情页那个收藏按钮一样宽
-            width: _anchorKey.currentContext?.size?.width ?? 176,
+            width: _anchorKey.currentContext?.size?.width ?? 120,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
