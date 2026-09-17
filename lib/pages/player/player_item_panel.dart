@@ -815,22 +815,60 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                             height: 48,
                             width: 150,
                             child: Align(
-                              alignment: Alignment.centerLeft,
+                              alignment: Alignment.center,
                               child: Text(mode.label),
                             ),
                           ),
                         ),
                     ],
                   ),
-                  TextButton(
-                      onPressed: () => showSetSpeedSheet(),
-                      child: Text(
-                        playerController.playback.playerSpeed == 1.0
-                            ? '倍速'
-                            : '${playerController.playback.playerSpeed}x',
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
+                  PlayerPanelHoldMenuAnchor(
+                    acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
+                    onVisibilityChanged: widget.onMenuVisibilityChanged,
+                    consumeOutsideTap: true,
+                    builder: (BuildContext context, MenuController controller,
+                        Widget? child) {
+                      return TextButton(
+                        onPressed: () {
+                          if (controller.isOpen) {
+                            controller.close();
+                          } else {
+                            controller.open();
+                          }
+                        },
+                        child: Text(
+                          playerController.playback.playerSpeed == 1.0
+                              ? '倍速'
+                              : '${playerController.playback.playerSpeed}x',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      );
+                    },
+                    menuChildren: <Widget>[
+                      for (final double i in defaultPlaySpeedList)
+                        KazumiGlass.menuItem(
+                          context: context,
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 14),
+                          selected:
+                              i == playerController.playback.playerSpeed,
+                          onTap: () async {
+                            await widget.setPlaybackSpeed(i);
+                          },
+                          child: SizedBox(
+                            height: 48,
+                            width: 150,
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                '${i}x',
+                                style: Theme.of(context).textTheme.labelLarge,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                   PlayerPanelHoldMenuAnchor(
                     acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
                     onVisibilityChanged: widget.onMenuVisibilityChanged,
@@ -866,7 +904,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                             height: 48,
                             width: 150,
                             child: Align(
-                              alignment: Alignment.centerLeft,
+                              alignment: Alignment.center,
                               child: Text(aspectRatioMode.label),
                             ),
                           ),
@@ -1010,7 +1048,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       height: 48,
                       width: 150,
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text("弹幕切换"),
                       ),
                     ),
@@ -1026,7 +1064,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       height: 48,
                       width: 150,
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text("视频详情"),
                       ),
                     ),
@@ -1051,7 +1089,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       height: 48,
                       width: 150,
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text("远程投屏"),
                       ),
                     ),
@@ -1067,7 +1105,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       height: 48,
                       width: 150,
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text("外部播放"),
                       ),
                     ),
@@ -1076,6 +1114,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                 submenuIcon: const WidgetStatePropertyAll<Widget>(
                   SizedBox.shrink(),
                 ),
+                style: KazumiGlass.submenuTriggerStyle(context),
                 menuStyle: MenuStyle(
                 backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
                 elevation: const WidgetStatePropertyAll(0),
@@ -1107,7 +1146,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                           height: 48,
                           width: 150,
                           child: const Align(
-                            alignment: Alignment.centerLeft,
+                            alignment: Alignment.center,
                             child: Text("不开启"),
                           ),
                         ),
@@ -1130,7 +1169,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                             height: 48,
                             width: 150,
                             child: Align(
-                              alignment: Alignment.centerLeft,
+                              alignment: Alignment.center,
                               child: Text("$minutes 分钟"),
                             ),
                           ),
@@ -1148,7 +1187,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                           height: 48,
                           width: 150,
                           child: Align(
-                            alignment: Alignment.centerLeft,
+                            alignment: Alignment.center,
                             child: Text("自定义"),
                           ),
                         ),
@@ -1160,30 +1199,16 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       height: 48,
                       width: 150,
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: ValueListenableBuilder<int>(
                           valueListenable:
                               TimedShutdownService().remainingSecondsNotifier,
                           builder: (context, remainingSeconds, child) {
-                            return Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Text(
-                                  remainingSeconds > 0
-                                      ? "定时关闭 (${TimedShutdownService().formatRemainingTime()})"
-                                      : "定时关闭",
-                                  style:
-                                      Theme.of(context).textTheme.labelLarge,
-                                ),
-                                const SizedBox(width: 2),
-                                Icon(
-                                  Icons.chevron_right,
-                                  size: 18,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant,
-                                ),
-                              ],
+                            return Text(
+                              remainingSeconds > 0
+                                  ? "定时关闭 (${TimedShutdownService().formatRemainingTime()})"
+                                  : "定时关闭",
+                              style: Theme.of(context).textTheme.labelLarge,
                             );
                           },
                         ),
@@ -1201,7 +1226,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       height: 48,
                       width: 150,
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text("一起看"),
                       ),
                     ),

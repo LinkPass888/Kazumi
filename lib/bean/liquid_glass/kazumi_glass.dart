@@ -235,7 +235,14 @@ abstract final class KazumiGlass {
       // 3 + 面板的 3 = 6：四边留白等宽（相邻条目之间也是 3 + 3 = 6）
       padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 3),
       child: _GlassTapTarget(
-        onTap: onTap,
+        // 和 MenuItemButton 一样：点完就把所在的菜单关掉，
+        // 否则选完倍速/定时关闭，菜单还留在屏幕上
+        onTap: onTap == null
+            ? null
+            : () {
+                MenuController.maybeOf(context)?.close();
+                onTap();
+              },
         shape: panelShape,
         padding: padding,
         selected: selected,
@@ -246,6 +253,26 @@ abstract final class KazumiGlass {
         child: DefaultTextStyle(
           style: Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
           child: child,
+        ),
+      ),
+    );
+  }
+
+  /// 子菜单触发条目（视频比例、超分辨率、倍速、定时关闭）的按下底色。
+  ///
+  /// SubmenuButton 自带的是 M3 菜单按钮那层很淡的按下色，和玻璃条目的按下
+  /// 深色对不上，所以显式给一份：按下 0.22，圆角用同心的条目圆角。
+  static ButtonStyle submenuTriggerStyle(BuildContext context) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    return ButtonStyle(
+      overlayColor: WidgetStatePropertyAll(
+        scheme.primary.withValues(alpha: 0.22),
+      ),
+      shape: WidgetStatePropertyAll(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(menuItemRadiusOf(context)),
+          ),
         ),
       ),
     );

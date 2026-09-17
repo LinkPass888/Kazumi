@@ -537,6 +537,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 submenuIcon: const WidgetStatePropertyAll<Widget>(
                   SizedBox.shrink(),
                 ),
+                style: KazumiGlass.submenuTriggerStyle(context),
                 menuStyle: MenuStyle(
                 backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
                 elevation: const WidgetStatePropertyAll(0),
@@ -570,7 +571,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                         height: 48,
                         width: 150,
                         child: Align(
-                          alignment: Alignment.centerLeft,
+                          alignment: Alignment.center,
                           child: Text(aspectRatioMode.label),
                         ),
                       ),
@@ -582,22 +583,10 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   height: 48,
                   width: 150,
                   child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          '视频比例',
-                          style: Theme.of(context).textTheme.labelLarge,
-                        ),
-                        const SizedBox(width: 2),
-                        Icon(
-                          Icons.chevron_right,
-                          size: 18,
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ],
+                    alignment: Alignment.center,
+                    child: Text(
+                      '视频比例',
+                      style: Theme.of(context).textTheme.labelLarge,
                     ),
                   ),
                 ),
@@ -606,6 +595,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 submenuIcon: const WidgetStatePropertyAll<Widget>(
                   SizedBox.shrink(),
                 ),
+                style: KazumiGlass.submenuTriggerStyle(context),
                 menuStyle: MenuStyle(
                   backgroundColor:
                       const WidgetStatePropertyAll(Colors.transparent),
@@ -640,7 +630,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                               height: 48,
                               width: 150,
                               child: Align(
-                                alignment: Alignment.centerLeft,
+                                alignment: Alignment.center,
                                 child: Text(
                                   '${i}x',
                                   style:
@@ -657,7 +647,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   height: 48,
                   width: 150,
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
@@ -683,6 +673,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 submenuIcon: const WidgetStatePropertyAll<Widget>(
                   SizedBox.shrink(),
                 ),
+                style: KazumiGlass.submenuTriggerStyle(context),
                 menuStyle: MenuStyle(
                 backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
                 elevation: const WidgetStatePropertyAll(0),
@@ -715,7 +706,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                         height: 48,
                         width: 150,
                         child: Align(
-                          alignment: Alignment.centerLeft,
+                          alignment: Alignment.center,
                           child: Text(mode.label),
                         ),
                       ),
@@ -727,22 +718,10 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   height: 48,
                   width: 150,
                   child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          '超分辨率',
-                          style: Theme.of(context).textTheme.labelLarge,
-                        ),
-                        const SizedBox(width: 2),
-                        Icon(
-                          Icons.chevron_right,
-                          size: 18,
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ],
+                    alignment: Alignment.center,
+                    child: Text(
+                      '超分辨率',
+                      style: Theme.of(context).textTheme.labelLarge,
                     ),
                   ),
                 ),
@@ -758,7 +737,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   height: 48,
                   width: 150,
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Text("一起看"),
                   ),
                 ),
@@ -774,7 +753,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   height: 48,
                   width: 150,
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Text("弹幕切换"),
                   ),
                 ),
@@ -797,7 +776,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   height: 48,
                   width: 150,
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Text("弹幕设置"),
                   ),
                 ),
@@ -813,7 +792,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   height: 48,
                   width: 150,
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Text("视频详情"),
                   ),
                 ),
@@ -838,7 +817,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   height: 48,
                   width: 150,
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Text("远程投屏"),
                   ),
                 ),
@@ -854,7 +833,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   height: 48,
                   width: 150,
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Text("外部播放"),
                   ),
                 ),
@@ -865,6 +844,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 submenuIcon: const WidgetStatePropertyAll<Widget>(
                   SizedBox.shrink(),
                 ),
+                style: KazumiGlass.submenuTriggerStyle(context),
                 menuStyle: MenuStyle(
                 backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
                 elevation: const WidgetStatePropertyAll(0),
@@ -896,7 +876,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                       height: 48,
                       width: 150,
                       child: const Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text("不开启"),
                       ),
                     ),
@@ -918,7 +898,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                         height: 48,
                         width: 150,
                         child: Align(
-                          alignment: Alignment.centerLeft,
+                          alignment: Alignment.center,
                           child: Text("$minutes 分钟"),
                         ),
                       ),
@@ -936,7 +916,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                       height: 48,
                       width: 150,
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text("自定义"),
                       ),
                     ),
@@ -948,29 +928,16 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   height: 48,
                   width: 150,
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: ValueListenableBuilder<int>(
                       valueListenable:
                           TimedShutdownService().remainingSecondsNotifier,
                       builder: (context, remainingSeconds, child) {
-                        return Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Text(
-                              remainingSeconds > 0
-                                  ? "定时关闭 (${TimedShutdownService().formatRemainingTime()})"
-                                  : "定时关闭",
-                              style: Theme.of(context).textTheme.labelLarge,
-                            ),
-                            const SizedBox(width: 2),
-                            Icon(
-                              Icons.chevron_right,
-                              size: 18,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant,
-                            ),
-                          ],
+                        return Text(
+                          remainingSeconds > 0
+                              ? "定时关闭 (${TimedShutdownService().formatRemainingTime()})"
+                              : "定时关闭",
+                          style: Theme.of(context).textTheme.labelLarge,
                         );
                       },
                     ),
