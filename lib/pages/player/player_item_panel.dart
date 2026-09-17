@@ -878,6 +878,21 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                           },
                           // 右侧多留 20：滚动条画在面板右边缘，不留通道会压住数值
                           style: ButtonStyle(
+                            // 当前档位深色填充 + 按下深色（和收藏状态菜单同值）
+                            backgroundColor: WidgetStatePropertyAll(
+                              i == playerController.playback.playerSpeed
+                                  ? Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withValues(alpha: 0.30)
+                                  : Colors.transparent,
+                            ),
+                            overlayColor: WidgetStatePropertyAll(
+                              Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withValues(alpha: 0.18),
+                            ),
                             padding: const WidgetStatePropertyAll(
                               EdgeInsets.only(left: 14, right: 20),
                             ),
