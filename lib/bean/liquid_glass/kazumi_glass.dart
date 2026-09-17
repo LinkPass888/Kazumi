@@ -228,6 +228,7 @@ abstract final class KazumiGlass {
     required Widget child,
     required VoidCallback? onTap,
     bool selected = false,
+    bool closeMenu = true,
     EdgeInsetsGeometry padding =
         const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
     double? radius,
@@ -241,7 +242,9 @@ abstract final class KazumiGlass {
         onTap: onTap == null
             ? null
             : () {
-                MenuController.maybeOf(context)?.close();
+                if (closeMenu) {
+                  MenuController.maybeOf(context)?.close();
+                }
                 onTap();
               },
         shape: panelShape,
@@ -306,7 +309,11 @@ abstract final class KazumiGlass {
             // 弹窗里没有 Material 祖先，不补一层的话文字会掉回黑色默认样式
             child: Material(
               type: MaterialType.transparency,
-              child: ConstrainedBox(
+              // 玻璃是原生平台视图：放在 Center 这类松散约束里会被撑到可用宽度
+              // （整屏那么宽），所以宽度必须写死。128 是条目内容宽 + 外层留白。
+              child: SizedBox(
+                width: 134,
+                child: ConstrainedBox(
                 constraints: const BoxConstraints(maxHeight: 360),
                 child: SingleChildScrollView(
                   child: Column(
@@ -333,6 +340,7 @@ abstract final class KazumiGlass {
                     ],
                   ),
                 ),
+              ),
               ),
             ),
           ),

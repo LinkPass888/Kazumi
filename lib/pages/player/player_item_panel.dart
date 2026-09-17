@@ -1076,30 +1076,48 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       ),
                     ),
                   ),
-                  SubmenuButton(
-                submenuIcon: const WidgetStatePropertyAll<Widget>(
-                  SizedBox.shrink(),
-                ),
-                style: KazumiGlass.submenuTriggerStyle(context),
-                menuStyle: MenuStyle(
-                backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
-                elevation: const WidgetStatePropertyAll(0),
-                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                shape: WidgetStatePropertyAll(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(KazumiGlass.panelRadiusOf(context)),
+                  PlayerPanelHoldMenuAnchor(
+                acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
+                onVisibilityChanged: widget.onMenuVisibilityChanged,
+                consumeOutsideTap: true,
+                builder: (BuildContext context, MenuController controller,
+                    Widget? child) {
+                  // 触发条目本身就是普通玻璃条目：和别的条目同一个 widget、
+                  // 同一套内边距 —— 文字自然对齐，按下深色范围也完全一致
+                  return KazumiGlass.menuItem(
+                    context: context,
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    closeMenu: false,
+                    onTap: () {
+                      if (controller.isOpen) {
+                        controller.close();
+                      } else {
+                        controller.open();
+                      }
+                    },
+                    child: SizedBox(
+                      height: 48,
+                      width: 128,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: ValueListenableBuilder<int>(
+                          valueListenable:
+                              TimedShutdownService().remainingSecondsNotifier,
+                          builder: (context, remainingSeconds, child) {
+                            return Text(
+                              remainingSeconds > 0
+                                  ? "定时关闭 (${TimedShutdownService().formatRemainingTime()})"
+                                  : "定时关闭",
+                              style: Theme.of(context).textTheme.labelLarge,
+                            );
+                          },
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-                                  menuChildren: <Widget>[
-                  KazumiGlass.glassSurface(
-                    shape: KazumiGlass.panelShapeOf(context),
-                    padding: KazumiGlass.menuPanelPadding,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
+                  );
+                },
+                menuChildren: <Widget>[
+
                       KazumiGlass.menuItem(
                         context: context,
                         padding:
@@ -1158,29 +1176,8 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                           ),
                         ),
                       ),
-                    ],),
-                  ),
                 ],
-                    child: SizedBox(
-                      height: 48,
-                      width: 128,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: ValueListenableBuilder<int>(
-                          valueListenable:
-                              TimedShutdownService().remainingSecondsNotifier,
-                          builder: (context, remainingSeconds, child) {
-                            return Text(
-                              remainingSeconds > 0
-                                  ? "定时关闭 (${TimedShutdownService().formatRemainingTime()})"
-                                  : "定时关闭",
-                              style: Theme.of(context).textTheme.labelLarge,
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
+              ),
                   KazumiGlass.menuItem(
                     context: context,
                     // 四周等距：横向 14，纵向由条目高 48 撑开
