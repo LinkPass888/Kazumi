@@ -139,29 +139,10 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
 
   @override
   Widget build(BuildContext context) {
-    final MenuStyle base = widget.style ?? const MenuStyle();
-    final Size? fixed = base.fixedSize?.resolve(const <WidgetState>{});
-    return MenuTheme(
-      // 条目按下/选中的高亮形状统一注入，和面板圆角成同心圆
-      data: MenuThemeData(
-        style: MenuStyle(
-          shape: WidgetStatePropertyAll(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(KazumiGlass.menuItemRadiusOf(context)),
-              ),
-            ),
-          ),
-        ),
-      ),
-      child: MenuAnchor(
-      // 播放器的弹出菜单（倍速、超分辨率…）和别的菜单一样：面板透明、圆角一致，
-      // 真正的面板由下面那块玻璃画。
-      style: base.merge(
+    return MenuAnchor(
+      // 播放器的弹出菜单（倍速、超分辨率…）统一用和别的菜单一样的圆角
+      style: (widget.style ?? const MenuStyle()).merge(
         MenuStyle(
-          backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
-          elevation: const WidgetStatePropertyAll(0),
-          padding: const WidgetStatePropertyAll(EdgeInsets.zero),
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
@@ -175,34 +156,7 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
       onOpen: _handleOpen,
       onClose: _handleClose,
       builder: widget.builder,
-      menuChildren: [
-        KazumiGlass.glassSurface(
-          shape: KazumiGlass.panelShapeOf(context),
-          // 只收上下：面板宽高都是定死的，横向再收就会“右边少一截”
-          padding: const EdgeInsets.symmetric(
-            vertical: KazumiGlass.menuPanelInset,
-          ),
-          child: SizedBox(
-            width: fixed?.width,
-            height: fixed?.height,
-            child: fixed?.height != null
-                // 定高面板（倍速菜单）：条目在里面滚，滚动条两端避开圆角
-                ? SingleChildScrollView(
-                    // 内边距必须是 0：面板高度是定死的，再加内边距内容就少一截
-                    padding: EdgeInsets.zero,
-                    child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                      children: widget.menuChildren,
-                    ),
-                  )
-                : Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: widget.menuChildren,
-                  ),
-          ),
-        ),
-      ],
-    ),
+      menuChildren: widget.menuChildren,
     );
   }
 }
