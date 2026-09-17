@@ -231,12 +231,12 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     onPressed: () async {
                       await widget.setPlaybackSpeed(i);
                       KazumiDialog.dismiss();
-                    }                    style: FilledButton.styleFrom(
+                    },
+                    style: FilledButton.styleFrom(
                       // 深色填充贴着文字：四周一律 14，块比以前小
                       padding: const EdgeInsets.all(14),
                       minimumSize: Size.zero,
                     ),
-
                     child: Text(i.toString()),
                   )
                 else
@@ -244,12 +244,12 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     onPressed: () async {
                       await widget.setPlaybackSpeed(i);
                       KazumiDialog.dismiss();
-                    }                    style: FilledButton.styleFrom(
+                    },
+                    style: FilledButton.styleFrom(
                       // 深色填充贴着文字：四周一律 14，块比以前小
                       padding: const EdgeInsets.all(14),
                       minimumSize: Size.zero,
                     ),
-
                     child: Text(i.toString()),
                   ),
               ]
