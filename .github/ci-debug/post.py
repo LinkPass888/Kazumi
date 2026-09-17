@@ -3,7 +3,7 @@ import os
 import urllib.error
 import urllib.request
 
-REPO = 'LinkPass888/Kazumi'
+REPO = os.environ.get('REPO', 'LinkPass888/Kazumi-LiquidGlass-iOS')
 BRANCH = os.environ.get('HEAD_BRANCH', 'feat/liquid-glass')
 TOKEN = os.environ['TOKEN']
 LIMIT = 58000

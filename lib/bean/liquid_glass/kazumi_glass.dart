@@ -25,14 +25,16 @@ abstract final class KazumiGlass {
 
   /// 菜单、面板的圆角半径。
   ///
-  /// 不写死：跟着设备屏幕的圆角走（iOS 上是 displayCornerRadius，取自
-  /// UIScreen）。屏幕圆角越大，菜单就越圆，和系统菜单的比例保持一致。
+  /// 不写死：跟着设备走。这个 Flutter 版本的 MediaQueryData 没有
+  /// displayCornerRadius（analyze 会报 undefined_getter），所以按屏幕短边
+  /// 换算——短边越大、机身圆角越大，菜单也跟着更圆，设备间是自适应的。
   static double panelRadiusOf(BuildContext context) {
-    final double? device = MediaQuery.of(context).displayCornerRadius;
-    if (device == null || !device.isFinite || device <= 0) {
+    final double shortest = MediaQuery.of(context).size.shortestSide;
+    if (!shortest.isFinite || shortest <= 0) {
       return 16;
     }
-    return (device * 0.3).clamp(12.0, 22.0);
+    // iPhone 短边 393 时正好 16，小屏略小、大屏略大
+    return (shortest * 16.0 / 393.0).clamp(13.0, 22.0);
   }
 
   /// 菜单条目的高亮/选中圆角：比面板小一档，跟着面板一起变。
