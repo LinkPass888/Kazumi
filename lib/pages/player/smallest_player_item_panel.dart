@@ -603,14 +603,18 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   onTap: () async {
                     final MenuController? parentMenu =
                         MenuController.maybeOf(speedContext);
-                    await KazumiGlass.showSpeedPanel(
+                    final double? chosen = await KazumiGlass.showSpeedPanel(
                       context: speedContext,
                       currentSpeed: playerController.playback.playerSpeed,
                       setPlaybackSpeed: widget.setPlaybackSpeed,
                       // 让面板下沿和超分辨率菜单的下沿齐平（只影响横屏）
                       bottomGap: 18,
                     );
-                    parentMenu?.close();
+                    // 只有真的选了倍速才连更多菜单一起收；点别处（或点更多菜单
+                    // 里别的项）只关倍速面板
+                    if (chosen != null) {
+                      parentMenu?.close();
+                    }
                   },
                   child: SizedBox(
                     height: 48,

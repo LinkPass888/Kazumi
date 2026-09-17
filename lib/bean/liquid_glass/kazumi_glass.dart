@@ -302,7 +302,7 @@ abstract final class KazumiGlass {
   /// - 竖屏居中弹出（和其它弹窗一样）；横屏贴着按钮上方、再整体左移一点
   ///   （横屏按钮挤在右下角，居中会被画面挡住）。
   /// - 横屏屏幕矮，只露四行；打开时把当前倍速滚到第二行，上下都看得见。
-  static Future<void> showSpeedPanel({
+  static Future<double?> showSpeedPanel({
     required BuildContext context,
     required double currentSpeed,
     required Future<void> Function(double) setPlaybackSpeed,
@@ -324,7 +324,7 @@ abstract final class KazumiGlass {
     final ScrollController scrollController = ScrollController(
       initialScrollOffset: index <= 1 ? 0 : (index - 1) * rowHeight,
     );
-    return showDialog<void>(
+    return showDialog<double>(
       context: context,
       barrierColor: Colors.black26,
       builder: (BuildContext ctx) {
@@ -343,8 +343,11 @@ abstract final class KazumiGlass {
           // 面板底边落在按钮上方 8
           // 横屏往下挪一点，让下沿和超分辨率菜单（基准）一致：
           // bottom 从屏幕底部量起，减号就是更靠下
-          bottom = (screen.height - anchorTopLeft.dy + bottomGap)
-              .clamp(8.0, screen.height - panelHeight - 8);
+          // showDialog 会把内容包进 SafeArea：这层 Stack 的底边在底部安全区
+          // 之上，所以要把这段安全区减掉，否则面板整体偏高
+          final double safeBottom = MediaQuery.of(ctx).padding.bottom;
+          bottom = (screen.height - safeBottom - anchorTopLeft.dy + bottomGap)
+              .clamp(8.0, screen.height - safeBottom - panelHeight - 8);
         }
         return SizedBox(
           width: screen.width,
@@ -376,7 +379,9 @@ abstract final class KazumiGlass {
                                       horizontal: 14),
                                   selected: i == currentSpeed,
                                   onTap: () async {
-                                    Navigator.of(ctx).pop();
+                                    // 把选中的倍速带回去，调用方据此决定要不要
+                                    // 连更多菜单一起收
+                                    Navigator.of(ctx).pop(i);
                                     await setPlaybackSpeed(i);
                                   },
                                   child: SizedBox(
