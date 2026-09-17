@@ -1047,29 +1047,31 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       ),
                     ),
                   ),
-                                  MenuItemButton(
-                  style: KazumiGlass.menuItemButtonStyle(context),
-                  onPressed: () {
-                    bool needRestart = playerController.playback.playing;
-                    playerController.pause();
-                    RemotePlay()
-                        .castVideo(playerController.videoUrl,
-                            videoPageController.currentPlugin.referer)
-                        .whenComplete(() {
-                      if (mounted && needRestart) {
-                        playerController.play();
-                      }
-                    });
-                  },
-                  child: Container(
-                    height: 48,
-                    constraints: BoxConstraints(minWidth: 112),
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text("远程投屏"),
+                  KazumiGlass.menuItem(
+                    context: context,
+                    // 四周等距：横向 14，纵向由条目高 48 撑开
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    onTap: () {
+                      bool needRestart = playerController.playback.playing;
+                      playerController.pause();
+                      RemotePlay()
+                          .castVideo(playerController.videoUrl,
+                              videoPageController.currentPlugin.referer)
+                          .whenComplete(() {
+                        if (mounted && needRestart) {
+                          playerController.play();
+                        }
+                      });
+                    },
+                    child: SizedBox(
+                      height: 48,
+                      width: 112,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text("远程投屏"),
+                      ),
                     ),
                   ),
-                ),,
                   KazumiGlass.menuItem(
                     context: context,
                     // 四周等距：横向 14，纵向由条目高 48 撑开

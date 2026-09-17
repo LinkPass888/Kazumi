@@ -751,9 +751,11 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   ),
                 ),
               ),
-                            MenuItemButton(
-                style: KazumiGlass.menuItemButtonStyle(context),
-                onPressed: () {
+              KazumiGlass.menuItem(
+                context: context,
+                // 四周等距：横向 14，纵向由条目高 48 撑开
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                onTap: () {
                   bool needRestart = playerController.playback.playing;
                   playerController.pause();
                   RemotePlay()
@@ -765,15 +767,15 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                     }
                   });
                 },
-                child: Container(
+                child: SizedBox(
                   height: 48,
-                  constraints: BoxConstraints(minWidth: 112),
+                  width: 112,
                   child: Align(
                     alignment: Alignment.center,
                     child: Text("远程投屏"),
                   ),
                 ),
-              ),,
+              ),
               KazumiGlass.menuItem(
                 context: context,
                 // 四周等距：横向 14，纵向由条目高 48 撑开
