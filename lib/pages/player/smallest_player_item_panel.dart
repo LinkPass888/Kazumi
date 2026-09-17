@@ -532,12 +532,33 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
             },
             menuChildren: <Widget>[
               SubmenuButton(
-                menuChildren: <Widget>[
+                style: MenuStyle(
+                backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+                elevation: const WidgetStatePropertyAll(0),
+                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(KazumiGlass.panelRadiusOf(context)),
+                    ),
+                  ),
+                ),
+              ),
+                              menuChildren: <Widget>[
+                  KazumiGlass.glassSurface(
+                    shape: KazumiGlass.panelShapeOf(context),
+                    padding: KazumiGlass.menuPanelPadding,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
                   for (final aspectRatioMode in PlayerAspectRatio.values)
                     KazumiGlass.menuItem(
                       context: context,
                       // 四周等距：横向 14，纵向由条目高 48 撑开
                       padding: const EdgeInsets.symmetric(horizontal: 14),
+                      selected:
+                          playerController.panel.aspectRatioMode ==
+                              aspectRatioMode,
                       onTap: () => playerController.panel.aspectRatioMode =
                           aspectRatioMode,
                       child: Container(
@@ -556,6 +577,8 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                         ),
                       ),
                     ),
+                ],),
+                  ),
                 ],
                 child: Container(
                   height: 48,
@@ -567,13 +590,33 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 ),
               ),
               SubmenuButton(
-                menuChildren: <Widget>[
+                style: MenuStyle(
+                backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+                elevation: const WidgetStatePropertyAll(0),
+                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(KazumiGlass.panelRadiusOf(context)),
+                    ),
+                  ),
+                ),
+              ),
+                              menuChildren: <Widget>[
+                  KazumiGlass.glassSurface(
+                    shape: KazumiGlass.panelShapeOf(context),
+                    padding: KazumiGlass.menuPanelPadding,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
                   for (final double i
                       in defaultPlaySpeedList) ...<Widget>[
                     KazumiGlass.menuItem(
                       context: context,
                       // 四周等距：横向 14，纵向由条目高 48 撑开
                       padding: const EdgeInsets.symmetric(horizontal: 14),
+                      selected:
+                          i == playerController.playback.playerSpeed,
                       onTap: () async {
                         await widget.setPlaybackSpeed(i);
                       },
@@ -594,6 +637,8 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                       ),
                     ),
                   ],
+                ],),
+                  ),
                 ],
                 child: Container(
                   height: 48,
@@ -605,12 +650,33 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 ),
               ),
               SubmenuButton(
-                menuChildren: <Widget>[
+                style: MenuStyle(
+                backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+                elevation: const WidgetStatePropertyAll(0),
+                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(KazumiGlass.panelRadiusOf(context)),
+                    ),
+                  ),
+                ),
+              ),
+                              menuChildren: <Widget>[
+                  KazumiGlass.glassSurface(
+                    shape: KazumiGlass.panelShapeOf(context),
+                    padding: KazumiGlass.menuPanelPadding,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
                   for (final mode in SuperResolutionMode.values)
                     KazumiGlass.menuItem(
                       context: context,
                       // 四周等距：横向 14，纵向由条目高 48 撑开
                       padding: const EdgeInsets.symmetric(horizontal: 14),
+                      selected:
+                          playerController.playback.superResolutionMode ==
+                              mode,
                       onTap: () => widget.handleSuperResolutionChange(mode),
                       child: Container(
                         height: 48,
@@ -630,6 +696,8 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                         ),
                       ),
                     ),
+                ],),
+                  ),
                 ],
                 child: Container(
                   height: 48,
@@ -753,7 +821,25 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 ),
               ),
               SubmenuButton(
-                menuChildren: <Widget>[
+                style: MenuStyle(
+                backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+                elevation: const WidgetStatePropertyAll(0),
+                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(KazumiGlass.panelRadiusOf(context)),
+                    ),
+                  ),
+                ),
+              ),
+                              menuChildren: <Widget>[
+                  KazumiGlass.glassSurface(
+                    shape: KazumiGlass.panelShapeOf(context),
+                    padding: KazumiGlass.menuPanelPadding,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
                   KazumiGlass.menuItem(
                     context: context,
                     // 四周等距：横向 14，纵向由条目高 48 撑开
@@ -823,6 +909,8 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                         child: Text("自定义"),
                       ),
                     ),
+                  ),
+                ],),
                   ),
                 ],
                 child: Container(
