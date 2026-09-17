@@ -221,9 +221,8 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
         content: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
           return Wrap(
-            // 行距和列距一样，四周间距才等宽
-            spacing: 14,
-            runSpacing: 14,
+            spacing: 8,
+            runSpacing: isDesktop() ? 8 : 0,
             children: [
               for (final double i in defaultPlaySpeedList) ...<Widget>[
                 if (i == currentSpeed)
@@ -232,11 +231,6 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       await widget.setPlaybackSpeed(i);
                       KazumiDialog.dismiss();
                     },
-                    style: FilledButton.styleFrom(
-                      // 深色填充贴着文字：四周一律 14，块比以前小
-                      padding: const EdgeInsets.all(14),
-                      minimumSize: Size.zero,
-                    ),
                     child: Text(i.toString()),
                   )
                 else
@@ -245,11 +239,6 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       await widget.setPlaybackSpeed(i);
                       KazumiDialog.dismiss();
                     },
-                    style: FilledButton.styleFrom(
-                      // 深色填充贴着文字：四周一律 14，块比以前小
-                      padding: const EdgeInsets.all(14),
-                      minimumSize: Size.zero,
-                    ),
                     child: Text(i.toString()),
                   ),
               ]
