@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kazumi/services/storage/storage.dart';
+import 'package:kazumi/utils/constants.dart';
 import 'package:real_liquid_glass/real_liquid_glass.dart';
 
 /// 液态玻璃（iOS 26 Liquid Glass）适配的统一入口。
@@ -268,6 +269,10 @@ abstract final class KazumiGlass {
       overlayColor: WidgetStatePropertyAll(
         scheme.primary.withValues(alpha: 0.22),
       ),
+      // 框架给「有子菜单」的条目在文字后面留了一段和按钮内边距同宽的空白
+      // （_MenuItemLabel 里的 submenuIcon 占位），文字就被顶偏了。
+      // 内边距归零后，这类条目和普通条目一样是整块宽度里居中。
+      padding: const WidgetStatePropertyAll(EdgeInsets.zero),
       shape: WidgetStatePropertyAll(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
@@ -275,6 +280,64 @@ abstract final class KazumiGlass {
           ),
         ),
       ),
+    );
+  }
+
+  /// 倍速选择面板：一块玻璃 + 逐个列出的倍速（和原来的倍速菜单同样的排布）。
+  ///
+  /// 为什么不放进 menuChildren：框架会给菜单内容套一层自带滚动条、而且常显的
+  /// 滚动视图，那条滚动条会压在「当前倍速」的选中块上面（横屏尤其明显，而且
+  /// ScrollbarTheme 在子菜单这条链路上照不到）。这里自己控制滚动：只滚动、
+  /// 不画滚动条。
+  static Future<void> showSpeedPanel({
+    required BuildContext context,
+    required double currentSpeed,
+    required Future<void> Function(double) setPlaybackSpeed,
+  }) {
+    return showDialog<void>(
+      context: context,
+      barrierColor: Colors.black26,
+      builder: (BuildContext ctx) {
+        final TextTheme text = Theme.of(ctx).textTheme;
+        return Center(
+          child: glassSurface(
+            shape: panelShapeOf(ctx),
+            padding: menuPanelPadding,
+            // 弹窗里没有 Material 祖先，不补一层的话文字会掉回黑色默认样式
+            child: Material(
+              type: MaterialType.transparency,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 360),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      for (final double i in defaultPlaySpeedList)
+                        menuItem(
+                          context: ctx,
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          selected: i == currentSpeed,
+                          onTap: () async {
+                            Navigator.of(ctx).pop();
+                            await setPlaybackSpeed(i);
+                          },
+                          child: SizedBox(
+                            height: 48,
+                            width: 128,
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text('${i}x', style: text.labelLarge),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 

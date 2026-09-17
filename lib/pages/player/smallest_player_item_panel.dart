@@ -568,7 +568,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                           aspectRatioMode,
                       child: SizedBox(
                         height: 48,
-                        width: 150,
+                        width: 128,
                         child: Align(
                           alignment: Alignment.center,
                           child: Text(aspectRatioMode.label),
@@ -580,7 +580,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 ],
                 child: SizedBox(
                   height: 48,
-                  width: 150,
+                  width: 128,
                   child: Align(
                     alignment: Alignment.center,
                     child: Text(
@@ -590,61 +590,17 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   ),
                 ),
               ),
-              SubmenuButton(
-                submenuIcon: const WidgetStatePropertyAll<Widget>(
-                  SizedBox.shrink(),
+              KazumiGlass.menuItem(
+                context: context,
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                onTap: () => KazumiGlass.showSpeedPanel(
+                  context: context,
+                  currentSpeed: playerController.playback.playerSpeed,
+                  setPlaybackSpeed: widget.setPlaybackSpeed,
                 ),
-                style: KazumiGlass.submenuTriggerStyle(context),
-                menuStyle: MenuStyle(
-                  backgroundColor:
-                      const WidgetStatePropertyAll(Colors.transparent),
-                  elevation: const WidgetStatePropertyAll(0),
-                  padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                  shape: WidgetStatePropertyAll(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(KazumiGlass.panelRadiusOf(context)),
-                      ),
-                    ),
-                  ),
-                ),
-                menuChildren: <Widget>[
-                  KazumiGlass.glassSurface(
-                    shape: KazumiGlass.panelShapeOf(context),
-                    padding: KazumiGlass.menuPanelPadding,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        for (final double i in defaultPlaySpeedList)
-                          KazumiGlass.menuItem(
-                            context: context,
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 14),
-                            selected:
-                                i == playerController.playback.playerSpeed,
-                            onTap: () async {
-                              await widget.setPlaybackSpeed(i);
-                            },
-                            child: SizedBox(
-                              height: 48,
-                              width: 150,
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  '${i}x',
-                                  style:
-                                      Theme.of(context).textTheme.labelLarge,
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
                 child: SizedBox(
                   height: 48,
-                  width: 150,
+                  width: 128,
                   child: Align(
                     alignment: Alignment.center,
                     child: Text(
@@ -690,7 +646,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                       onTap: () => widget.handleSuperResolutionChange(mode),
                       child: SizedBox(
                         height: 48,
-                        width: 150,
+                        width: 128,
                         child: Align(
                           alignment: Alignment.center,
                           child: Text(mode.label),
@@ -702,7 +658,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 ],
                 child: SizedBox(
                   height: 48,
-                  width: 150,
+                  width: 128,
                   child: Align(
                     alignment: Alignment.center,
                     child: Text(
@@ -721,7 +677,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 },
                 child: SizedBox(
                   height: 48,
-                  width: 150,
+                  width: 128,
                   child: Align(
                     alignment: Alignment.center,
                     child: Text("一起看"),
@@ -737,7 +693,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 },
                 child: SizedBox(
                   height: 48,
-                  width: 150,
+                  width: 128,
                   child: Align(
                     alignment: Alignment.center,
                     child: Text("弹幕切换"),
@@ -760,7 +716,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 },
                 child: SizedBox(
                   height: 48,
-                  width: 150,
+                  width: 128,
                   child: Align(
                     alignment: Alignment.center,
                     child: Text("弹幕设置"),
@@ -776,7 +732,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 },
                 child: SizedBox(
                   height: 48,
-                  width: 150,
+                  width: 128,
                   child: Align(
                     alignment: Alignment.center,
                     child: Text("视频详情"),
@@ -801,7 +757,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 },
                 child: SizedBox(
                   height: 48,
-                  width: 150,
+                  width: 128,
                   child: Align(
                     alignment: Alignment.center,
                     child: Text("远程投屏"),
@@ -817,7 +773,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 },
                 child: SizedBox(
                   height: 48,
-                  width: 150,
+                  width: 128,
                   child: Align(
                     alignment: Alignment.center,
                     child: Text("外部播放"),
@@ -859,7 +815,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                     },
                     child: SizedBox(
                       height: 48,
-                      width: 150,
+                      width: 128,
                       child: const Align(
                         alignment: Alignment.center,
                         child: Text("不开启"),
@@ -881,7 +837,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                       },
                       child: SizedBox(
                         height: 48,
-                        width: 150,
+                        width: 128,
                         child: Align(
                           alignment: Alignment.center,
                           child: Text("$minutes 分钟"),
@@ -899,7 +855,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                     },
                     child: SizedBox(
                       height: 48,
-                      width: 150,
+                      width: 128,
                       child: Align(
                         alignment: Alignment.center,
                         child: Text("自定义"),
@@ -911,7 +867,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 ],
                 child: SizedBox(
                   height: 48,
-                  width: 150,
+                  width: 128,
                   child: Align(
                     alignment: Alignment.center,
                     child: ValueListenableBuilder<int>(
