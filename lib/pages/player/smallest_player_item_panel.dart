@@ -535,6 +535,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 menuChildren: [
                   for (final aspectRatioMode in PlayerAspectRatio.values)
                     MenuItemButton(
+                      style: KazumiGlass.menuItemButtonStyle(context),
                       onPressed: () => playerController.panel.aspectRatioMode =
                           aspectRatioMode,
                       child: Container(
@@ -568,6 +569,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   for (final double i
                       in defaultPlaySpeedList) ...<MenuItemButton>[
                     MenuItemButton(
+                      style: KazumiGlass.menuItemButtonStyle(context),
                       onPressed: () async {
                         await widget.setPlaybackSpeed(i);
                       },
@@ -602,6 +604,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 menuChildren: [
                   for (final mode in SuperResolutionMode.values)
                     MenuItemButton(
+                      style: KazumiGlass.menuItemButtonStyle(context),
                       onPressed: () => widget.handleSuperResolutionChange(mode),
                       child: Container(
                         height: 48,
@@ -734,6 +737,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
               SubmenuButton(
                 menuChildren: [
                   MenuItemButton(
+                    style: KazumiGlass.menuItemButtonStyle(context),
                     onPressed: () {
                       TimedShutdownService().cancel();
                     },
@@ -755,6 +759,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   ),
                   for (final int minutes in [15, 30, 60])
                     MenuItemButton(
+                      style: KazumiGlass.menuItemButtonStyle(context),
                       onPressed: () {
                         TimedShutdownService().start(minutes,
                             onExpired: widget.pauseForTimedShutdown);
