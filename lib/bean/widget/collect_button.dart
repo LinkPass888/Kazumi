@@ -103,7 +103,9 @@ class _CollectButtonState extends State<CollectButton> {
         padding: WidgetStatePropertyAll(EdgeInsets.zero),
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(18)),
+            borderRadius: BorderRadius.all(
+              Radius.circular(KazumiGlass.panelRadius),
+            ),
           ),
         ),
       ),

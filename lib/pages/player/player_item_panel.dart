@@ -5,6 +5,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kazumi/bean/widget/play_pause_icon.dart';
+import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 import 'package:kazumi/pages/player/player_adjustment_hud.dart';
 import 'package:kazumi/pages/player/controller/player_aspect_ratio.dart';
 import 'package:kazumi/pages/player/controller/player_super_resolution.dart';
@@ -838,6 +839,14 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       maximumSize: WidgetStatePropertyAll(Size(112, 264)),
                       padding: WidgetStatePropertyAll(EdgeInsets.zero),
                       elevation: WidgetStatePropertyAll(0),
+                      // 和其它弹出菜单同一个圆角
+                      shape: WidgetStatePropertyAll(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(KazumiGlass.panelRadius),
+                          ),
+                        ),
+                      ),
                     ),
                     builder: (BuildContext context, MenuController controller,
                         Widget? child) {
@@ -868,6 +877,14 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                           style: const ButtonStyle(
                             padding: WidgetStatePropertyAll(
                               EdgeInsets.only(left: 14, right: 20),
+                            ),
+                            // 选中/按下的深色范围和菜单条目同一个圆角
+                            shape: WidgetStatePropertyAll(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(KazumiGlass.menuItemRadius),
+                                ),
+                              ),
                             ),
                           ),
                           // 宽度撑满面板：这样滚动条才贴着面板右边缘，

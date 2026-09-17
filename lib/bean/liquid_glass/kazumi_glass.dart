@@ -23,9 +23,15 @@ abstract final class KazumiGlass {
   static const LiquidGlassShape pillShape =
       LiquidGlassShape.roundedRectangle(22);
 
+  /// 菜单、面板统一的圆角半径：所有弹出菜单都用它。
+  static const double panelRadius = 16;
+
+  /// 菜单条目的高亮/选中圆角：比面板小一点，正好贴合面板内边。
+  static const double menuItemRadius = 12;
+
   /// 菜单、面板用的圆角形状。
   static const LiquidGlassShape panelShape =
-      LiquidGlassShape.roundedRectangle(16);
+      LiquidGlassShape.roundedRectangle(panelRadius);
 
   /// 顶栏按钮的统一尺寸。
   static const double barButtonSize = 40;
@@ -149,7 +155,7 @@ abstract final class KazumiGlass {
     bool selected = false,
     EdgeInsetsGeometry padding =
         const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-    double radius = 12,
+    double radius = menuItemRadius,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
