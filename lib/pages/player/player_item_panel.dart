@@ -805,7 +805,6 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     menuChildren: [
                       for (final mode in SuperResolutionMode.values)
                         MenuItemButton(
-                          style: KazumiGlass.menuItemButtonStyle(context),
                           onPressed: () =>
                               widget.handleSuperResolutionChange(mode),
                           child: Container(
@@ -874,7 +873,6 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       for (final double i
                           in defaultPlaySpeedList) ...<MenuItemButton>[
                         MenuItemButton(
-                          style: KazumiGlass.menuItemButtonStyle(context),
                           onPressed: () async {
                             await widget.setPlaybackSpeed(i);
                           },
@@ -940,7 +938,6 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     menuChildren: [
                       for (final aspectRatioMode in PlayerAspectRatio.values)
                         MenuItemButton(
-                          style: KazumiGlass.menuItemButtonStyle(context),
                           onPressed: () => playerController
                               .panel.aspectRatioMode = aspectRatioMode,
                           child: Container(
@@ -1156,7 +1153,6 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                   SubmenuButton(
                     menuChildren: [
                       MenuItemButton(
-                        style: KazumiGlass.menuItemButtonStyle(context),
                         onPressed: () {
                           TimedShutdownService().cancel();
                         },
@@ -1178,7 +1174,6 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       ),
                       for (final int minutes in [15, 30, 60])
                         MenuItemButton(
-                          style: KazumiGlass.menuItemButtonStyle(context),
                           onPressed: () {
                             TimedShutdownService().start(minutes,
                                 onExpired: widget.pauseForTimedShutdown);
