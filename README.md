@@ -4,7 +4,7 @@
 
 <img src="assets/images/logo/logo_rounded.png" width=200></img>
 
-<a href="https://t.me/kazumi_app"><img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white"></img></a>
+<a href="https://t.me/KLGI66"><img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white"></img></a>
 
 <img src="https://img.shields.io/badge/Flutter-03A9F4?style=for-the-badge&logo=flutter&logoColor=white"></img>
 <img src="https://img.shields.io/badge/Dart-00B4AB?style=for-the-badge&logo=Dart&logoColor=white"></img>
@@ -39,6 +39,15 @@
 </table>
 
 ## 功能 / 开发计划
+
+### 本仓库新增
+
+- [X]  iOS 26 液态玻璃界面
+- [X]  液态玻璃效果跟随系统
+- [X]  自定义放送星期（在时间表展示）
+- [X]  针对原版部分界面优化
+
+### 上游功能
 
 - [X]  规则编辑器
 - [X]  番剧目录

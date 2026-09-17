@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:kazumi/bean/liquid_glass/soft_progressive_blur.dart';
 import 'package:kazumi/services/storage/storage.dart';
 import 'package:real_liquid_glass/real_liquid_glass.dart';
 
@@ -24,7 +23,87 @@ abstract final class KazumiGlass {
   static const LiquidGlassShape pillShape =
       LiquidGlassShape.roundedRectangle(22);
 
+  /// 菜单、面板的圆角半径。
+  ///
+  /// 不写死：跟着设备走。这个 Flutter 版本的 MediaQueryData 没有
+  /// displayCornerRadius（analyze 会报 undefined_getter），所以按屏幕短边
+  /// 换算——短边越大、机身圆角越大，菜单也跟着更圆，设备间是自适应的。
+  static double panelRadiusOf(BuildContext context) {
+    final double shortest = MediaQuery.of(context).size.shortestSide;
+    if (!shortest.isFinite || shortest <= 0) {
+      return 16;
+    }
+    // iPhone 短边 393 时正好 16，小屏略小、大屏略大
+    return (shortest * 16.0 / 393.0).clamp(13.0, 22.0);
+  }
+
+  /// 菜单内容离面板内边的距离。
+  ///
+  /// 这是「同心圆」的关键：条目高亮圆角恒等于 面板圆角 − 这个值，两个圆角的
+  /// 圆心就落在同一点，看起来才是 iOS 那种同心圆。所有菜单都从这里取，
+  /// 不要各处自己写数字。
+  static const double menuPanelInset = 6;
+
+  /// 条目自身还带了 3 的外边距（见 [menuItem]），面板再补 3 就正好 6。
+  ///
+  /// 面板 3 + 条目 3 = 6，相邻两个条目之间是 3 + 3 = 6：高亮块离玻璃边框的
+  /// 距离、和离上下选项的距离完全一样宽。
+  static const EdgeInsets menuPanelPadding = EdgeInsets.all(3);
+
+  /// 菜单条目的高亮/选中圆角：= 面板圆角 − [menuPanelInset]。
+  static double menuItemRadiusOf(BuildContext context) =>
+      (panelRadiusOf(context) - menuPanelInset).clamp(6.0, 18.0);
+
+  /// 菜单条目的样式：按下/选中的高亮形状用同心圆半径。
+  ///
+  /// 播放器那几个菜单是 MenuItemButton/SubmenuButton，MenuTheme 在这条链路
+  /// 上照不到，所以逐个显式给。
+  static ButtonStyle menuItemButtonStyle(
+    BuildContext context, {
+    bool selected = false,
+  }) {
+    final Color primary = Theme.of(context).colorScheme.primary;
+    return ButtonStyle(
+      // 当前值那一项也要深色填充（这些条目不是 MenuItemButton 的选中态，
+      // 得由调用方告诉它自己是当前值）
+      backgroundColor: WidgetStatePropertyAll(
+        selected ? primary.withValues(alpha: 0.30) : Colors.transparent,
+      ),
+      shape: WidgetStatePropertyAll(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(menuItemRadiusOf(context)),
+          ),
+        ),
+      ),
+      // 按下/悬停的深色
+      overlayColor: WidgetStatePropertyAll(primary.withValues(alpha: 0.18)),
+    );
+  }
+
+  /// 子菜单（SubmenuButton）的面板样式。
+  ///
+  /// 子菜单面板由框架自己画，铺不了玻璃，所以退一步：圆角和别的菜单完全一致，
+  /// 底色用半透明的 surface，远看和玻璃面板是一套。
+  static MenuStyle submenuStyle(BuildContext context) => MenuStyle(
+        backgroundColor: WidgetStatePropertyAll(
+          Theme.of(context).colorScheme.surface.withValues(alpha: 0.86),
+        ),
+        elevation: const WidgetStatePropertyAll(0),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(panelRadiusOf(context)),
+            ),
+          ),
+        ),
+      );
+
   /// 菜单、面板用的圆角形状。
+  static LiquidGlassShape panelShapeOf(BuildContext context) =>
+      LiquidGlassShape.roundedRectangle(panelRadiusOf(context));
+
+  /// 兜底用的默认形状（拿不到设备信息时）。
   static const LiquidGlassShape panelShape =
       LiquidGlassShape.roundedRectangle(16);
 
@@ -47,17 +126,6 @@ abstract final class KazumiGlass {
     }
     // 栏体本身已经盖住底部安全区，这里再留一点余量，免得最后一行贴着玻璃。
     return bottomBarHeight + 8;
-  }
-
-  /// 顶栏的软渐进模糊（iOS 26 的 `scrollEdgeEffectStyle(.soft)`）。
-  static Widget? softHeader(BuildContext context, {double height = 104}) {
-    if (!enabled) {
-      return null;
-    }
-    return SoftProgressiveBlur(
-      height: height,
-      tint: Theme.of(context).colorScheme.surface,
-    );
   }
 
   /// 顶栏用的系统状态栏样式：透明背景 + 跟随主题明暗的图标。
@@ -159,23 +227,72 @@ abstract final class KazumiGlass {
     required Widget child,
     required VoidCallback? onTap,
     bool selected = false,
+    bool closeMenu = true,
     EdgeInsetsGeometry padding =
         const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-    double radius = 12,
+    double? radius,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      // 3 + 面板的 3 = 6：四边留白等宽（相邻条目之间也是 3 + 3 = 6）
+      padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 3),
       child: _GlassTapTarget(
-        onTap: onTap,
+        // 和 MenuItemButton 一样：点完就把所在的菜单关掉，
+        // 否则选完倍速/定时关闭，菜单还留在屏幕上
+        onTap: onTap == null
+            ? null
+            : () {
+                // 先跑条目自己的动作，再把关菜单推到下一帧 —— 投屏 / 弹窗 /
+                // 跳详情这类「先做事」的条目不能被打断：同步关菜单会立刻重建
+                // 菜单树，动作就可能像没发生一样。
+                final MenuController? menu = closeMenu
+                    ? MenuController.maybeOf(context)
+                    : null;
+                onTap();
+                if (menu != null) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    menu.close();
+                  });
+                }
+              },
         shape: panelShape,
         padding: padding,
         selected: selected,
-        radius: radius,
+        radius: radius ?? menuItemRadiusOf(context),
         wrapInGlass: false,
-        child: child,
+        // 同一块面板里的条目必须同一套字：菜单条目统一 labelLarge，
+        // 免得「一起看」这类和「定时关闭」那类条目的字号字重不一样。
+        child: DefaultTextStyle(
+          style: Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
+          child: child,
+        ),
       ),
     );
   }
+
+  /// 子菜单触发条目（视频比例、超分辨率、倍速、定时关闭）的按下底色。
+  ///
+  /// SubmenuButton 自带的是 M3 菜单按钮那层很淡的按下色，和玻璃条目的按下
+  /// 深色对不上，所以显式给一份：按下 0.22，圆角用同心的条目圆角。
+  static ButtonStyle submenuTriggerStyle(BuildContext context) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    return ButtonStyle(
+      overlayColor: WidgetStatePropertyAll(
+        scheme.primary.withValues(alpha: 0.22),
+      ),
+      // 框架给「有子菜单」的条目在文字后面留了一段和按钮内边距同宽的空白
+      // （_MenuItemLabel 里的 submenuIcon 占位），文字就被顶偏了。
+      // 内边距归零后，这类条目和普通条目一样是整块宽度里居中。
+      padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+      shape: WidgetStatePropertyAll(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(menuItemRadiusOf(context)),
+          ),
+        ),
+      ),
+    );
+  }
+
 
   /// 浮在玻璃标签栏之上的浮动按钮。
   ///
@@ -266,9 +383,10 @@ class _GlassTapTargetState extends State<_GlassTapTarget> {
     final Color base = widget.selected
         ? scheme.primary.withValues(alpha: 0.30)
         : Colors.transparent;
+    // 按压高亮和选中填充画在同一个盒子上：形状、圆角、大小必然一致
     final Color color = _pressed
         ? scheme.primary
-            .withValues(alpha: widget.selected ? 0.46 : 0.18)
+            .withValues(alpha: widget.selected ? 0.46 : 0.22)
         : base;
     final ShapeBorder border = widget.radius == null
         ? const StadiumBorder()

@@ -61,10 +61,16 @@ class MaterialBottomSheetHeader extends StatelessWidget {
                 trailing!,
               ] else if (onClose != null) ...[
                 const SizedBox(width: 12),
-                IconButton.filledTonal(
-                  onPressed: onClose,
-                  tooltip: '关闭',
-                  icon: const Icon(Icons.close_rounded),
+                // 这里不用原生液态玻璃：弹窗里铺原生玻璃视图会渲染成一大块
+                // 遮挡，退回 Material 的圆形填充按钮，尺寸仍是 40。
+                SizedBox.square(
+                  dimension: 40,
+                  child: IconButton.filledTonal(
+                    onPressed: onClose,
+                    tooltip: '关闭',
+                    padding: EdgeInsets.zero,
+                    icon: const Icon(Icons.close_rounded, size: 22),
+                  ),
                 ),
               ],
             ],

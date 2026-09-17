@@ -36,6 +36,8 @@ class CollectButton extends StatefulWidget {
 }
 
 class _CollectButtonState extends State<CollectButton> {
+  /// 量一下按钮自己的宽度，菜单面板跟它对齐。
+  final GlobalKey _anchorKey = GlobalKey();
   // 1. 在看
   // 2. 想看
   // 3. 搁置
@@ -97,19 +99,31 @@ class _CollectButtonState extends State<CollectButton> {
       crossAxisUnconstrained: false,
       // 面板本身画不了玻璃（框架自己画 Material），所以把它整块变透明，
       // 再在 menuChildren 里放一块玻璃顶上去。
-      style: const MenuStyle(
-        backgroundColor: WidgetStatePropertyAll(Colors.transparent),
-        elevation: WidgetStatePropertyAll(0),
-        padding: WidgetStatePropertyAll(EdgeInsets.zero),
+      style: MenuStyle(
+        backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+        elevation: const WidgetStatePropertyAll(0),
+        padding: const WidgetStatePropertyAll(EdgeInsets.zero),
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(18)),
+            borderRadius: BorderRadius.all(
+              Radius.circular(KazumiGlass.panelRadiusOf(context)),
+            ),
           ),
         ),
       ),
       builder: (_, MenuController controller, __) {
         if (widget.isExtended) {
-          return FilledButton.icon(
+          return KeyedSubtree(
+            key: _anchorKey,
+            child: FilledButton.icon(
+            style: FilledButton.styleFrom(
+              // 和外层玻璃、各菜单统一同一个圆角
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(KazumiGlass.panelRadiusOf(context)),
+                ),
+              ),
+            ),
             onPressed: () {
               if (controller.isOpen) {
                 controller.close();
@@ -118,7 +132,8 @@ class _CollectButtonState extends State<CollectButton> {
               }
             },
             icon: Icon(getIconByInt(collectType)),
-            label: Text(getTypeStringByInt(collectType)),
+              label: Text(getTypeStringByInt(collectType)),
+            ),
           );
         } else {
           return IconButton(
@@ -141,9 +156,13 @@ class _CollectButtonState extends State<CollectButton> {
       // 变透明，再把这一块玻璃当作唯一的面板内容顶上去。
       menuChildren: [
         KazumiGlass.glassSurface(
-          shape: KazumiGlass.panelShape,
+          shape: KazumiGlass.panelShapeOf(context),
+          // 上下留空，和热门番组的菜单一致：条目高亮的圆角才和面板平行
+          // 和条目高亮圆角配套的内边距，两个圆角是同心圆
+          padding: KazumiGlass.menuPanelPadding,
           child: SizedBox(
-            width: 176,
+            // 和详情页那个收藏按钮一样宽
+            width: _anchorKey.currentContext?.size?.width ?? 120,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,

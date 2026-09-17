@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 import 'package:kazumi/bean/widget/collect_button.dart';
 import 'package:kazumi/modules/bangumi/bangumi_item.dart';
 
@@ -85,6 +86,7 @@ class PlayerPanelHoldMenuAnchor extends StatefulWidget {
     required this.menuChildren,
     this.consumeOutsideTap = false,
     this.style,
+    this.alignmentOffset,
   });
 
   final PlayerPanelHold Function() acquirePlayerPanelHold;
@@ -99,6 +101,9 @@ class PlayerPanelHoldMenuAnchor extends StatefulWidget {
 
   /// 菜单面板的样式，需要指定宽高（例如倍速菜单）时传进来。
   final MenuStyle? style;
+
+  /// 菜单相对锚点的偏移。负的 dy 把面板顶到按钮上方（横屏按钮贴底时要用）。
+  final Offset? alignmentOffset;
 
   @override
   State<PlayerPanelHoldMenuAnchor> createState() =>
@@ -138,13 +143,56 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
 
   @override
   Widget build(BuildContext context) {
-    return MenuAnchor(
-      style: widget.style,
+    // 菜单不要滚动条（倍速那种长列表会把滚动条压在圆角上）
+    return ScrollbarTheme(
+      data: const ScrollbarThemeData(
+        thickness: WidgetStatePropertyAll(0),
+        thumbVisibility: WidgetStatePropertyAll(false),
+        trackVisibility: WidgetStatePropertyAll(false),
+      ),
+      child: MenuAnchor(
+      // 播放器的弹出菜单（倍速、超分辨率…）统一用和别的菜单一样的圆角
+      style: (widget.style ?? const MenuStyle()).merge(
+        MenuStyle(
+          backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+          elevation: const WidgetStatePropertyAll(0),
+          padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(KazumiGlass.panelRadiusOf(context)),
+              ),
+            ),
+          ),
+        ),
+      ),
       consumeOutsideTap: widget.consumeOutsideTap,
+      alignmentOffset: widget.alignmentOffset,
       onOpen: _handleOpen,
       onClose: _handleClose,
       builder: widget.builder,
-      menuChildren: widget.menuChildren,
+      menuChildren: [
+        // 和收藏状态菜单同一套写法：一块玻璃当面板，内容原样交给它。
+        // 不钉高度、不自接管滚动——上次就是那两样把面板弄坏的。
+        KazumiGlass.glassSurface(
+          shape: KazumiGlass.panelShapeOf(context),
+          // 上下留空 = 面板圆角 − 条目圆角，两个圆角同心
+          padding: KazumiGlass.menuPanelPadding,
+          // 子菜单（倍速…）是从这里长出来的，ScrollbarTheme 套在这一层才吃得到
+          child: ScrollbarTheme(
+            data: const ScrollbarThemeData(
+              thickness: WidgetStatePropertyAll(0),
+              thumbVisibility: WidgetStatePropertyAll(false),
+              trackVisibility: WidgetStatePropertyAll(false),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: widget.menuChildren,
+            ),
+          ),
+        ),
+      ],
+      ),
     );
   }
 }

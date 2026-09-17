@@ -235,32 +235,58 @@ class _PopularPageState extends State<PopularPage> {
     );
   }
 
+  /// 顶栏的圆形玻璃按钮，尺寸与间距和统一顶栏一致。
+  Widget _glassBarButton({
+    required String tooltip,
+    required VoidCallback onPressed,
+    required Widget icon,
+  }) {
+    if (!KazumiGlass.enabled) {
+      return IconButton(tooltip: tooltip, onPressed: onPressed, icon: icon);
+    }
+    return Padding(
+      padding:
+          const EdgeInsets.symmetric(horizontal: KazumiGlass.barButtonGap / 2),
+      child: KazumiGlass.iconButton(
+        context: context,
+        icon: icon,
+        onPressed: onPressed,
+        tooltip: tooltip,
+      ),
+    );
+  }
+
   List<Widget> buildActions() {
     final actions = <Widget>[
       if (MediaQuery.of(context).orientation == Orientation.portrait)
-        IconButton(
+        _glassBarButton(
           tooltip: '搜索',
           onPressed: () => context.pushNamed('/search/'),
-          icon: const Icon(Icons.search),
+          icon: const Icon(Icons.search, size: 22),
         ),
     ];
     actions.add(
-      IconButton(
+      _glassBarButton(
         tooltip: '历史记录',
         onPressed: () => context.pushNamed('/settings/history/'),
-        icon: const Icon(Icons.history),
+        icon: const Icon(Icons.history, size: 22),
       ),
     );
     if (isDesktop()) {
       if (!showWindowButton()) {
         actions.add(
-          IconButton(
+          _glassBarButton(
             tooltip: '退出',
             onPressed: () => windowManager.close(),
-            icon: const Icon(Icons.close),
+            icon: const Icon(Icons.close, size: 22),
           ),
         );
       }
+    }
+    if (KazumiGlass.enabled) {
+      actions.add(
+        const SizedBox(width: KazumiGlass.barEdgeInset - KazumiGlass.barButtonGap / 2),
+      );
     }
     return actions;
   }

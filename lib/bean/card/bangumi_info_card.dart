@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:kazumi/bean/dialog/dialog_helper.dart';
@@ -84,29 +85,35 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
     final selected = await KazumiDialog.show<int>(
       builder: (context) {
         return AlertDialog(
+          // 收窄成正方形：宽高都给死，按钮 2 个一行
+          constraints: const BoxConstraints.tightFor(width: 260, height: 260),
           title: const Text('选择放送星期'),
           content: Wrap(
+            // 居中分布：左右余量相等，两侧离边框的距离就一样
+            alignment: WrapAlignment.center,
             spacing: 8,
             runSpacing: 8,
             children: [
               for (int index = 1; index <= 7; index++)
-                ChoiceChip(
-                  label: Text(weekdayCnLabel(index)),
-                  selected: index == weekday,
-                  onSelected: (_) {
-                    KazumiDialog.dismiss<int>(popWith: index);
-                  },
+                // 尺寸写死：原生玻璃视图在 Wrap 里会被撑到可用宽度，
+                // 靠 padding 撑不出大小，必须给死宽高（和详情页收藏按钮一致）
+                SizedBox(
+                  width: 96,
+                  height: 40,
+                  child: KazumiGlass.glassButton(
+                    context: context,
+                    padding: EdgeInsets.zero,
+                    selected: index == weekday,
+                    onTap: () {
+                      KazumiDialog.dismiss<int>(popWith: index);
+                    },
+                    child: Text(weekdayCnLabel(index)),
+                  ),
                 ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                KazumiDialog.dismiss();
-              },
-              child: const Text('取消'),
+              ],
             ),
-          ],
+          // 按用户要求不留「取消」按钮：点外面即取消，弹窗也更紧凑。
+          // 弹窗本体保持原来的不透明背景，标题不会再被挤出。
         );
       },
     );

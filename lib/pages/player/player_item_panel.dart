@@ -5,6 +5,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kazumi/bean/widget/play_pause_icon.dart';
+import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 import 'package:kazumi/pages/player/player_adjustment_hud.dart';
 import 'package:kazumi/pages/player/controller/player_aspect_ratio.dart';
 import 'package:kazumi/pages/player/controller/player_super_resolution.dart';
@@ -785,6 +786,14 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
                     onVisibilityChanged: widget.onMenuVisibilityChanged,
                     consumeOutsideTap: true,
+                    // 只挪横屏（竖屏保持框架默认位置，之前误改过竖屏）。
+                    // 框架的算法是 desiredPosition += alignmentOffset，
+                    // 所以 dx 负=往左、dy 负=往上：往上顶回原来的位置，
+                    // 再往左挪 30。
+                    alignmentOffset: MediaQuery.of(context).size.width >
+                            MediaQuery.of(context).size.height
+                        ? const Offset(-30, -240)
+                        : null,
                     builder: (BuildContext context, MenuController controller,
                         Widget? child) {
                       return TextButton(
@@ -801,26 +810,21 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                         ),
                       );
                     },
-                    menuChildren: [
+                    menuChildren: <Widget>[
                       for (final mode in SuperResolutionMode.values)
-                        MenuItemButton(
-                          onPressed: () =>
+                        KazumiGlass.menuItem(
+                          context: context,
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          selected: playerController.playback.superResolutionMode ==
+                              mode,
+                          onTap: () =>
                               widget.handleSuperResolutionChange(mode),
-                          child: Container(
+                          child: SizedBox(
                             height: 48,
-                            constraints: BoxConstraints(minWidth: 112),
+                            width: 112,
                             child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                mode.label,
-                                style: TextStyle(
-                                  color: playerController
-                                              .playback.superResolutionMode ==
-                                          mode
-                                      ? Theme.of(context).colorScheme.primary
-                                      : null,
-                                ),
-                              ),
+                              alignment: Alignment.center,
+                              child: Text(mode.label),
                             ),
                           ),
                         ),
@@ -830,15 +834,11 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
                     onVisibilityChanged: widget.onMenuVisibilityChanged,
                     consumeOutsideTap: true,
-                    // 要收的是宽度：面板宽度由 fixedSize 定住，条目自身的最小
-                    // 宽度和左右内边距都要压小，否则内容会把面板撑开。
-                    style: const MenuStyle(
-                      fixedSize: WidgetStatePropertyAll(Size(112, 264)),
-                      minimumSize: WidgetStatePropertyAll(Size(112, 264)),
-                      maximumSize: WidgetStatePropertyAll(Size(112, 264)),
-                      padding: WidgetStatePropertyAll(EdgeInsets.zero),
-                      elevation: WidgetStatePropertyAll(0),
-                    ),
+                    // 只挪横屏：和超分辨率菜单（同处工具栏）下沿齐平
+                    alignmentOffset: MediaQuery.of(context).size.width >
+                            MediaQuery.of(context).size.height
+                        ? const Offset(-30, -294)
+                        : null,
                     builder: (BuildContext context, MenuController controller,
                         Widget? child) {
                       return TextButton(
@@ -857,45 +857,59 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                         ),
                       );
                     },
-                    menuChildren: [
-                      for (final double i
-                          in defaultPlaySpeedList) ...<MenuItemButton>[
-                        MenuItemButton(
-                          onPressed: () async {
-                            await widget.setPlaybackSpeed(i);
-                          },
-                          // 右侧多留 20：滚动条画在面板右边缘，不留通道会压住数值
-                          style: const ButtonStyle(
-                            padding: WidgetStatePropertyAll(
-                              EdgeInsets.only(left: 14, right: 20),
-                            ),
-                          ),
-                          // 宽度撑满面板：这样滚动条才贴着面板右边缘，
-                          // 文字靠左，右边留出的通道正好给滚动条
-                          child: SizedBox(
-                            height: 40,
-                            width: double.infinity,
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                '${i}x',
-                                style: TextStyle(
-                                  color: i ==
-                                          playerController.playback.playerSpeed
-                                      ? Theme.of(context).colorScheme.primary
-                                      : null,
+                    menuChildren: <Widget>[
+                  ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 216.0),
+                      child: SingleChildScrollView(
+                        controller: ScrollController(
+                          initialScrollOffset: () {
+                            final int idx = defaultPlaySpeedList
+                                .indexOf(playerController.playback.playerSpeed);
+                            return idx <= 1 ? 0.0 : (idx - 1) * 54.0;
+                          }(),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            for (final double i in defaultPlaySpeedList)
+                            KazumiGlass.menuItem(
+                              context: context,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 14),
+                              selected:
+                                  i == playerController.playback.playerSpeed,
+                              onTap: () async {
+                                await widget.setPlaybackSpeed(i);
+                              },
+                              child: SizedBox(
+                                height: 48,
+                                width: 112,
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    '${i}x',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ],
+                      ),
+                    ),
+                ],
                   ),
                   PlayerPanelHoldMenuAnchor(
                     acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
                     onVisibilityChanged: widget.onMenuVisibilityChanged,
                     consumeOutsideTap: true,
+                    // 只改横屏：往上顶，和超分辨率菜单（基准）的下沿对齐
+                    alignmentOffset: MediaQuery.of(context).size.width >
+                            MediaQuery.of(context).size.height
+                        ? const Offset(-40, -294)
+                        : null,
                     builder: (BuildContext context, MenuController controller,
                         Widget? child) {
                       return IconButton(
@@ -913,25 +927,22 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                         tooltip: '视频比例',
                       );
                     },
-                    menuChildren: [
+                    menuChildren: <Widget>[
                       for (final aspectRatioMode in PlayerAspectRatio.values)
-                        MenuItemButton(
-                          onPressed: () => playerController
-                              .panel.aspectRatioMode = aspectRatioMode,
-                          child: Container(
+                        KazumiGlass.menuItem(
+                          context: context,
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 14),
+                          selected: playerController.panel.aspectRatioMode ==
+                              aspectRatioMode,
+                          onTap: () => playerController.panel.aspectRatioMode =
+                              aspectRatioMode,
+                          child: SizedBox(
                             height: 48,
-                            constraints: BoxConstraints(minWidth: 112),
+                            width: 112,
                             child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                aspectRatioMode.label,
-                                style: TextStyle(
-                                  color: aspectRatioMode ==
-                                          playerController.panel.aspectRatioMode
-                                      ? Theme.of(context).colorScheme.primary
-                                      : null,
-                                ),
-                              ),
+                              alignment: Alignment.center,
+                              child: Text(aspectRatioMode.label),
                             ),
                           ),
                         ),
@@ -1062,35 +1073,44 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     ),
                   );
                 },
-                menuChildren: [
-                  MenuItemButton(
-                    onPressed: () {
+                menuChildren: <Widget>[
+                  KazumiGlass.menuItem(
+                    context: context,
+                    // 四周等距：横向 14，纵向由条目高 48 撑开
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    onTap: () {
                       widget.showDanmakuSwitch();
                     },
-                    child: Container(
+                    child: SizedBox(
                       height: 48,
-                      constraints: BoxConstraints(minWidth: 112),
+                      width: 112,
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text("弹幕切换"),
                       ),
                     ),
                   ),
-                  MenuItemButton(
-                    onPressed: () {
+                  KazumiGlass.menuItem(
+                    context: context,
+                    // 四周等距：横向 14，纵向由条目高 48 撑开
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    onTap: () {
                       widget.showVideoInfo();
                     },
-                    child: Container(
+                    child: SizedBox(
                       height: 48,
-                      constraints: BoxConstraints(minWidth: 112),
+                      width: 112,
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text("视频详情"),
                       ),
                     ),
                   ),
-                  MenuItemButton(
-                    onPressed: () {
+                  KazumiGlass.menuItem(
+                    context: context,
+                    // 四周等距：横向 14，纵向由条目高 48 撑开
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    onTap: () {
                       bool needRestart = playerController.playback.playing;
                       playerController.pause();
                       RemotePlay()
@@ -1102,97 +1122,55 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                         }
                       });
                     },
-                    child: Container(
+                    child: SizedBox(
                       height: 48,
-                      constraints: BoxConstraints(minWidth: 112),
+                      width: 112,
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text("远程投屏"),
                       ),
                     ),
                   ),
-                  MenuItemButton(
-                    onPressed: () {
+                  KazumiGlass.menuItem(
+                    context: context,
+                    // 四周等距：横向 14，纵向由条目高 48 撑开
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    onTap: () {
                       playerController.launchExternalPlayer();
                     },
-                    child: Container(
+                    child: SizedBox(
                       height: 48,
-                      constraints: BoxConstraints(minWidth: 112),
+                      width: 112,
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text("外部播放"),
                       ),
                     ),
                   ),
-                  SubmenuButton(
-                    menuChildren: [
-                      MenuItemButton(
-                        onPressed: () {
-                          TimedShutdownService().cancel();
-                        },
-                        child: Container(
-                          height: 48,
-                          constraints: BoxConstraints(minWidth: 112),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "不开启",
-                              style: TextStyle(
-                                color: !TimedShutdownService().isActive
-                                    ? Theme.of(context).colorScheme.primary
-                                    : null,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      for (final int minutes in [15, 30, 60])
-                        MenuItemButton(
-                          onPressed: () {
-                            TimedShutdownService().start(minutes,
-                                onExpired: widget.pauseForTimedShutdown);
-                            KazumiDialog.showToast(
-                                message:
-                                    '已设置 ${TimedShutdownService().formatMinutesToDisplay(minutes)} 后定时关闭');
-                          },
-                          child: Container(
-                            height: 48,
-                            constraints: BoxConstraints(minWidth: 112),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "$minutes 分钟",
-                                style: TextStyle(
-                                  color: TimedShutdownService().setMinutes ==
-                                          minutes
-                                      ? Theme.of(context).colorScheme.primary
-                                      : null,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      MenuItemButton(
-                        onPressed: () {
-                          TimedShutdownService.showCustomTimerDialog(
-                            onExpired: widget.pauseForTimedShutdown,
-                          );
-                        },
-                        child: Container(
-                          height: 48,
-                          constraints: BoxConstraints(minWidth: 112),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text("自定义"),
-                          ),
-                        ),
-                      ),
-                    ],
-                    child: Container(
+                  PlayerPanelHoldMenuAnchor(
+                acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
+                onVisibilityChanged: widget.onMenuVisibilityChanged,
+                consumeOutsideTap: true,
+                builder: (BuildContext context, MenuController controller,
+                    Widget? child) {
+                  // 触发条目本身就是普通玻璃条目：和别的条目同一个 widget、
+                  // 同一套内边距 —— 文字自然对齐，按下深色范围也完全一致
+                  return KazumiGlass.menuItem(
+                    context: context,
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    closeMenu: false,
+                    onTap: () {
+                      if (controller.isOpen) {
+                        controller.close();
+                      } else {
+                        controller.open();
+                      }
+                    },
+                    child: SizedBox(
                       height: 48,
-                      constraints: BoxConstraints(minWidth: 112),
+                      width: 112,
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: ValueListenableBuilder<int>(
                           valueListenable:
                               TimedShutdownService().remainingSecondsNotifier,
@@ -1201,21 +1179,88 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                               remainingSeconds > 0
                                   ? "定时关闭 (${TimedShutdownService().formatRemainingTime()})"
                                   : "定时关闭",
+                              style: Theme.of(context).textTheme.labelLarge,
                             );
                           },
                         ),
                       ),
                     ),
-                  ),
-                  MenuItemButton(
-                    onPressed: () {
+                  );
+                },
+                menuChildren: <Widget>[
+
+                      KazumiGlass.menuItem(
+                        context: context,
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 14),
+                        selected: !TimedShutdownService().isActive,
+                        onTap: () {
+                          TimedShutdownService().cancel();
+                        },
+                        child: SizedBox(
+                          height: 48,
+                          width: 112,
+                          child: const Align(
+                            alignment: Alignment.center,
+                            child: Text("不开启"),
+                          ),
+                        ),
+                      ),
+                      for (final int minutes in [15, 30, 60])
+                        KazumiGlass.menuItem(
+                          context: context,
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 14),
+                          selected:
+                              TimedShutdownService().setMinutes == minutes,
+                          onTap: () {
+                            TimedShutdownService().start(minutes,
+                                onExpired: widget.pauseForTimedShutdown);
+                            KazumiDialog.showToast(
+                                message:
+                                    '已设置 ${TimedShutdownService().formatMinutesToDisplay(minutes)} 后定时关闭');
+                          },
+                          child: SizedBox(
+                            height: 48,
+                            width: 112,
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text("$minutes 分钟"),
+                            ),
+                          ),
+                        ),
+                      KazumiGlass.menuItem(
+                        context: context,
+                        // 四周等距：横向 14，纵向由条目高 48 撑开
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        onTap: () {
+                          TimedShutdownService.showCustomTimerDialog(
+                            onExpired: widget.pauseForTimedShutdown,
+                          );
+                        },
+                        child: SizedBox(
+                          height: 48,
+                          width: 112,
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text("自定义"),
+                          ),
+                        ),
+                      ),
+                ],
+              ),
+                  KazumiGlass.menuItem(
+                    context: context,
+                    // 四周等距：横向 14，纵向由条目高 48 撑开
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    onTap: () {
                       widget.showSyncPlayPanel();
                     },
-                    child: Container(
+                    child: SizedBox(
                       height: 48,
-                      constraints: BoxConstraints(minWidth: 112),
+                      width: 112,
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text("一起看"),
                       ),
                     ),

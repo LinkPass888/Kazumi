@@ -720,7 +720,10 @@ class _TimelinePageState extends State<TimelinePage>
         title: InkWell(
           borderRadius: BorderRadius.circular(8),
           child: Observer(builder: (context) {
-            return Text(timelineController.seasonString);
+            return Text(
+              timelineController.seasonString,
+              style: appBarTitleStyle(context),
+            );
           }),
           onTap: () {
             showSeasonBottomSheet(context);
