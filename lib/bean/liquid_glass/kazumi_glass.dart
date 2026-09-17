@@ -51,6 +51,38 @@ abstract final class KazumiGlass {
   static double menuItemRadiusOf(BuildContext context) =>
       (panelRadiusOf(context) - menuPanelInset).clamp(6.0, 18.0);
 
+  /// 菜单条目的样式：按下/选中的高亮形状用同心圆半径。
+  ///
+  /// 播放器那几个菜单是 MenuItemButton/SubmenuButton，MenuTheme 在这条链路
+  /// 上照不到，所以逐个显式给。
+  static ButtonStyle menuItemButtonStyle(BuildContext context) => ButtonStyle(
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(menuItemRadiusOf(context)),
+            ),
+          ),
+        ),
+      );
+
+  /// 子菜单（SubmenuButton）的面板样式。
+  ///
+  /// 子菜单面板由框架自己画，铺不了玻璃，所以退一步：圆角和别的菜单完全一致，
+  /// 底色用半透明的 surface，远看和玻璃面板是一套。
+  static MenuStyle submenuStyle(BuildContext context) => MenuStyle(
+        backgroundColor: WidgetStatePropertyAll(
+          Theme.of(context).colorScheme.surface.withValues(alpha: 0.86),
+        ),
+        elevation: const WidgetStatePropertyAll(0),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(panelRadiusOf(context)),
+            ),
+          ),
+        ),
+      );
+
   /// 菜单、面板用的圆角形状。
   static LiquidGlassShape panelShapeOf(BuildContext context) =>
       LiquidGlassShape.roundedRectangle(panelRadiusOf(context));

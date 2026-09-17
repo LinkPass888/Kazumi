@@ -195,9 +195,18 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
                       children: widget.menuChildren,
                     ),
                   )
-                : Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: widget.menuChildren,
+                : ConstrainedBox(
+                    // 不限高的话内容会超出框架给面板的高度，底部被硬裁
+                    // （倍速弹窗“少一截”就是这个），所以限高 + 内部滚动。
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * 0.6,
+                    ),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: widget.menuChildren,
+                      ),
+                    ),
                   ),
           ),
         ),

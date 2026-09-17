@@ -104,14 +104,8 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
               ],
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                KazumiDialog.dismiss();
-              },
-              child: const Text('取消'),
-            ),
-          ],
+          // 按用户要求不留「取消」按钮：点外面即取消，弹窗也更紧凑。
+          // 弹窗本体保持原来的不透明背景，标题不会再被挤出。
         );
       },
     );
