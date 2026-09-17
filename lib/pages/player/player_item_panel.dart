@@ -1102,6 +1102,8 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                 menuChildren: [
                   KazumiGlass.menuItem(
                     context: context,
+                    // 四周等距：横向 14，纵向由条目高 48 撑开
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
                     onTap: () {
                       widget.showDanmakuSwitch();
                     },
@@ -1116,6 +1118,8 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                   ),
                   KazumiGlass.menuItem(
                     context: context,
+                    // 四周等距：横向 14，纵向由条目高 48 撑开
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
                     onTap: () {
                       widget.showVideoInfo();
                     },
@@ -1130,6 +1134,8 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                   ),
                   KazumiGlass.menuItem(
                     context: context,
+                    // 四周等距：横向 14，纵向由条目高 48 撑开
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
                     onTap: () {
                       bool needRestart = playerController.playback.playing;
                       playerController.pause();
@@ -1153,6 +1159,8 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                   ),
                   KazumiGlass.menuItem(
                     context: context,
+                    // 四周等距：横向 14，纵向由条目高 48 撑开
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
                     onTap: () {
                       playerController.launchExternalPlayer();
                     },
@@ -1215,6 +1223,8 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                         ),
                       KazumiGlass.menuItem(
                         context: context,
+                        // 四周等距：横向 14，纵向由条目高 48 撑开
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
                         onTap: () {
                           TimedShutdownService.showCustomTimerDialog(
                             onExpired: widget.pauseForTimedShutdown,
@@ -1251,6 +1261,8 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                   ),
                   KazumiGlass.menuItem(
                     context: context,
+                    // 四周等距：横向 14，纵向由条目高 48 撑开
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
                     onTap: () {
                       widget.showSyncPlayPanel();
                     },
