@@ -97,14 +97,14 @@ class _CollectButtonState extends State<CollectButton> {
       crossAxisUnconstrained: false,
       // 面板本身画不了玻璃（框架自己画 Material），所以把它整块变透明，
       // 再在 menuChildren 里放一块玻璃顶上去。
-      style: const MenuStyle(
-        backgroundColor: WidgetStatePropertyAll(Colors.transparent),
-        elevation: WidgetStatePropertyAll(0),
-        padding: WidgetStatePropertyAll(EdgeInsets.zero),
+      style: MenuStyle(
+        backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+        elevation: const WidgetStatePropertyAll(0),
+        padding: const WidgetStatePropertyAll(EdgeInsets.zero),
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.all(
-              Radius.circular(KazumiGlass.panelRadius),
+              Radius.circular(KazumiGlass.panelRadiusOf(context)),
             ),
           ),
         ),
@@ -143,7 +143,9 @@ class _CollectButtonState extends State<CollectButton> {
       // 变透明，再把这一块玻璃当作唯一的面板内容顶上去。
       menuChildren: [
         KazumiGlass.glassSurface(
-          shape: KazumiGlass.panelShape,
+          shape: KazumiGlass.panelShapeOf(context),
+          // 上下留空，和热门番组的菜单一致：条目高亮的圆角才和面板平行
+          padding: const EdgeInsets.symmetric(vertical: 8),
           child: SizedBox(
             width: 176,
             child: Column(

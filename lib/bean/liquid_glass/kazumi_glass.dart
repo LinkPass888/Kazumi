@@ -23,15 +23,29 @@ abstract final class KazumiGlass {
   static const LiquidGlassShape pillShape =
       LiquidGlassShape.roundedRectangle(22);
 
-  /// 菜单、面板统一的圆角半径：所有弹出菜单都用它。
-  static const double panelRadius = 16;
+  /// 菜单、面板的圆角半径。
+  ///
+  /// 不写死：跟着设备屏幕的圆角走（iOS 上是 displayCornerRadius，取自
+  /// UIScreen）。屏幕圆角越大，菜单就越圆，和系统菜单的比例保持一致。
+  static double panelRadiusOf(BuildContext context) {
+    final double? device = MediaQuery.of(context).displayCornerRadius;
+    if (device == null || !device.isFinite || device <= 0) {
+      return 16;
+    }
+    return (device * 0.3).clamp(12.0, 22.0);
+  }
 
-  /// 菜单条目的高亮/选中圆角：比面板小一点，正好贴合面板内边。
-  static const double menuItemRadius = 12;
+  /// 菜单条目的高亮/选中圆角：比面板小一档，跟着面板一起变。
+  static double menuItemRadiusOf(BuildContext context) =>
+      (panelRadiusOf(context) - 6).clamp(6.0, 18.0);
 
   /// 菜单、面板用的圆角形状。
+  static LiquidGlassShape panelShapeOf(BuildContext context) =>
+      LiquidGlassShape.roundedRectangle(panelRadiusOf(context));
+
+  /// 兜底用的默认形状（拿不到设备信息时）。
   static const LiquidGlassShape panelShape =
-      LiquidGlassShape.roundedRectangle(panelRadius);
+      LiquidGlassShape.roundedRectangle(16);
 
   /// 顶栏按钮的统一尺寸。
   static const double barButtonSize = 40;
@@ -155,7 +169,7 @@ abstract final class KazumiGlass {
     bool selected = false,
     EdgeInsetsGeometry padding =
         const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-    double radius = menuItemRadius,
+    double? radius,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -164,7 +178,7 @@ abstract final class KazumiGlass {
         shape: panelShape,
         padding: padding,
         selected: selected,
-        radius: radius,
+        radius: radius ?? menuItemRadiusOf(context),
         wrapInGlass: false,
         child: child,
       ),

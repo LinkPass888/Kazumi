@@ -833,17 +833,20 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     consumeOutsideTap: true,
                     // 要收的是宽度：面板宽度由 fixedSize 定住，条目自身的最小
                     // 宽度和左右内边距都要压小，否则内容会把面板撑开。
-                    style: const MenuStyle(
-                      fixedSize: WidgetStatePropertyAll(Size(112, 264)),
-                      minimumSize: WidgetStatePropertyAll(Size(112, 264)),
-                      maximumSize: WidgetStatePropertyAll(Size(112, 264)),
-                      padding: WidgetStatePropertyAll(EdgeInsets.zero),
-                      elevation: WidgetStatePropertyAll(0),
+                    style: MenuStyle(
+                      fixedSize: const WidgetStatePropertyAll(Size(112, 264)),
+                      minimumSize: const WidgetStatePropertyAll(Size(112, 264)),
+                      maximumSize: const WidgetStatePropertyAll(Size(112, 264)),
+                      // 上下留空：滚动条（框架画在内容区里）两端就不会顶到圆角
+                      padding: const WidgetStatePropertyAll(
+                        EdgeInsets.symmetric(vertical: 8),
+                      ),
+                      elevation: const WidgetStatePropertyAll(0),
                       // 和其它弹出菜单同一个圆角
                       shape: WidgetStatePropertyAll(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(
-                            Radius.circular(KazumiGlass.panelRadius),
+                            Radius.circular(KazumiGlass.panelRadiusOf(context)),
                           ),
                         ),
                       ),
@@ -874,15 +877,17 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                             await widget.setPlaybackSpeed(i);
                           },
                           // 右侧多留 20：滚动条画在面板右边缘，不留通道会压住数值
-                          style: const ButtonStyle(
-                            padding: WidgetStatePropertyAll(
+                          style: ButtonStyle(
+                            padding: const WidgetStatePropertyAll(
                               EdgeInsets.only(left: 14, right: 20),
                             ),
                             // 选中/按下的深色范围和菜单条目同一个圆角
                             shape: WidgetStatePropertyAll(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.all(
-                                  Radius.circular(KazumiGlass.menuItemRadius),
+                                  Radius.circular(
+                                    KazumiGlass.menuItemRadiusOf(context),
+                                  ),
                                 ),
                               ),
                             ),

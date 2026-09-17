@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kazumi/bean/liquid_glass/kazumi_glass.dart';
 import 'package:kazumi/bean/widget/collect_button.dart';
 import 'package:kazumi/modules/bangumi/bangumi_item.dart';
 
@@ -139,7 +140,18 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
   @override
   Widget build(BuildContext context) {
     return MenuAnchor(
-      style: widget.style,
+      // 播放器的弹出菜单（倍速、超分辨率…）统一用和别的菜单一样的圆角
+      style: (widget.style ?? const MenuStyle()).merge(
+        MenuStyle(
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(KazumiGlass.panelRadiusOf(context)),
+              ),
+            ),
+          ),
+        ),
+      ),
       consumeOutsideTap: widget.consumeOutsideTap,
       onOpen: _handleOpen,
       onClose: _handleClose,

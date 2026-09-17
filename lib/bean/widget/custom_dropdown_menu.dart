@@ -56,10 +56,11 @@ class CustomDropdownMenu extends StatelessWidget {
           Positioned(
             left: offset.dx,
             top: offset.dy + buttonSize.height + gap,
-            child: KazumiGlass.glassSurface(shape: KazumiGlass.panelShape, child: Material(
+            child: KazumiGlass.glassSurface(shape: KazumiGlass.panelShapeOf(context), child: Material(
                 elevation: 0,
                 clipBehavior: Clip.antiAlias,
-                borderRadius: BorderRadius.circular(KazumiGlass.panelRadius),
+                borderRadius:
+                    BorderRadius.circular(KazumiGlass.panelRadiusOf(context)),
                 color: KazumiGlass.enabled
                     ? Colors.transparent
                     : theme.colorScheme.surface,
