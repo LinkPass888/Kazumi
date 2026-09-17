@@ -44,8 +44,11 @@ abstract final class KazumiGlass {
   /// 不要各处自己写数字。
   static const double menuPanelInset = 6;
 
-  /// 条目自身还带了 2 的外边距（见 [menuItem]），面板再补 4 就正好 6。
-  static const EdgeInsets menuPanelPadding = EdgeInsets.all(4);
+  /// 条目自身还带了 3 的外边距（见 [menuItem]），面板再补 3 就正好 6。
+  ///
+  /// 面板 3 + 条目 3 = 6，相邻两个条目之间是 3 + 3 = 6：高亮块离玻璃边框的
+  /// 距离、和离上下选项的距离完全一样宽。
+  static const EdgeInsets menuPanelPadding = EdgeInsets.all(3);
 
   /// 菜单条目的高亮/选中圆角：= 面板圆角 − [menuPanelInset]。
   static double menuItemRadiusOf(BuildContext context) =>
@@ -229,7 +232,8 @@ abstract final class KazumiGlass {
     double? radius,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+      // 3 + 面板的 3 = 6：四边留白等宽（相邻条目之间也是 3 + 3 = 6）
+      padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 3),
       child: _GlassTapTarget(
         onTap: onTap,
         shape: panelShape,
@@ -331,9 +335,10 @@ class _GlassTapTargetState extends State<_GlassTapTarget> {
     final Color base = widget.selected
         ? scheme.primary.withValues(alpha: 0.30)
         : Colors.transparent;
+    // 按压高亮和选中填充画在同一个盒子上：形状、圆角、大小必然一致
     final Color color = _pressed
         ? scheme.primary
-            .withValues(alpha: widget.selected ? 0.46 : 0.18)
+            .withValues(alpha: widget.selected ? 0.46 : 0.22)
         : base;
     final ShapeBorder border = widget.radius == null
         ? const StadiumBorder()
