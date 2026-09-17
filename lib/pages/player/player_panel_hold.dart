@@ -203,7 +203,7 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
         ),
       ],
     ),
-    )
+    );
   }
 }
 
