@@ -143,6 +143,9 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
       // 播放器的弹出菜单（倍速、超分辨率…）统一用和别的菜单一样的圆角
       style: (widget.style ?? const MenuStyle()).merge(
         MenuStyle(
+          backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+          elevation: const WidgetStatePropertyAll(0),
+          padding: const WidgetStatePropertyAll(EdgeInsets.zero),
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
@@ -156,7 +159,21 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
       onOpen: _handleOpen,
       onClose: _handleClose,
       builder: widget.builder,
-      menuChildren: widget.menuChildren,
+      menuChildren: [
+        // 和收藏状态菜单同一套写法：一块玻璃当面板，内容原样交给它。
+        // 不钉高度、不自接管滚动——上次就是那两样把面板弄坏的。
+        KazumiGlass.glassSurface(
+          shape: KazumiGlass.panelShapeOf(context),
+          // 上下留空 = 面板圆角 − 条目圆角，两个圆角同心
+          padding: const EdgeInsets.symmetric(
+            vertical: KazumiGlass.menuPanelInset,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: widget.menuChildren,
+          ),
+        ),
+      ],
     );
   }
 }
