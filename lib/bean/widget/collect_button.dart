@@ -116,6 +116,14 @@ class _CollectButtonState extends State<CollectButton> {
           return KeyedSubtree(
             key: _anchorKey,
             child: FilledButton.icon(
+            style: FilledButton.styleFrom(
+              // 和外层玻璃、各菜单统一同一个圆角
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(KazumiGlass.panelRadiusOf(context)),
+                ),
+              ),
+            ),
             onPressed: () {
               if (controller.isOpen) {
                 controller.close();

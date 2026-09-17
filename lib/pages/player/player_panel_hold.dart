@@ -196,10 +196,10 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
                     ),
                   )
                 : ConstrainedBox(
-                    // 不限高的话内容会超出框架给面板的高度，底部被硬裁
-                    // （倍速弹窗“少一截”就是这个），所以限高 + 内部滚动。
+                    // 留一点余量防止内容被硬裁，但上限要尽量贴近框架能给的高度：
+                    // 收太狠面板就“被抬太高”，底部离控制栏太远。
                     constraints: BoxConstraints(
-                      maxHeight: MediaQuery.of(context).size.height * 0.6,
+                      maxHeight: MediaQuery.of(context).size.height * 0.85,
                     ),
                     child: SingleChildScrollView(
                       child: Column(
