@@ -538,7 +538,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 // 只改横屏：往上顶，和超分辨率菜单（基准）的下沿对齐
                 alignmentOffset: MediaQuery.of(context).size.width >
                         MediaQuery.of(context).size.height
-                    ? const Offset(-30, -240)
+                    ? const Offset(-30, -186)
                     : null,
                 builder: (BuildContext context, MenuController controller,
                     Widget? child) {
@@ -607,6 +607,8 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                       context: speedContext,
                       currentSpeed: playerController.playback.playerSpeed,
                       setPlaybackSpeed: widget.setPlaybackSpeed,
+                      // 让面板下沿和超分辨率菜单的下沿齐平（只影响横屏）
+                      bottomGap: 18,
                     );
                     parentMenu?.close();
                   },

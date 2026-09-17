@@ -306,6 +306,8 @@ abstract final class KazumiGlass {
     required BuildContext context,
     required double currentSpeed,
     required Future<void> Function(double) setPlaybackSpeed,
+    // 横屏时面板下沿离触发条目顶部的距离（用来和别的菜单下沿对齐）
+    double bottomGap = 72,
   }) {
     // 拿触发按钮的位置来定位面板（横屏用）
     Offset? anchorTopLeft;
@@ -341,7 +343,7 @@ abstract final class KazumiGlass {
           // 面板底边落在按钮上方 8
           // 横屏往下挪一点，让下沿和超分辨率菜单（基准）一致：
           // bottom 从屏幕底部量起，减号就是更靠下
-          bottom = (screen.height - anchorTopLeft.dy - 16)
+          bottom = (screen.height - anchorTopLeft.dy + bottomGap)
               .clamp(8.0, screen.height - panelHeight - 8);
         }
         return SizedBox(
