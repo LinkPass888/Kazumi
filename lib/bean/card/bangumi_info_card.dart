@@ -86,10 +86,6 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
       builder: (context) {
         return AlertDialog(
           title: const Text('选择放送星期'),
-          // 弹窗自己变透明，玻璃画在选项这一块上
-          backgroundColor: KazumiGlass.enabled ? Colors.transparent : null,
-          surfaceTintColor: Colors.transparent,
-          elevation: KazumiGlass.enabled ? 0 : null,
           content: KazumiGlass.glassSurface(
             shape: KazumiGlass.panelShapeOf(context),
             padding: KazumiGlass.menuPanelPadding,
@@ -108,7 +104,14 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
               ],
             ),
           ),
-          // 不留「取消」按钮：点外面就是取消，弹窗也能收窄
+          actions: [
+            TextButton(
+              onPressed: () {
+                KazumiDialog.dismiss();
+              },
+              child: const Text('取消'),
+            ),
+          ],
         );
       },
     );
