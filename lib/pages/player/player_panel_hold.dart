@@ -165,7 +165,10 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
       menuChildren: [
         KazumiGlass.glassSurface(
           shape: KazumiGlass.panelShapeOf(context),
-          padding: const EdgeInsets.all(KazumiGlass.menuPanelInset),
+          // 只收上下：面板宽高都是定死的，横向再收就会“右边少一截”
+          padding: const EdgeInsets.symmetric(
+            vertical: KazumiGlass.menuPanelInset,
+          ),
           child: SizedBox(
             width: fixed?.width,
             height: fixed?.height,
