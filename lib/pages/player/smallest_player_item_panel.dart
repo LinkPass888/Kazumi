@@ -569,7 +569,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
               SubmenuButton(
                 menuChildren: <Widget>[
                   for (final double i
-                      in defaultPlaySpeedList) ...<MenuItemButton>[
+                      in defaultPlaySpeedList) ...<Widget>[
                     KazumiGlass.menuItem(
                       context: context,
                       // 四周等距：横向 14，纵向由条目高 48 撑开

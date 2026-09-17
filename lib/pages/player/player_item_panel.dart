@@ -871,7 +871,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     },
                     menuChildren: <Widget>[
                       for (final double i
-                          in defaultPlaySpeedList) ...<MenuItemButton>[
+                          in defaultPlaySpeedList) ...<Widget>[
                         MenuItemButton(
                           onPressed: () async {
                             await widget.setPlaybackSpeed(i);
