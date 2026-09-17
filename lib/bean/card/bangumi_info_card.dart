@@ -93,6 +93,11 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
               for (int index = 1; index <= 7; index++)
                 KazumiGlass.glassButton(
                   context: context,
+                  // 尺寸对齐收藏状态菜单的条目，别搞得比它宽
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
                   selected: index == weekday,
                   onTap: () {
                     KazumiDialog.dismiss<int>(popWith: index);

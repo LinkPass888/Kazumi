@@ -55,9 +55,17 @@ abstract final class KazumiGlass {
   ///
   /// 播放器那几个菜单是 MenuItemButton/SubmenuButton，MenuTheme 在这条链路
   /// 上照不到，所以逐个显式给。
-  static ButtonStyle menuItemButtonStyle(BuildContext context) {
+  static ButtonStyle menuItemButtonStyle(
+    BuildContext context, {
+    bool selected = false,
+  }) {
     final Color primary = Theme.of(context).colorScheme.primary;
     return ButtonStyle(
+      // 当前值那一项也要深色填充（这些条目不是 MenuItemButton 的选中态，
+      // 得由调用方告诉它自己是当前值）
+      backgroundColor: WidgetStatePropertyAll(
+        selected ? primary.withValues(alpha: 0.30) : Colors.transparent,
+      ),
       shape: WidgetStatePropertyAll(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
@@ -67,12 +75,6 @@ abstract final class KazumiGlass {
       ),
       // 按下/悬停的深色
       overlayColor: WidgetStatePropertyAll(primary.withValues(alpha: 0.18)),
-      // 选中项也是深色（和收藏状态菜单一致）
-      backgroundColor: WidgetStateProperty.resolveWith(
-        (Set<WidgetState> states) => states.contains(WidgetState.selected)
-            ? primary.withValues(alpha: 0.30)
-            : Colors.transparent,
-      ),
     );
   }
 
