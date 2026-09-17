@@ -1174,19 +1174,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     ),
                   ),
                   SubmenuButton(
-                style: MenuStyle(
-                backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
-                elevation: const WidgetStatePropertyAll(0),
-                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                shape: WidgetStatePropertyAll(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(KazumiGlass.panelRadiusOf(context)),
-                    ),
-                  ),
-                ),
-              ),
-                                  menuChildren: <Widget>[
+                                    menuChildren: <Widget>[
                   KazumiGlass.glassSurface(
                     shape: KazumiGlass.panelShapeOf(context),
                     padding: KazumiGlass.menuPanelPadding,
