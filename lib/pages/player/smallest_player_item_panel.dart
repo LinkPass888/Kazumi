@@ -535,6 +535,11 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
                 onVisibilityChanged: widget.onMenuVisibilityChanged,
                 consumeOutsideTap: true,
+                // 只改横屏：往上顶，和超分辨率菜单（基准）的下沿对齐
+                alignmentOffset: MediaQuery.of(context).size.width >
+                        MediaQuery.of(context).size.height
+                    ? const Offset(0, -240)
+                    : null,
                 builder: (BuildContext context, MenuController controller,
                     Widget? child) {
                   // 触发条目本身就是普通玻璃条目：和别的条目同一个 widget、

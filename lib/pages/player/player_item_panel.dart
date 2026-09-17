@@ -851,6 +851,11 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
                     onVisibilityChanged: widget.onMenuVisibilityChanged,
                     consumeOutsideTap: true,
+                    // 只改横屏：往上顶，和超分辨率菜单（基准）的下沿对齐
+                    alignmentOffset: MediaQuery.of(context).size.width >
+                            MediaQuery.of(context).size.height
+                        ? const Offset(0, -240)
+                        : null,
                     builder: (BuildContext context, MenuController controller,
                         Widget? child) {
                       return IconButton(

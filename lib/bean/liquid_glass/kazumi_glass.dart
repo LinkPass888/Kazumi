@@ -339,7 +339,9 @@ abstract final class KazumiGlass {
           left = (anchorCenterX - panelWidth / 2 - 60)
               .clamp(8.0, screen.width - panelWidth - 8);
           // 面板底边落在按钮上方 8
-          bottom = (screen.height - anchorTopLeft.dy + 8)
+          // 横屏往下挪一点，让下沿和超分辨率菜单（基准）一致：
+          // bottom 从屏幕底部量起，减号就是更靠下
+          bottom = (screen.height - anchorTopLeft.dy - 16)
               .clamp(8.0, screen.height - panelHeight - 8);
         }
         return SizedBox(
