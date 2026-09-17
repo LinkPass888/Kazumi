@@ -146,6 +146,15 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
           backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
           elevation: const WidgetStatePropertyAll(0),
           padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+          // 滚动条缩短并离开圆角，别贴着 R 角
+          scrollbarTheme: WidgetStatePropertyAll(
+            ScrollbarThemeData(
+              thickness: const WidgetStatePropertyAll(3),
+              mainAxisMargin: 14,
+              crossAxisMargin: 4,
+              radius: const Radius.circular(2),
+            ),
+          ),
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
@@ -165,9 +174,7 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
         KazumiGlass.glassSurface(
           shape: KazumiGlass.panelShapeOf(context),
           // 上下留空 = 面板圆角 − 条目圆角，两个圆角同心
-          padding: const EdgeInsets.symmetric(
-            vertical: KazumiGlass.menuPanelInset,
-          ),
+          padding: KazumiGlass.menuPanelPadding,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: widget.menuChildren,

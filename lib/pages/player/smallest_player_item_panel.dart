@@ -534,9 +534,9 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
               SubmenuButton(
                 menuChildren: [
                   for (final aspectRatioMode in PlayerAspectRatio.values)
-                    MenuItemButton(
-                      style: KazumiGlass.menuItemButtonStyle(context),
-                      onPressed: () => playerController.panel.aspectRatioMode =
+                    KazumiGlass.menuItem(
+                      context: context,
+                      onTap: () => playerController.panel.aspectRatioMode =
                           aspectRatioMode,
                       child: Container(
                         height: 48,
@@ -568,9 +568,9 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 menuChildren: [
                   for (final double i
                       in defaultPlaySpeedList) ...<MenuItemButton>[
-                    MenuItemButton(
-                      style: KazumiGlass.menuItemButtonStyle(context),
-                      onPressed: () async {
+                    KazumiGlass.menuItem(
+                      context: context,
+                      onTap: () async {
                         await widget.setPlaybackSpeed(i);
                       },
                       child: Container(
@@ -603,9 +603,9 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
               SubmenuButton(
                 menuChildren: [
                   for (final mode in SuperResolutionMode.values)
-                    MenuItemButton(
-                      style: KazumiGlass.menuItemButtonStyle(context),
-                      onPressed: () => widget.handleSuperResolutionChange(mode),
+                    KazumiGlass.menuItem(
+                      context: context,
+                      onTap: () => widget.handleSuperResolutionChange(mode),
                       child: Container(
                         height: 48,
                         constraints: BoxConstraints(minWidth: 112),
@@ -634,9 +634,9 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   ),
                 ),
               ),
-              MenuItemButton(
-                style: KazumiGlass.menuItemButtonStyle(context),
-                onPressed: () {
+              KazumiGlass.menuItem(
+                context: context,
+                onTap: () {
                   widget.showSyncPlayPanel();
                 },
                 child: Container(
@@ -648,9 +648,9 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   ),
                 ),
               ),
-              MenuItemButton(
-                style: KazumiGlass.menuItemButtonStyle(context),
-                onPressed: () {
+              KazumiGlass.menuItem(
+                context: context,
+                onTap: () {
                   widget.showDanmakuSwitch();
                 },
                 child: Container(
@@ -662,9 +662,9 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   ),
                 ),
               ),
-              MenuItemButton(
-                style: KazumiGlass.menuItemButtonStyle(context),
-                onPressed: () {
+              KazumiGlass.menuItem(
+                context: context,
+                onTap: () {
                   showDanmakuSettingsSheet(
                     context: context,
                     danmakuController:
@@ -683,9 +683,9 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   ),
                 ),
               ),
-              MenuItemButton(
-                style: KazumiGlass.menuItemButtonStyle(context),
-                onPressed: () {
+              KazumiGlass.menuItem(
+                context: context,
+                onTap: () {
                   widget.showVideoInfo();
                 },
                 child: Container(
@@ -697,9 +697,9 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   ),
                 ),
               ),
-              MenuItemButton(
-                style: KazumiGlass.menuItemButtonStyle(context),
-                onPressed: () {
+              KazumiGlass.menuItem(
+                context: context,
+                onTap: () {
                   bool needRestart = playerController.playback.playing;
                   playerController.pause();
                   RemotePlay()
@@ -720,9 +720,9 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   ),
                 ),
               ),
-              MenuItemButton(
-                style: KazumiGlass.menuItemButtonStyle(context),
-                onPressed: () {
+              KazumiGlass.menuItem(
+                context: context,
+                onTap: () {
                   playerController.launchExternalPlayer();
                 },
                 child: Container(
@@ -736,9 +736,9 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
               ),
               SubmenuButton(
                 menuChildren: [
-                  MenuItemButton(
-                    style: KazumiGlass.menuItemButtonStyle(context),
-                    onPressed: () {
+                  KazumiGlass.menuItem(
+                    context: context,
+                    onTap: () {
                       TimedShutdownService().cancel();
                     },
                     child: Container(
@@ -758,9 +758,9 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                     ),
                   ),
                   for (final int minutes in [15, 30, 60])
-                    MenuItemButton(
-                      style: KazumiGlass.menuItemButtonStyle(context),
-                      onPressed: () {
+                    KazumiGlass.menuItem(
+                      context: context,
+                      onTap: () {
                         TimedShutdownService().start(minutes,
                             onExpired: widget.pauseForTimedShutdown);
                         KazumiDialog.showToast(
@@ -784,9 +784,9 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                         ),
                       ),
                     ),
-                  MenuItemButton(
-                    style: KazumiGlass.menuItemButtonStyle(context),
-                    onPressed: () {
+                  KazumiGlass.menuItem(
+                    context: context,
+                    onTap: () {
                       TimedShutdownService.showCustomTimerDialog(
                         onExpired: widget.pauseForTimedShutdown,
                       );

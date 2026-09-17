@@ -1100,9 +1100,9 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                   );
                 },
                 menuChildren: [
-                  MenuItemButton(
-                    style: KazumiGlass.menuItemButtonStyle(context),
-                    onPressed: () {
+                  KazumiGlass.menuItem(
+                    context: context,
+                    onTap: () {
                       widget.showDanmakuSwitch();
                     },
                     child: Container(
@@ -1114,9 +1114,9 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       ),
                     ),
                   ),
-                  MenuItemButton(
-                    style: KazumiGlass.menuItemButtonStyle(context),
-                    onPressed: () {
+                  KazumiGlass.menuItem(
+                    context: context,
+                    onTap: () {
                       widget.showVideoInfo();
                     },
                     child: Container(
@@ -1128,9 +1128,9 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       ),
                     ),
                   ),
-                  MenuItemButton(
-                    style: KazumiGlass.menuItemButtonStyle(context),
-                    onPressed: () {
+                  KazumiGlass.menuItem(
+                    context: context,
+                    onTap: () {
                       bool needRestart = playerController.playback.playing;
                       playerController.pause();
                       RemotePlay()
@@ -1151,9 +1151,9 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       ),
                     ),
                   ),
-                  MenuItemButton(
-                    style: KazumiGlass.menuItemButtonStyle(context),
-                    onPressed: () {
+                  KazumiGlass.menuItem(
+                    context: context,
+                    onTap: () {
                       playerController.launchExternalPlayer();
                     },
                     child: Container(
@@ -1213,9 +1213,9 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                             ),
                           ),
                         ),
-                      MenuItemButton(
-                        style: KazumiGlass.menuItemButtonStyle(context),
-                        onPressed: () {
+                      KazumiGlass.menuItem(
+                        context: context,
+                        onTap: () {
                           TimedShutdownService.showCustomTimerDialog(
                             onExpired: widget.pauseForTimedShutdown,
                           );
@@ -1249,9 +1249,9 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       ),
                     ),
                   ),
-                  MenuItemButton(
-                    style: KazumiGlass.menuItemButtonStyle(context),
-                    onPressed: () {
+                  KazumiGlass.menuItem(
+                    context: context,
+                    onTap: () {
                       widget.showSyncPlayPanel();
                     },
                     child: Container(
