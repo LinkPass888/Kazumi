@@ -620,7 +620,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                       onTap: () async {
                         await widget.setPlaybackSpeed(i);
                       },
-                      child: Container(
+                      child: SizedBox(
                         height: 48,
                         child: Align(
                           alignment: Alignment.center,
