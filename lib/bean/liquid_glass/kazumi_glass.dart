@@ -288,61 +288,96 @@ abstract final class KazumiGlass {
 
   /// 倍速选择面板：一块玻璃 + 逐个列出的倍速（和原来的倍速菜单同样的排布）。
   ///
-  /// 为什么不放进 menuChildren：框架会给菜单内容套一层自带滚动条、而且常显的
-  /// 滚动视图，那条滚动条会压在「当前倍速」的选中块上面（横屏尤其明显，而且
-  /// ScrollbarTheme 在子菜单这条链路上照不到）。这里自己控制滚动：只滚动、
-  /// 不画滚动条。
+  /// 两点讲究：
+  /// - 不进 menuChildren：框架会给菜单内容套一层自带滚动条、而且常显的滚动视图，
+  ///   那条滚动条会压在当前倍速的选中块上（横屏尤其明显，ScrollbarTheme 在子菜单
+  ///   这条链路上也照不到）。这里自己控制滚动：只滚动、不画滚动条。
+  /// - 贴着触发它的按钮「上方」弹出；横屏屏幕矮，最多只显示四行。
   static Future<void> showSpeedPanel({
     required BuildContext context,
     required double currentSpeed,
     required Future<void> Function(double) setPlaybackSpeed,
   }) {
+    // 拿触发按钮的位置来定位面板
+    Offset? anchorTopLeft;
+    double? anchorCenterX;
+    final RenderObject? anchorBox = context.findRenderObject();
+    if (anchorBox is RenderBox && anchorBox.hasSize) {
+      anchorTopLeft = anchorBox.localToGlobal(Offset.zero);
+      anchorCenterX = anchorTopLeft.dx + anchorBox.size.width / 2;
+    }
     return showDialog<void>(
       context: context,
       barrierColor: Colors.black26,
       builder: (BuildContext ctx) {
         final TextTheme text = Theme.of(ctx).textTheme;
-        return Center(
-          child: glassSurface(
-            shape: panelShapeOf(ctx),
-            padding: menuPanelPadding,
-            // 弹窗里没有 Material 祖先，不补一层的话文字会掉回黑色默认样式
-            child: Material(
-              type: MaterialType.transparency,
-              // 玻璃是原生平台视图：放在 Center 这类松散约束里会被撑到可用宽度
-              // （整屏那么宽），所以宽度必须写死。128 是条目内容宽 + 外层留白。
-              child: SizedBox(
-                width: 134,
-                child: ConstrainedBox(
-                constraints: const BoxConstraints(maxHeight: 360),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      for (final double i in defaultPlaySpeedList)
-                        menuItem(
-                          context: ctx,
-                          padding: const EdgeInsets.symmetric(horizontal: 14),
-                          selected: i == currentSpeed,
-                          onTap: () async {
-                            Navigator.of(ctx).pop();
-                            await setPlaybackSpeed(i);
-                          },
-                          child: SizedBox(
-                            height: 48,
-                            width: 128,
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text('${i}x', style: text.labelLarge),
-                            ),
+        final Size screen = MediaQuery.of(ctx).size;
+        // 横屏屏幕矮：四行封顶；竖屏最多八行
+        final int rows = screen.width > screen.height ? 4 : 8;
+        const double panelWidth = 118;
+        final double panelHeight = rows * 48.0 + 12;
+        double left = (screen.width - panelWidth) / 2;
+        double bottom = (screen.height - panelHeight) / 2;
+        if (anchorTopLeft != null && anchorCenterX != null) {
+          left = (anchorCenterX - panelWidth / 2)
+              .clamp(8.0, screen.width - panelWidth - 8);
+          // 面板底边落在按钮上方 8
+          bottom = (screen.height - anchorTopLeft.dy + 8)
+              .clamp(8.0, screen.height - panelHeight - 8);
+        }
+        return SizedBox(
+          width: screen.width,
+          height: screen.height,
+          child: Stack(
+            children: <Widget>[
+              Positioned(
+                left: left,
+                bottom: bottom,
+                child: SizedBox(
+                  width: panelWidth,
+                  child: glassSurface(
+                    shape: panelShapeOf(ctx),
+                    padding: menuPanelPadding,
+                    // 弹窗里没有 Material 祖先，不补一层文字会掉回黑色默认样式
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(maxHeight: panelHeight),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              for (final double i in defaultPlaySpeedList)
+                                menuItem(
+                                  context: ctx,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 14),
+                                  selected: i == currentSpeed,
+                                  onTap: () async {
+                                    Navigator.of(ctx).pop();
+                                    await setPlaybackSpeed(i);
+                                  },
+                                  child: SizedBox(
+                                    height: 48,
+                                    width: 112,
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        '${i}x',
+                                        style: text.labelLarge,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
-                    ],
+                      ),
+                    ),
                   ),
                 ),
               ),
-              ),
-            ),
+            ],
           ),
         );
       },

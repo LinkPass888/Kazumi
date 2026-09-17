@@ -786,6 +786,8 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
                     onVisibilityChanged: widget.onMenuVisibilityChanged,
                     consumeOutsideTap: true,
+                    // 横屏按钮贴着屏幕底部，往下弹会出屏：顶到按钮上方
+                    alignmentOffset: const Offset(0, -240),
                     builder: (BuildContext context, MenuController controller,
                         Widget? child) {
                       return TextButton(
@@ -813,7 +815,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                               widget.handleSuperResolutionChange(mode),
                           child: SizedBox(
                             height: 48,
-                            width: 128,
+                            width: 112,
                             child: Align(
                               alignment: Alignment.center,
                               child: Text(mode.label),
@@ -822,17 +824,21 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                         ),
                     ],
                   ),
-                  TextButton(
-                      onPressed: () => KazumiGlass.showSpeedPanel(
-                        context: context,
-                        currentSpeed: playerController.playback.playerSpeed,
-                        setPlaybackSpeed: widget.setPlaybackSpeed,
-                      ),
-                      child: Text(
-                        playerController.playback.playerSpeed == 1.0
-                            ? '倍速'
-                            : '${playerController.playback.playerSpeed}x',
-                        style: const TextStyle(color: Colors.white),
+                  Builder(
+                      // 面板要贴着这个按钮弹出来
+                      builder: (BuildContext speedContext) => TextButton(
+                        onPressed: () => KazumiGlass.showSpeedPanel(
+                          context: speedContext,
+                          currentSpeed:
+                              playerController.playback.playerSpeed,
+                          setPlaybackSpeed: widget.setPlaybackSpeed,
+                        ),
+                        child: Text(
+                          playerController.playback.playerSpeed == 1.0
+                              ? '倍速'
+                              : '${playerController.playback.playerSpeed}x',
+                          style: const TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                   PlayerPanelHoldMenuAnchor(
@@ -868,7 +874,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                               aspectRatioMode,
                           child: SizedBox(
                             height: 48,
-                            width: 128,
+                            width: 112,
                             child: Align(
                               alignment: Alignment.center,
                               child: Text(aspectRatioMode.label),
@@ -1012,7 +1018,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     },
                     child: SizedBox(
                       height: 48,
-                      width: 128,
+                      width: 112,
                       child: Align(
                         alignment: Alignment.center,
                         child: Text("弹幕切换"),
@@ -1028,7 +1034,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     },
                     child: SizedBox(
                       height: 48,
-                      width: 128,
+                      width: 112,
                       child: Align(
                         alignment: Alignment.center,
                         child: Text("视频详情"),
@@ -1053,7 +1059,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     },
                     child: SizedBox(
                       height: 48,
-                      width: 128,
+                      width: 112,
                       child: Align(
                         alignment: Alignment.center,
                         child: Text("远程投屏"),
@@ -1069,7 +1075,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     },
                     child: SizedBox(
                       height: 48,
-                      width: 128,
+                      width: 112,
                       child: Align(
                         alignment: Alignment.center,
                         child: Text("外部播放"),
@@ -1097,7 +1103,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     },
                     child: SizedBox(
                       height: 48,
-                      width: 128,
+                      width: 112,
                       child: Align(
                         alignment: Alignment.center,
                         child: ValueListenableBuilder<int>(
@@ -1128,7 +1134,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                         },
                         child: SizedBox(
                           height: 48,
-                          width: 128,
+                          width: 112,
                           child: const Align(
                             alignment: Alignment.center,
                             child: Text("不开启"),
@@ -1151,7 +1157,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                           },
                           child: SizedBox(
                             height: 48,
-                            width: 128,
+                            width: 112,
                             child: Align(
                               alignment: Alignment.center,
                               child: Text("$minutes 分钟"),
@@ -1169,7 +1175,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                         },
                         child: SizedBox(
                           height: 48,
-                          width: 128,
+                          width: 112,
                           child: Align(
                             alignment: Alignment.center,
                             child: Text("自定义"),
@@ -1187,7 +1193,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     },
                     child: SizedBox(
                       height: 48,
-                      width: 128,
+                      width: 112,
                       child: Align(
                         alignment: Alignment.center,
                         child: Text("一起看"),
