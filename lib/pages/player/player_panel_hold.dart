@@ -173,9 +173,17 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
           shape: KazumiGlass.panelShapeOf(context),
           // 上下留空 = 面板圆角 − 条目圆角，两个圆角同心
           padding: KazumiGlass.menuPanelPadding,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: widget.menuChildren,
+          // 子菜单（倍速…）是从这里长出来的，ScrollbarTheme 套在这一层才吃得到
+          child: ScrollbarTheme(
+            data: const ScrollbarThemeData(
+              thickness: WidgetStatePropertyAll(0),
+              thumbVisibility: WidgetStatePropertyAll(false),
+              trackVisibility: WidgetStatePropertyAll(false),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: widget.menuChildren,
+            ),
           ),
         ),
       ],
