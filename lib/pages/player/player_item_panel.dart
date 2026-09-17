@@ -804,14 +804,18 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     },
                     menuChildren: <Widget>[
                       for (final mode in SuperResolutionMode.values)
-                        MenuItemButton(
-                          onPressed: () =>
+                        KazumiGlass.menuItem(
+                          context: context,
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          selected: playerController.playback.superResolutionMode ==
+                              mode,
+                          onTap: () =>
                               widget.handleSuperResolutionChange(mode),
                           child: Container(
                             height: 48,
                             constraints: BoxConstraints(minWidth: 112),
                             child: Align(
-                              alignment: Alignment.centerLeft,
+                              alignment: Alignment.center,
                               child: Text(
                                 mode.label,
                                 style: TextStyle(
@@ -913,7 +917,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                             height: 40,
                             width: double.infinity,
                             child: Align(
-                              alignment: Alignment.centerLeft,
+                              alignment: Alignment.center,
                               child: Text(
                                 '${i}x',
                                 style: TextStyle(
@@ -959,7 +963,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                             height: 48,
                             constraints: BoxConstraints(minWidth: 112),
                             child: Align(
-                              alignment: Alignment.centerLeft,
+                              alignment: Alignment.center,
                               child: Text(
                                 aspectRatioMode.label,
                                 style: TextStyle(
@@ -1111,7 +1115,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       height: 48,
                       constraints: BoxConstraints(minWidth: 112),
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text("弹幕切换"),
                       ),
                     ),
@@ -1127,7 +1131,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       height: 48,
                       constraints: BoxConstraints(minWidth: 112),
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text("视频详情"),
                       ),
                     ),
@@ -1152,7 +1156,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       height: 48,
                       constraints: BoxConstraints(minWidth: 112),
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text("远程投屏"),
                       ),
                     ),
@@ -1168,7 +1172,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       height: 48,
                       constraints: BoxConstraints(minWidth: 112),
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text("外部播放"),
                       ),
                     ),
@@ -1201,7 +1205,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                           height: 48,
                           constraints: BoxConstraints(minWidth: 112),
                           child: Align(
-                            alignment: Alignment.centerLeft,
+                            alignment: Alignment.center,
                             child: Text(
                               "不开启",
                               style: TextStyle(
@@ -1226,7 +1230,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                             height: 48,
                             constraints: BoxConstraints(minWidth: 112),
                             child: Align(
-                              alignment: Alignment.centerLeft,
+                              alignment: Alignment.center,
                               child: Text(
                                 "$minutes 分钟",
                                 style: TextStyle(
@@ -1252,7 +1256,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                           height: 48,
                           constraints: BoxConstraints(minWidth: 112),
                           child: Align(
-                            alignment: Alignment.centerLeft,
+                            alignment: Alignment.center,
                             child: Text("自定义"),
                           ),
                         ),
@@ -1264,7 +1268,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       height: 48,
                       constraints: BoxConstraints(minWidth: 112),
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: ValueListenableBuilder<int>(
                           valueListenable:
                               TimedShutdownService().remainingSecondsNotifier,
@@ -1290,7 +1294,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                       height: 48,
                       constraints: BoxConstraints(minWidth: 112),
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text("一起看"),
                       ),
                     ),

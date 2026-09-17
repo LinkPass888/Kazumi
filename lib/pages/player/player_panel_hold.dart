@@ -139,14 +139,12 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
 
   @override
   Widget build(BuildContext context) {
-    // 滚动条缩短并避开圆角（菜单面板由 MenuAnchor 在 overlay 里建，
-    // 继承的是这里的 Theme）
+    // 菜单不要滚动条（倍速那种长列表会把滚动条压在圆角上）
     return ScrollbarTheme(
-      data: ScrollbarThemeData(
-        thickness: const WidgetStatePropertyAll(3),
-        mainAxisMargin: 14,
-        crossAxisMargin: 4,
-        radius: const Radius.circular(2),
+      data: const ScrollbarThemeData(
+        thickness: WidgetStatePropertyAll(0),
+        thumbVisibility: WidgetStatePropertyAll(false),
+        trackVisibility: WidgetStatePropertyAll(false),
       ),
       child: MenuAnchor(
       // 播放器的弹出菜单（倍速、超分辨率…）统一用和别的菜单一样的圆角
