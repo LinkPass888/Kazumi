@@ -629,13 +629,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   );
                 },
                 menuChildren: <Widget>[
-                  KazumiGlass.glassSurface(
-                    shape: KazumiGlass.panelShapeOf(context),
-                    padding: KazumiGlass.menuPanelPadding,
-                    // 12 条倍速：这里自己限高 + 自己滚，于是框架那层的
-                    // 滚动条不会出现（它只在内容真的溢出时才画），
-                    // 打开时把当前倍速滚到第二行
-                    child: ConstrainedBox(
+                  ConstrainedBox(
                       constraints: const BoxConstraints(maxHeight: 216.0),
                       child: SingleChildScrollView(
                         controller: ScrollController(
