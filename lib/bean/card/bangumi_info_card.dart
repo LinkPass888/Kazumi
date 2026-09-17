@@ -87,6 +87,8 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
         return AlertDialog(
           title: const Text('选择放送星期'),
           content: Wrap(
+            // 居中分布：左右余量相等，两侧离边框的距离就一样
+            alignment: WrapAlignment.center,
             spacing: 8,
             runSpacing: 8,
             children: [

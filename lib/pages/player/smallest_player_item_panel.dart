@@ -542,7 +542,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                         height: 48,
                         constraints: BoxConstraints(minWidth: 112),
                         child: Align(
-                          alignment: Alignment.centerLeft,
+                          alignment: Alignment.center,
                           child: Text(
                             aspectRatioMode.label,
                             style: TextStyle(
@@ -559,7 +559,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   height: 48,
                   constraints: BoxConstraints(minWidth: 112),
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Text("视频比例"),
                   ),
                 ),
@@ -577,7 +577,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                         height: 48,
                         constraints: BoxConstraints(minWidth: 112),
                         child: Align(
-                          alignment: Alignment.centerLeft,
+                          alignment: Alignment.center,
                           child: Text(
                             '${i}x',
                             style: TextStyle(
@@ -595,7 +595,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   height: 48,
                   constraints: BoxConstraints(minWidth: 112),
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Text("倍速"),
                   ),
                 ),
@@ -610,7 +610,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                         height: 48,
                         constraints: BoxConstraints(minWidth: 112),
                         child: Align(
-                          alignment: Alignment.centerLeft,
+                          alignment: Alignment.center,
                           child: Text(
                             mode.label,
                             style: TextStyle(
@@ -629,7 +629,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   height: 48,
                   constraints: BoxConstraints(minWidth: 112),
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Text("超分辨率"),
                   ),
                 ),
@@ -643,7 +643,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   height: 48,
                   constraints: BoxConstraints(minWidth: 112),
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Text("一起看"),
                   ),
                 ),
@@ -657,7 +657,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   height: 48,
                   constraints: BoxConstraints(minWidth: 112),
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Text("弹幕切换"),
                   ),
                 ),
@@ -678,7 +678,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   height: 48,
                   constraints: BoxConstraints(minWidth: 112),
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Text("弹幕设置"),
                   ),
                 ),
@@ -692,7 +692,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   height: 48,
                   constraints: BoxConstraints(minWidth: 112),
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Text("视频详情"),
                   ),
                 ),
@@ -715,7 +715,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   height: 48,
                   constraints: BoxConstraints(minWidth: 112),
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Text("远程投屏"),
                   ),
                 ),
@@ -729,7 +729,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   height: 48,
                   constraints: BoxConstraints(minWidth: 112),
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: Text("外部播放"),
                   ),
                 ),
@@ -745,7 +745,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                       height: 48,
                       constraints: BoxConstraints(minWidth: 112),
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text(
                           "不开启",
                           style: TextStyle(
@@ -771,7 +771,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                         height: 48,
                         constraints: BoxConstraints(minWidth: 112),
                         child: Align(
-                          alignment: Alignment.centerLeft,
+                          alignment: Alignment.center,
                           child: Text(
                             "$minutes 分钟",
                             style: TextStyle(
@@ -795,7 +795,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                       height: 48,
                       constraints: BoxConstraints(minWidth: 112),
                       child: Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         child: Text("自定义"),
                       ),
                     ),
@@ -805,7 +805,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   height: 48,
                   constraints: BoxConstraints(minWidth: 112),
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: ValueListenableBuilder<int>(
                       valueListenable:
                           TimedShutdownService().remainingSecondsNotifier,
