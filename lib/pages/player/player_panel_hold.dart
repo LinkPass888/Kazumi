@@ -178,15 +178,17 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
           // 子菜单（比例/倍速/超分）的面板样式只能由 MenuTheme 给，
           // SubmenuButton 的 style 是 ButtonStyle 不是 MenuStyle。
           child: MenuTheme(
-            data: MenuStyle(
+            data: MenuThemeData(
+              style: MenuStyle(
               backgroundColor:
                   const WidgetStatePropertyAll(Colors.transparent),
               elevation: const WidgetStatePropertyAll(0),
               padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-              shape: WidgetStatePropertyAll(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(KazumiGlass.panelRadiusOf(context)),
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(KazumiGlass.panelRadiusOf(context)),
+                    ),
                   ),
                 ),
               ),
