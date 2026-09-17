@@ -288,17 +288,18 @@ abstract final class KazumiGlass {
 
   /// 倍速选择面板：一块玻璃 + 逐个列出的倍速（和原来的倍速菜单同样的排布）。
   ///
-  /// 两点讲究：
+  /// 几点讲究：
   /// - 不进 menuChildren：框架会给菜单内容套一层自带滚动条、而且常显的滚动视图，
-  ///   那条滚动条会压在当前倍速的选中块上（横屏尤其明显，ScrollbarTheme 在子菜单
-  ///   这条链路上也照不到）。这里自己控制滚动：只滚动、不画滚动条。
-  /// - 贴着触发它的按钮「上方」弹出；横屏屏幕矮，最多只显示四行。
+  ///   那条滚动条会压在当前倍速的选中块上。这里自己控制滚动：只滚动、不画滚动条。
+  /// - 竖屏居中弹出（和其它弹窗一样）；横屏贴着按钮上方、再整体左移一点
+  ///   （横屏按钮挤在右下角，居中会被画面挡住）。
+  /// - 横屏屏幕矮，只露四行；打开时把当前倍速滚到第二行，上下都看得见。
   static Future<void> showSpeedPanel({
     required BuildContext context,
     required double currentSpeed,
     required Future<void> Function(double) setPlaybackSpeed,
   }) {
-    // 拿触发按钮的位置来定位面板
+    // 拿触发按钮的位置来定位面板（横屏用）
     Offset? anchorTopLeft;
     double? anchorCenterX;
     final RenderObject? anchorBox = context.findRenderObject();
@@ -306,20 +307,28 @@ abstract final class KazumiGlass {
       anchorTopLeft = anchorBox.localToGlobal(Offset.zero);
       anchorCenterX = anchorTopLeft.dx + anchorBox.size.width / 2;
     }
+    // 一条条目占的高度：48 的内容 + menuItem 上下各 3 的留白
+    const double rowHeight = 48 + 6;
+    final int index = defaultPlaySpeedList.indexOf(currentSpeed);
+    // 当前倍速落在第二行：第一行留一个上一条，眼睛有上下文
+    final ScrollController scrollController = ScrollController(
+      initialScrollOffset: index <= 1 ? 0 : (index - 1) * rowHeight,
+    );
     return showDialog<void>(
       context: context,
       barrierColor: Colors.black26,
       builder: (BuildContext ctx) {
         final TextTheme text = Theme.of(ctx).textTheme;
         final Size screen = MediaQuery.of(ctx).size;
-        // 横屏屏幕矮：四行封顶；竖屏最多八行
-        final int rows = screen.width > screen.height ? 4 : 8;
+        final bool landscape = screen.width > screen.height;
+        final int rows = landscape ? 4 : 8;
         const double panelWidth = 118;
-        final double panelHeight = rows * 48.0 + 12;
+        // 高度要把条目之间的留白也算上，否则第四行露不全
+        final double panelHeight = rows * rowHeight + menuPanelPadding.vertical;
         double left = (screen.width - panelWidth) / 2;
         double bottom = (screen.height - panelHeight) / 2;
-        if (anchorTopLeft != null && anchorCenterX != null) {
-          left = (anchorCenterX - panelWidth / 2)
+        if (landscape && anchorTopLeft != null && anchorCenterX != null) {
+          left = (anchorCenterX - panelWidth / 2 - 60)
               .clamp(8.0, screen.width - panelWidth - 8);
           // 面板底边落在按钮上方 8
           bottom = (screen.height - anchorTopLeft.dy + 8)
@@ -344,6 +353,7 @@ abstract final class KazumiGlass {
                       child: ConstrainedBox(
                         constraints: BoxConstraints(maxHeight: panelHeight),
                         child: SingleChildScrollView(
+                          controller: scrollController,
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[

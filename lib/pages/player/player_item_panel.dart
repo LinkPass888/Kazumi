@@ -786,8 +786,13 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
                     onVisibilityChanged: widget.onMenuVisibilityChanged,
                     consumeOutsideTap: true,
-                    // 横屏按钮贴着屏幕底部，往下弹会出屏：顶到按钮上方
-                    alignmentOffset: const Offset(0, -240),
+                    // 显式声明对齐方向：给了 AlignmentDirectional，
+                    // alignmentOffset.dx 才按「正数往左」解释
+                    style: const MenuStyle(
+                      alignment: AlignmentDirectional.topStart,
+                    ),
+                    // 横屏按钮贴着屏幕底部：往上顶，再往左挪 30
+                    alignmentOffset: const Offset(30, -240),
                     builder: (BuildContext context, MenuController controller,
                         Widget? child) {
                       return TextButton(
