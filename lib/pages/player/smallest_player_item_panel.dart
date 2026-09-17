@@ -591,50 +591,93 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                     ),
                 ],
               ),
-              Builder(
-                // 倍速面板要贴着这个条目的位置弹出来，所以把条目自己的
-                // context 传下去（面板靠它算按钮的位置）
-                builder: (BuildContext speedContext) => KazumiGlass.menuItem(
-                  context: speedContext,
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  // 打开倍速面板时不要顺手把更多菜单关掉（面板是浮在它上面的），
-                  // 等选完速度、或者点外面把面板关掉，再把更多菜单一起收起来
-                  closeMenu: false,
-                  onTap: () async {
-                    final MenuController? parentMenu =
-                        MenuController.maybeOf(speedContext);
-                    final RenderBox? itemBox =
-                        speedContext.findRenderObject() as RenderBox?;
-                    // 这一项所在的那一列就是更多菜单的面板：
-                    // 点在这一列里 -> 只关倍速面板（和其它子菜单一样）；
-                    // 点在别处 -> 倍速面板和更多菜单一起关
-                    final bool closeAll =
-                        await KazumiGlass.showSpeedPanel(
-                      context: speedContext,
-                      currentSpeed: playerController.playback.playerSpeed,
-                      setPlaybackSpeed: widget.setPlaybackSpeed,
-                      // 让面板下沿和超分辨率菜单的下沿齐平（只影响横屏）
-                      bottomGap: 18,
-                      menuLeft: itemBox != null && itemBox.hasSize
-                          ? itemBox.localToGlobal(Offset.zero).dx
-                          : null,
-                    );
-                    if (closeAll) {
-                      parentMenu?.close();
-                    }
-                  },
-                  child: SizedBox(
-                    height: 48,
-                    width: 112,
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        "倍速",
-                        style: Theme.of(context).textTheme.labelLarge,
+              PlayerPanelHoldMenuAnchor(
+                acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
+                onVisibilityChanged: widget.onMenuVisibilityChanged,
+                consumeOutsideTap: true,
+                // 只挪横屏：下沿和超分辨率菜单的下沿齐平
+                alignmentOffset:
+                    MediaQuery.of(context).size.width >
+                            MediaQuery.of(context).size.height
+                        ? const Offset(-30, -240)
+                        : null,
+                builder: (BuildContext context, MenuController controller,
+                    Widget? child) {
+                  // 触发条目就是普通玻璃条目，和别的条目同款
+                  return KazumiGlass.menuItem(
+                    context: context,
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    closeMenu: false,
+                    onTap: () {
+                      if (controller.isOpen) {
+                        controller.close();
+                      } else {
+                        controller.open();
+                      }
+                    },
+                    child: SizedBox(
+                      height: 48,
+                      width: 112,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "倍速",
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                menuChildren: <Widget>[
+                  KazumiGlass.glassSurface(
+                    shape: KazumiGlass.panelShapeOf(context),
+                    padding: KazumiGlass.menuPanelPadding,
+                    // 12 条倍速：这里自己限高 + 自己滚，于是框架那层的
+                    // 滚动条不会出现（它只在内容真的溢出时才画），
+                    // 打开时把当前倍速滚到第二行
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 216.0),
+                      child: SingleChildScrollView(
+                        controller: ScrollController(
+                          initialScrollOffset: () {
+                            final int idx = defaultPlaySpeedList
+                                .indexOf(playerController.playback.playerSpeed);
+                            return idx <= 1 ? 0.0 : (idx - 1) * 54.0;
+                          }(),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            for (final double i in defaultPlaySpeedList)
+                            KazumiGlass.menuItem(
+                              context: context,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 14),
+                              selected:
+                                  i == playerController.playback.playerSpeed,
+                              onTap: () async {
+                                await widget.setPlaybackSpeed(i);
+                              },
+                              child: SizedBox(
+                                height: 48,
+                                width: 112,
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    '${i}x',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
               PlayerPanelHoldMenuAnchor(
                 acquirePlayerPanelHold: widget.acquirePlayerPanelHold,

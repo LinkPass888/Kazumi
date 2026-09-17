@@ -830,23 +830,84 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                         ),
                     ],
                   ),
-                  Builder(
-                      // 面板要贴着这个按钮弹出来
-                      builder: (BuildContext speedContext) => TextButton(
-                        onPressed: () => KazumiGlass.showSpeedPanel(
-                          context: speedContext,
-                          currentSpeed:
-                              playerController.playback.playerSpeed,
-                          setPlaybackSpeed: widget.setPlaybackSpeed,
-                        ),
+                  PlayerPanelHoldMenuAnchor(
+                    acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
+                    onVisibilityChanged: widget.onMenuVisibilityChanged,
+                    consumeOutsideTap: true,
+                    // 只挪横屏：和超分辨率菜单（同处工具栏）下沿齐平
+                    alignmentOffset: MediaQuery.of(context).size.width >
+                            MediaQuery.of(context).size.height
+                        ? const Offset(-30, -294)
+                        : null,
+                    builder: (BuildContext context, MenuController controller,
+                        Widget? child) {
+                      return TextButton(
+                        onPressed: () {
+                          if (controller.isOpen) {
+                            controller.close();
+                          } else {
+                            controller.open();
+                          }
+                        },
                         child: Text(
                           playerController.playback.playerSpeed == 1.0
                               ? '倍速'
                               : '${playerController.playback.playerSpeed}x',
                           style: const TextStyle(color: Colors.white),
                         ),
+                      );
+                    },
+                    menuChildren: <Widget>[
+                      KazumiGlass.glassSurface(
+                    shape: KazumiGlass.panelShapeOf(context),
+                    padding: KazumiGlass.menuPanelPadding,
+                    // 12 条倍速：这里自己限高 + 自己滚，于是框架那层的
+                    // 滚动条不会出现（它只在内容真的溢出时才画），
+                    // 打开时把当前倍速滚到第二行
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 216.0),
+                      child: SingleChildScrollView(
+                        controller: ScrollController(
+                          initialScrollOffset: () {
+                            final int idx = defaultPlaySpeedList
+                                .indexOf(playerController.playback.playerSpeed);
+                            return idx <= 1 ? 0.0 : (idx - 1) * 54.0;
+                          }(),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            for (final double i in defaultPlaySpeedList)
+                            KazumiGlass.menuItem(
+                              context: context,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 14),
+                              selected:
+                                  i == playerController.playback.playerSpeed,
+                              onTap: () async {
+                                await widget.setPlaybackSpeed(i);
+                              },
+                              child: SizedBox(
+                                height: 48,
+                                width: 112,
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    '${i}x',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
+                  ),
+                    ],
+                  ),
                   PlayerPanelHoldMenuAnchor(
                     acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
                     onVisibilityChanged: widget.onMenuVisibilityChanged,
