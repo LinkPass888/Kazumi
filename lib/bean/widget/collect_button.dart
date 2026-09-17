@@ -36,6 +36,8 @@ class CollectButton extends StatefulWidget {
 }
 
 class _CollectButtonState extends State<CollectButton> {
+  /// 量一下按钮自己的宽度，菜单面板跟它对齐。
+  final GlobalKey _anchorKey = GlobalKey();
   // 1. 在看
   // 2. 想看
   // 3. 搁置
@@ -111,7 +113,9 @@ class _CollectButtonState extends State<CollectButton> {
       ),
       builder: (_, MenuController controller, __) {
         if (widget.isExtended) {
-          return FilledButton.icon(
+          return KeyedSubtree(
+            key: _anchorKey,
+            child: FilledButton.icon(
             onPressed: () {
               if (controller.isOpen) {
                 controller.close();
@@ -120,7 +124,8 @@ class _CollectButtonState extends State<CollectButton> {
               }
             },
             icon: Icon(getIconByInt(collectType)),
-            label: Text(getTypeStringByInt(collectType)),
+              label: Text(getTypeStringByInt(collectType)),
+            ),
           );
         } else {
           return IconButton(
@@ -147,7 +152,8 @@ class _CollectButtonState extends State<CollectButton> {
           // 上下留空，和热门番组的菜单一致：条目高亮的圆角才和面板平行
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: SizedBox(
-            width: 176,
+            // 和详情页那个收藏按钮一样宽
+            width: _anchorKey.currentContext?.size?.width ?? 176,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -139,10 +139,16 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
 
   @override
   Widget build(BuildContext context) {
+    final MenuStyle base = widget.style ?? const MenuStyle();
+    final Size? fixed = base.fixedSize?.resolve(const <WidgetState>{});
     return MenuAnchor(
-      // 播放器的弹出菜单（倍速、超分辨率…）统一用和别的菜单一样的圆角
-      style: (widget.style ?? const MenuStyle()).merge(
+      // 播放器的弹出菜单（倍速、超分辨率…）和别的菜单一样：面板透明、圆角一致，
+      // 真正的面板由下面那块玻璃画。
+      style: base.merge(
         MenuStyle(
+          backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+          elevation: const WidgetStatePropertyAll(0),
+          padding: const WidgetStatePropertyAll(EdgeInsets.zero),
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
@@ -156,7 +162,33 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
       onOpen: _handleOpen,
       onClose: _handleClose,
       builder: widget.builder,
-      menuChildren: widget.menuChildren,
+      menuChildren: [
+        KazumiGlass.glassSurface(
+          shape: KazumiGlass.panelShapeOf(context),
+          child: SizedBox(
+            width: fixed?.width,
+            height: fixed?.height,
+            child: fixed?.height != null
+                // 定高面板（倍速菜单）：条目在里面滚，滚动条两端避开圆角
+                ? Scrollbar(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 2,
+                    ),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: widget.menuChildren,
+                      ),
+                    ),
+                  )
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: widget.menuChildren,
+                  ),
+          ),
+        ),
+      ],
     );
   }
 }
