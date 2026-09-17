@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kazumi/services/storage/storage.dart';
-import 'package:kazumi/utils/constants.dart';
 import 'package:real_liquid_glass/real_liquid_glass.dart';
 
 /// 液态玻璃（iOS 26 Liquid Glass）适配的统一入口。
@@ -242,93 +241,13 @@ abstract final class KazumiGlass {
         selected: selected,
         radius: radius ?? menuItemRadiusOf(context),
         wrapInGlass: false,
-        child: child,
+        // 同一块面板里的条目必须同一套字：菜单条目统一 labelLarge，
+        // 免得「一起看」这类和「定时关闭」那类条目的字号字重不一样。
+        child: DefaultTextStyle(
+          style: Theme.of(context).textTheme.labelLarge,
+          child: child,
+        ),
       ),
-    );
-  }
-
-  /// 倍速选择面板：一整块玻璃 + 三列条目。
-  ///
-  /// 刻意不放进菜单（MenuAnchor 的 menuChildren）：只要进了 menuChildren，框架
-  /// 就会在外面套一层自带滚动条、且常显的滚动视图，玻璃面板也跟着一起滚，两侧
-  /// 高光就跟着跑。这里用一个普通弹窗装一块玻璃面板，内容排满即止、不滚动。
-  ///
-  /// 三列固定宽度，横竖屏排布完全一致，不会出现竖屏被折成一条长龙。
-  static Future<void> showSpeedPanel({
-    required BuildContext context,
-    required double currentSpeed,
-    required Future<void> Function(double) setPlaybackSpeed,
-  }) {
-    const double cellWidth = 88;
-    return showDialog<void>(
-      context: context,
-      barrierColor: Colors.black26,
-      builder: (BuildContext ctx) {
-        final TextTheme text = Theme.of(ctx).textTheme;
-        return Center(
-          child: glassSurface(
-            shape: panelShapeOf(ctx),
-            padding: menuPanelPadding,
-            // 弹窗里没有 Material 祖先，文字会掉回默认样式（黑色 14px），
-            // 所以补一层透明 Material，让字体和颜色跟菜单条目一模一样。
-            child: Material(
-              type: MaterialType.transparency,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8, bottom: 4),
-                    child: Text('播放速度', style: text.titleSmall),
-                  ),
-                  SizedBox(
-                    width: cellWidth * 3,
-                    child: Wrap(
-                      children: <Widget>[
-                        for (final double speed in defaultPlaySpeedList)
-                          SizedBox(
-                            width: cellWidth,
-                            child: menuItem(
-                              context: ctx,
-                              padding: EdgeInsets.zero,
-                              selected: speed == currentSpeed,
-                              onTap: () async {
-                                Navigator.of(ctx).pop();
-                                await setPlaybackSpeed(speed);
-                              },
-                              child: SizedBox(
-                                height: 44,
-                                child: Center(
-                                  child: Text(
-                                    '${speed}x',
-                                    style: text.labelLarge,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  menuItem(
-                    context: ctx,
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
-                    onTap: () async {
-                      Navigator.of(ctx).pop();
-                      await setPlaybackSpeed(1.0);
-                    },
-                    child: SizedBox(
-                      height: 44,
-                      child: Center(
-                        child: Text('默认速度', style: text.labelLarge),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 

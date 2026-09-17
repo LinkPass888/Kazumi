@@ -813,9 +813,9 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                               widget.handleSuperResolutionChange(mode),
                           child: Container(
                             height: 48,
-                            constraints: BoxConstraints(minWidth: 112),
+                            width: 150,
                             child: Align(
-                              alignment: Alignment.center,
+                              alignment: Alignment.centerLeft,
                               child: Text(mode.label),
                             ),
                           ),
@@ -823,11 +823,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     ],
                   ),
                   TextButton(
-                      onPressed: () => KazumiGlass.showSpeedPanel(
-                        context: context,
-                        currentSpeed: playerController.playback.playerSpeed,
-                        setPlaybackSpeed: widget.setPlaybackSpeed,
-                      ),
+                      onPressed: () => showSetSpeedSheet(),
                       child: Text(
                         playerController.playback.playerSpeed == 1.0
                             ? '倍速'
@@ -868,9 +864,9 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                               aspectRatioMode,
                           child: Container(
                             height: 48,
-                            constraints: BoxConstraints(minWidth: 112),
+                            width: 150,
                             child: Align(
-                              alignment: Alignment.center,
+                              alignment: Alignment.centerLeft,
                               child: Text(aspectRatioMode.label),
                             ),
                           ),
@@ -1012,9 +1008,9 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     },
                     child: Container(
                       height: 48,
-                      constraints: BoxConstraints(minWidth: 112),
+                      width: 150,
                       child: Align(
-                        alignment: Alignment.center,
+                        alignment: Alignment.centerLeft,
                         child: Text("弹幕切换"),
                       ),
                     ),
@@ -1028,9 +1024,9 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     },
                     child: Container(
                       height: 48,
-                      constraints: BoxConstraints(minWidth: 112),
+                      width: 150,
                       child: Align(
-                        alignment: Alignment.center,
+                        alignment: Alignment.centerLeft,
                         child: Text("视频详情"),
                       ),
                     ),
@@ -1053,9 +1049,9 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     },
                     child: Container(
                       height: 48,
-                      constraints: BoxConstraints(minWidth: 112),
+                      width: 150,
                       child: Align(
-                        alignment: Alignment.center,
+                        alignment: Alignment.centerLeft,
                         child: Text("远程投屏"),
                       ),
                     ),
@@ -1069,9 +1065,9 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     },
                     child: Container(
                       height: 48,
-                      constraints: BoxConstraints(minWidth: 112),
+                      width: 150,
                       child: Align(
-                        alignment: Alignment.center,
+                        alignment: Alignment.centerLeft,
                         child: Text("外部播放"),
                       ),
                     ),
@@ -1109,9 +1105,9 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                         },
                         child: Container(
                           height: 48,
-                          constraints: BoxConstraints(minWidth: 112),
+                          width: 150,
                           child: const Align(
-                            alignment: Alignment.center,
+                            alignment: Alignment.centerLeft,
                             child: Text("不开启"),
                           ),
                         ),
@@ -1132,9 +1128,9 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                           },
                           child: Container(
                             height: 48,
-                            constraints: BoxConstraints(minWidth: 112),
+                            width: 150,
                             child: Align(
-                              alignment: Alignment.center,
+                              alignment: Alignment.centerLeft,
                               child: Text("$minutes 分钟"),
                             ),
                           ),
@@ -1150,9 +1146,9 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                         },
                         child: Container(
                           height: 48,
-                          constraints: BoxConstraints(minWidth: 112),
+                          width: 150,
                           child: Align(
-                            alignment: Alignment.center,
+                            alignment: Alignment.centerLeft,
                             child: Text("自定义"),
                           ),
                         ),
@@ -1162,9 +1158,9 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                 ],
                     child: Container(
                       height: 48,
-                      constraints: BoxConstraints(minWidth: 112),
+                      width: 150,
                       child: Align(
-                        alignment: Alignment.center,
+                        alignment: Alignment.centerLeft,
                         child: ValueListenableBuilder<int>(
                           valueListenable:
                               TimedShutdownService().remainingSecondsNotifier,
@@ -1176,6 +1172,8 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                                   remainingSeconds > 0
                                       ? "定时关闭 (${TimedShutdownService().formatRemainingTime()})"
                                       : "定时关闭",
+                                  style:
+                                      Theme.of(context).textTheme.labelLarge,
                                 ),
                                 const SizedBox(width: 2),
                                 Icon(
@@ -1201,9 +1199,9 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     },
                     child: Container(
                       height: 48,
-                      constraints: BoxConstraints(minWidth: 112),
+                      width: 150,
                       child: Align(
-                        alignment: Alignment.center,
+                        alignment: Alignment.centerLeft,
                         child: Text("一起看"),
                       ),
                     ),
