@@ -589,59 +589,12 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                   ),
                 ),
               ),
-              SubmenuButton(
-                menuStyle: MenuStyle(
-                backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
-                elevation: const WidgetStatePropertyAll(0),
-                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                shape: WidgetStatePropertyAll(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(KazumiGlass.panelRadiusOf(context)),
-                    ),
-                  ),
-                ),
-              ),
-                              menuChildren: <Widget>[
-                  KazumiGlass.glassSurface(
-                    shape: KazumiGlass.panelShapeOf(context),
-                    padding: KazumiGlass.menuPanelPadding,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                  for (final double i
-                      in defaultPlaySpeedList) ...<Widget>[
-                    KazumiGlass.menuItem(
-                      context: context,
-                      // 四周等距：横向 14，纵向由条目高 48 撑开
-                      padding: const EdgeInsets.all(14),
-                      selected:
-                          i == playerController.playback.playerSpeed,
-                      onTap: () async {
-                        await widget.setPlaybackSpeed(i);
-                      },
-                      child: SizedBox(
-                        height: 48,
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            '${i}x',
-                            style: TextStyle(
-                                color:
-                                    i == playerController.playback.playerSpeed
-                                        ? Theme.of(context).colorScheme.primary
-                                        : null),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ],),
-                  ),
-                ],
-                child: Container(
+              KazumiGlass.menuItem(
+                context: context,
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                onTap: () => _showSpeedDialog(context, widget.setPlaybackSpeed),
+                child: SizedBox(
                   height: 48,
-                  constraints: BoxConstraints(minWidth: 112),
                   child: Align(
                     alignment: Alignment.center,
                     child: Text("倍速"),
@@ -937,4 +890,51 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
       ),
     );
   }
+}
+
+
+/// 倍速改成原生 Flutter 弹窗（和上游 PlayerItemPanel 的 showSetSpeedSheet 一致）：
+/// 不滚动、没有玻璃面板，滚动条 / 跟随滚动的高光 / 深色填充贴合这三条都不存在。
+void _showSpeedDialog(
+  BuildContext context,
+  Future<void> Function(double) setSpeed,
+) {
+  final double currentSpeed = playerController.playback.playerSpeed;
+  showDialog<void>(
+    context: context,
+    builder: (BuildContext ctx) => AlertDialog(
+      title: const Text('播放速度'),
+      content: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: <Widget>[
+          for (final double i in defaultPlaySpeedList)
+            i == currentSpeed
+                ? FilledButton(
+                    onPressed: () async {
+                      await setSpeed(i);
+                      Navigator.of(ctx).pop();
+                    },
+                    child: Text(i.toString()),
+                  )
+                : FilledButton.tonal(
+                    onPressed: () async {
+                      await setSpeed(i);
+                      Navigator.of(ctx).pop();
+                    },
+                    child: Text(i.toString()),
+                  ),
+        ],
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () async {
+            await setSpeed(1.0);
+            Navigator.of(ctx).pop();
+          },
+          child: const Text('默认速度'),
+        ),
+      ],
+    ),
+  );
 }
