@@ -91,18 +91,20 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
             runSpacing: 8,
             children: [
               for (int index = 1; index <= 7; index++)
-                KazumiGlass.glassButton(
-                  context: context,
-                  // 尺寸对齐收藏状态菜单的条目，别搞得比它宽
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 10,
+                // 尺寸写死：原生玻璃视图在 Wrap 里会被撑到可用宽度，
+                // 靠 padding 撑不出大小，必须给死宽高（和详情页收藏按钮一致）
+                SizedBox(
+                  width: 96,
+                  height: 40,
+                  child: KazumiGlass.glassButton(
+                    context: context,
+                    padding: EdgeInsets.zero,
+                    selected: index == weekday,
+                    onTap: () {
+                      KazumiDialog.dismiss<int>(popWith: index);
+                    },
+                    child: Text(weekdayCnLabel(index)),
                   ),
-                  selected: index == weekday,
-                  onTap: () {
-                    KazumiDialog.dismiss<int>(popWith: index);
-                  },
-                  child: Text(weekdayCnLabel(index)),
                 ),
               ],
             ),
