@@ -8,7 +8,7 @@ on:
       - "ci-debug"
 
 env:
-  HEAD_BRANCH: "fix/remove-soft-blur"
+  HEAD_BRANCH: "feat/liquid-glass"
 
 jobs:
   debug:
