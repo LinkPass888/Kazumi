@@ -592,11 +592,19 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 builder: (BuildContext speedContext) => KazumiGlass.menuItem(
                   context: speedContext,
                   padding: const EdgeInsets.symmetric(horizontal: 14),
-                  onTap: () => KazumiGlass.showSpeedPanel(
-                    context: speedContext,
-                    currentSpeed: playerController.playback.playerSpeed,
-                    setPlaybackSpeed: widget.setPlaybackSpeed,
-                  ),
+                  // 打开倍速面板时不要顺手把更多菜单关掉（面板是浮在它上面的），
+                  // 等选完速度、或者点外面把面板关掉，再把更多菜单一起收起来
+                  closeMenu: false,
+                  onTap: () async {
+                    final MenuController? parentMenu =
+                        MenuController.maybeOf(speedContext);
+                    await KazumiGlass.showSpeedPanel(
+                      context: speedContext,
+                      currentSpeed: playerController.playback.playerSpeed,
+                      setPlaybackSpeed: widget.setPlaybackSpeed,
+                    );
+                    parentMenu?.close();
+                  },
                   child: SizedBox(
                     height: 48,
                     width: 112,
@@ -614,13 +622,15 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                 acquirePlayerPanelHold: widget.acquirePlayerPanelHold,
                 onVisibilityChanged: widget.onMenuVisibilityChanged,
                 consumeOutsideTap: true,
-                    // 显式声明对齐方向：给了 AlignmentDirectional，
-                    // alignmentOffset.dx 才按「正数往左」解释
-                    style: const MenuStyle(
-                      alignment: AlignmentDirectional.topStart,
-                    ),
-                    // 横屏按钮贴着屏幕底部：往上顶，再往左挪 30
-                    alignmentOffset: const Offset(30, -240),
+                    // 只挪横屏：横屏按钮挤在右下角，面板正对会被画面挡。
+                    // 竖屏保持框架默认位置（之前误改了竖屏，这里回退）。
+                    // 注意 dy 对竖向菜单没用 —— 框架在 parentOrientation 是
+                    // vertical 时会忽略 alignmentOffset.dy，所以只给 dx：
+                    // 这个方向上正数表示把面板再往左挪。
+                    alignmentOffset: MediaQuery.of(context).size.width >
+                            MediaQuery.of(context).size.height
+                        ? const Offset(30, 0)
+                        : null,
                 builder: (BuildContext context, MenuController controller,
                     Widget? child) {
                   // 触发条目本身就是普通玻璃条目：和别的条目同一个 widget、
