@@ -885,7 +885,10 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                     context: context,
                     // 四周等距：横向 14，纵向由条目高 48 撑开
                     padding: const EdgeInsets.symmetric(horizontal: 14),
-                    selected: !TimedShutdownService().isActive,
+                    // 点完只关这个二级菜单，一级的「更多」面板继续留着
+                    closeLevel: KazumiMenuCloseLevel.current,
+                    // 原来这里是 selected: !isActive，一打开「不开启」就是深色
+                    // 选中态，像已经点过一样 —— 去掉，默认不带填充
                     onTap: () {
                       TimedShutdownService().cancel();
                     },
@@ -903,6 +906,8 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                       context: context,
                       // 四周等距：横向 14，纵向由条目高 48 撑开
                       padding: const EdgeInsets.symmetric(horizontal: 14),
+                      // 点完只关这个二级菜单（和「不开启」一致）
+                      closeLevel: KazumiMenuCloseLevel.current,
                       selected: TimedShutdownService().setMinutes == minutes,
                       onTap: () {
                         TimedShutdownService().start(minutes,
@@ -924,6 +929,8 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                     context: context,
                     // 四周等距：横向 14，纵向由条目高 48 撑开
                     padding: const EdgeInsets.symmetric(horizontal: 14),
+                    // 点「自定义」只关二级菜单（和上面几项一致）
+                    closeLevel: KazumiMenuCloseLevel.current,
                     onTap: () {
                       TimedShutdownService.showCustomTimerDialog(
                         onExpired: widget.pauseForTimedShutdown,

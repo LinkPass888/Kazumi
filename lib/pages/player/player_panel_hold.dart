@@ -193,6 +193,9 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
         // 一级条目点下去 -> 只关本层（上层作用域为空时就是这个效果）；
         // 二级条目点下去 -> 关自己 + 关它所在的那层菜单。
         KazumiMenuCloseScope(
+          // 只关本层：定时关闭那种「选完时间，上面的一级面板继续留着」
+          closeSelf: () => _controller?.close(),
+          // 本层 + 上层：二级项点完整条菜单链收起来
           closeAll: () {
             _controller?.close();
             _parentCloseScope?.closeAll();

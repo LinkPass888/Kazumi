@@ -3,10 +3,29 @@ import 'package:flutter/services.dart';
 import 'package:kazumi/services/storage/storage.dart';
 import 'package:real_liquid_glass/real_liquid_glass.dart';
 
-class KazumiMenuCloseScope extends InheritedWidget {
-  const KazumiMenuCloseScope(
-      {super.key, required this.closeAll, required super.child});
+/// 菜单条目点完要关到哪一层。
+///
+/// 播放器菜单是两层的：一级是「更多」那块面板，二级是比例 / 倍速 / 超分 / 定时。
+enum KazumiMenuCloseLevel {
+  /// 二级项：关自己 + 上层，整条菜单链都收起来。
+  all,
 
+  /// 只关自己所在的那层（定时关闭：选完时间，一级面板继续留着）。
+  current,
+}
+
+class KazumiMenuCloseScope extends InheritedWidget {
+  const KazumiMenuCloseScope({
+    super.key,
+    required this.closeSelf,
+    required this.closeAll,
+    required super.child,
+  });
+
+  /// 只关自己这一层。
+  final VoidCallback closeSelf;
+
+  /// 关自己 + 上层。
   final VoidCallback closeAll;
 
   /// 用 `getInheritedWidgetOfExactType`：找一个已有祖先就行，不建立依赖，
@@ -236,6 +255,13 @@ abstract final class KazumiGlass {
   /// 玻璃面板里的一个可点条目。
   ///
   /// 不额外铺玻璃（苹果不建议玻璃叠玻璃，实测也会点不动），整块菜单还是一块
+  /// 条目点完到菜单真正关闭之间的停顿：让选中态 / 文案先改出来，
+  /// 用户能看清自己点中的是哪一项。
+  static const Duration menuCloseDelay = Duration(milliseconds: 200);
+
+  /// 玻璃面板里的一个可点条目。
+  ///
+  /// 不额外铺玻璃（苹果不建议玻璃叠玻璃，实测也会点不动），整块菜单还是一块
   /// 大玻璃；条目只负责按下时的圆角高亮。
   static Widget menuItem({
     required BuildContext context,
@@ -243,6 +269,7 @@ abstract final class KazumiGlass {
     required VoidCallback? onTap,
     bool selected = false,
     bool closeMenu = true,
+    KazumiMenuCloseLevel closeLevel = KazumiMenuCloseLevel.all,
     EdgeInsetsGeometry padding =
         const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
     double? radius,
@@ -271,14 +298,29 @@ abstract final class KazumiGlass {
                     final MenuController? menu = closeMenu && scope == null
                         ? MenuController.maybeOf(itemContext)
                         : null;
-                    // 先跑条目自己的动作，再把关菜单推到下一帧 —— 投屏 / 弹窗 /
-                    // 跳详情这类「先做事」的条目不能被打断：同步关菜单会立刻重建
-                    // 菜单树，动作就可能像没发生一样。
+                    // 先跑条目自己的动作，再留一小会儿才关菜单：
+                    // 1) 同步关菜单会立刻重建菜单树，投屏 / 弹窗 / 跳详情这类
+                    //    「先做事」的条目动作可能像没发生一样；
+                    // 2) 选中态（深色填充）也要有时间被看见，不然点完根本
+                    //    不知道自己选中了哪一项。
                     onTap();
-                    if (scope != null || menu != null) {
+                    if (scope != null) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
-                        scope?.closeAll();
-                        menu?.close();
+                        Future<void>.delayed(KazumiGlass.menuCloseDelay, () {
+                          if (closeLevel == KazumiMenuCloseLevel.all) {
+                            scope.closeAll();
+                          } else {
+                            scope.closeSelf();
+                          }
+                        });
+                      });
+                    } else if (menu != null) {
+                      // 不在播放器这套分层菜单里的（收藏状态菜单、下拉菜单），
+                      // 退回框架的 MenuController，行为和以前一致。
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        Future<void>.delayed(KazumiGlass.menuCloseDelay, () {
+                          menu.close();
+                        });
                       });
                     }
                   },
