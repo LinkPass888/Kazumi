@@ -908,7 +908,6 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       // 点完只关这个二级菜单（和「不开启」一致）
                       closeLevel: KazumiMenuCloseLevel.current,
-                      selected: TimedShutdownService().setMinutes == minutes,
                       onTap: () {
                         TimedShutdownService().start(minutes,
                             onExpired: widget.pauseForTimedShutdown);
