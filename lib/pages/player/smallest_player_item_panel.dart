@@ -643,29 +643,28 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             for (final double i in defaultPlaySpeedList)
-                            KazumiGlass.menuItem(
-                              context: context,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 14),
-                              selected:
-                                  i == playerController.playback.playerSpeed,
-                              onTap: () async {
-                                await widget.setPlaybackSpeed(i);
-                              },
-                              child: SizedBox(
-                                height: 48,
-                                width: 112,
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    '${i}x',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelLarge,
+                              MenuItemButton(
+                                style: KazumiGlass.menuItemButtonStyle(
+                                  context,
+                                  selected: i ==
+                                      playerController.playback.playerSpeed,
+                                ),
+                                onPressed: () async {
+                                  await widget.setPlaybackSpeed(i);
+                                },
+                                child: SizedBox(
+                                  height: 48,
+                                  width: 112,
+                                  child: Center(
+                                    child: Text(
+                                      '${i}x',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
                           ],
                         ),
                       ),
