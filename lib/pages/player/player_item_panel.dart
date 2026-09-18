@@ -790,10 +790,8 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     // 框架的算法是 desiredPosition += alignmentOffset，
                     // 所以 dx 负=往左、dy 负=往上：往上顶回原来的位置，
                     // 再往左挪 30。
-                    alignmentOffset: MediaQuery.of(context).size.width >
-                            MediaQuery.of(context).size.height
-                        ? const Offset(-30, -240)
-                        : null,
+                    alignmentOffset: playerLandscapeOffset(
+                        context, const Offset(-30, -240)),
                     builder: (BuildContext context, MenuController controller,
                         Widget? child) {
                       return TextButton(
@@ -835,10 +833,8 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     onVisibilityChanged: widget.onMenuVisibilityChanged,
                     consumeOutsideTap: true,
                     // 只挪横屏：和超分辨率菜单（同处工具栏）下沿齐平
-                    alignmentOffset: MediaQuery.of(context).size.width >
-                            MediaQuery.of(context).size.height
-                        ? const Offset(-30, -294)
-                        : null,
+                    alignmentOffset: playerLandscapeOffset(
+                        context, const Offset(-30, -294)),
                     builder: (BuildContext context, MenuController controller,
                         Widget? child) {
                       return TextButton(
@@ -906,10 +902,8 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     onVisibilityChanged: widget.onMenuVisibilityChanged,
                     consumeOutsideTap: true,
                     // 只改横屏：往上顶，和超分辨率菜单（基准）的下沿对齐
-                    alignmentOffset: MediaQuery.of(context).size.width >
-                            MediaQuery.of(context).size.height
-                        ? const Offset(-40, -294)
-                        : null,
+                    alignmentOffset: playerLandscapeOffset(
+                        context, const Offset(-40, -294)),
                     builder: (BuildContext context, MenuController controller,
                         Widget? child) {
                       return IconButton(
@@ -1193,7 +1187,10 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                         context: context,
                         padding:
                             const EdgeInsets.symmetric(horizontal: 14),
-                        selected: !TimedShutdownService().isActive,
+                        // 点完只关这个二级菜单，一级的「更多」面板继续留着
+                        closeLevel: KazumiMenuCloseLevel.current,
+                        // 原来这里是 selected: !isActive，一打开「不开启」就是
+                        // 深色选中态，像已经点过一样 —— 去掉，默认不带填充
                         onTap: () {
                           TimedShutdownService().cancel();
                         },
@@ -1211,8 +1208,8 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                           context: context,
                           padding:
                               const EdgeInsets.symmetric(horizontal: 14),
-                          selected:
-                              TimedShutdownService().setMinutes == minutes,
+                          // 点完只关这个二级菜单（和「不开启」一致）
+                          closeLevel: KazumiMenuCloseLevel.current,
                           onTap: () {
                             TimedShutdownService().start(minutes,
                                 onExpired: widget.pauseForTimedShutdown);
@@ -1233,6 +1230,8 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                         context: context,
                         // 四周等距：横向 14，纵向由条目高 48 撑开
                         padding: const EdgeInsets.symmetric(horizontal: 14),
+                        // 点「自定义」只关二级菜单（和上面几项一致）
+                        closeLevel: KazumiMenuCloseLevel.current,
                         onTap: () {
                           TimedShutdownService.showCustomTimerDialog(
                             onExpired: widget.pauseForTimedShutdown,
