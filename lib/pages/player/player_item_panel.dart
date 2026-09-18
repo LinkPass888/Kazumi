@@ -790,10 +790,8 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     // 框架的算法是 desiredPosition += alignmentOffset，
                     // 所以 dx 负=往左、dy 负=往上：往上顶回原来的位置，
                     // 再往左挪 30。
-                    alignmentOffset: MediaQuery.of(context).size.width >
-                            MediaQuery.of(context).size.height
-                        ? const Offset(-30, -240)
-                        : null,
+                    alignmentOffset: playerLandscapeOffset(
+                        context, const Offset(-30, -240)),
                     builder: (BuildContext context, MenuController controller,
                         Widget? child) {
                       return TextButton(
@@ -835,10 +833,8 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     onVisibilityChanged: widget.onMenuVisibilityChanged,
                     consumeOutsideTap: true,
                     // 只挪横屏：和超分辨率菜单（同处工具栏）下沿齐平
-                    alignmentOffset: MediaQuery.of(context).size.width >
-                            MediaQuery.of(context).size.height
-                        ? const Offset(-30, -294)
-                        : null,
+                    alignmentOffset: playerLandscapeOffset(
+                        context, const Offset(-30, -294)),
                     builder: (BuildContext context, MenuController controller,
                         Widget? child) {
                       return TextButton(
@@ -906,10 +902,8 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                     onVisibilityChanged: widget.onMenuVisibilityChanged,
                     consumeOutsideTap: true,
                     // 只改横屏：往上顶，和超分辨率菜单（基准）的下沿对齐
-                    alignmentOffset: MediaQuery.of(context).size.width >
-                            MediaQuery.of(context).size.height
-                        ? const Offset(-40, -294)
-                        : null,
+                    alignmentOffset: playerLandscapeOffset(
+                        context, const Offset(-40, -294)),
                     builder: (BuildContext context, MenuController controller,
                         Widget? child) {
                       return IconButton(

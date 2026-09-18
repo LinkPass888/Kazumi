@@ -77,6 +77,12 @@ class _PlayerPanelHoldMouseRegionState
   }
 }
 
+/// Returns an offset only in landscape, preserving each caller's exact offset.
+Offset? playerLandscapeOffset(BuildContext context, Offset offset) {
+  final Size size = MediaQuery.sizeOf(context);
+  return size.width > size.height ? offset : null;
+}
+
 class PlayerPanelHoldMenuAnchor extends StatefulWidget {
   const PlayerPanelHoldMenuAnchor({
     super.key,
