@@ -73,7 +73,7 @@
         name: "Build iOS ipa"
         runs-on: "macos-26"
         permissions:
-          contents: write
+          contents: read
         steps:
           - name: Clone repository
             uses: actions/checkout@v4
@@ -105,27 +105,3 @@
             with:
               name: ios_outputs
               path: Kazumi_ios_*.ipa
-          # Actions artifact 的下载永远是 zip（这是 GitHub 平台行为，工作流改不了）。
-          # 想要「点开就是 .ipa」就同时挂一份到 Release：release 文件不做二次打包，
-          # 链接直接以 .ipa 结尾，SideStore / AltStore 也能直接吃这个 URL。
-          - name: Publish ipa to rolling pre-release
-            if: ${{ github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' }}
-            env:
-              GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            run: |
-              TAG="ci-latest"
-              IPA=$(ls Kazumi_ios_*.ipa | head -n1)
-              if gh release view "$TAG" >/dev/null 2>&1; then
-                for asset in $(gh release view "$TAG" --json assets -q '.assets[].name'); do
-                  gh release delete-asset "$TAG" "$asset" -y || true
-                done
-              else
-                gh release create "$TAG" \
-                  --target "$GITHUB_SHA" \
-                  --title "CI 自动构建（最新一次）" \
-                  --notes "PR 工作流每次推送自动覆盖。未签名 ipa，需侧载。" \
-                  --prerelease
-              fi
-              gh release upload "$TAG" "$IPA" --clobber
-              echo "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/$IPA"
-            shell: bash
