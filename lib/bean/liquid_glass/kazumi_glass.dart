@@ -3,6 +3,21 @@ import 'package:flutter/services.dart';
 import 'package:kazumi/services/storage/storage.dart';
 import 'package:real_liquid_glass/real_liquid_glass.dart';
 
+class KazumiMenuCloseScope extends InheritedWidget {
+  const KazumiMenuCloseScope(
+      {super.key, required this.closeAll, required super.child});
+
+  final VoidCallback closeAll;
+
+  /// 用 `getInheritedWidgetOfExactType`：找一个已有祖先就行，不建立依赖，
+  /// 这样在 build 里、在点击回调里都能安全调用。
+  static KazumiMenuCloseScope? maybeOf(BuildContext context) =>
+      context.getInheritedWidgetOfExactType<KazumiMenuCloseScope>();
+
+  @override
+  bool updateShouldNotify(KazumiMenuCloseScope oldWidget) => false;
+}
+
 /// 液态玻璃（iOS 26 Liquid Glass）适配的统一入口。
 ///
 /// iOS 26+ 上交给苹果原生的 `UIGlassEffect`：真正的折光液态玻璃，并且自动
@@ -235,36 +250,52 @@ abstract final class KazumiGlass {
     return Padding(
       // 3 + 面板的 3 = 6：四边留白等宽（相邻条目之间也是 3 + 3 = 6）
       padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 3),
-      child: _GlassTapTarget(
-        // 和 MenuItemButton 一样：点完就把所在的菜单关掉，
-        // 否则选完倍速/定时关闭，菜单还留在屏幕上
-        onTap: onTap == null
-            ? null
-            : () {
-                // 先跑条目自己的动作，再把关菜单推到下一帧 —— 投屏 / 弹窗 /
-                // 跳详情这类「先做事」的条目不能被打断：同步关菜单会立刻重建
-                // 菜单树，动作就可能像没发生一样。
-                final MenuController? menu = closeMenu
-                    ? MenuController.maybeOf(context)
-                    : null;
-                onTap();
-                if (menu != null) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    menu.close();
-                  });
-                }
-              },
-        shape: panelShape,
-        padding: padding,
-        selected: selected,
-        radius: radius ?? menuItemRadiusOf(context),
-        wrapInGlass: false,
-        // 同一块面板里的条目必须同一套字：菜单条目统一 labelLarge，
-        // 免得「一起看」这类和「定时关闭」那类条目的字号字重不一样。
-        child: DefaultTextStyle(
-          style: Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
-          child: child,
-        ),
+      // 必须用「条目自己的 context」找菜单，不能用传进来的 context：
+      // 传进来的 context 属于构建菜单的那棵树（播放器面板 / Observer），
+      // 它在菜单浮层外面 —— 在那里查 MenuController 和 KazumiMenuCloseScope
+      // 永远是 null，关菜单就静默失败（这就是「改了没变化」的真正原因）。
+      // Builder 给的是条目在浮层里的 context，往上查才查得到。
+      child: Builder(
+        builder: (BuildContext itemContext) {
+          return _GlassTapTarget(
+            // 和 MenuItemButton 一样：点完就把所在的菜单关掉，
+            // 否则选完倍速 / 定时关闭，菜单还留在屏幕上。
+            // 菜单里的条目走 KazumiMenuCloseScope（能一层层往上关）；不在菜单
+            // 体系里的条目退回框架的 MenuController，行为和以前一致。
+            onTap: onTap == null
+                ? null
+                : () {
+                    final KazumiMenuCloseScope? scope = closeMenu
+                        ? KazumiMenuCloseScope.maybeOf(itemContext)
+                        : null;
+                    final MenuController? menu = closeMenu && scope == null
+                        ? MenuController.maybeOf(itemContext)
+                        : null;
+                    // 先跑条目自己的动作，再把关菜单推到下一帧 —— 投屏 / 弹窗 /
+                    // 跳详情这类「先做事」的条目不能被打断：同步关菜单会立刻重建
+                    // 菜单树，动作就可能像没发生一样。
+                    onTap();
+                    if (scope != null || menu != null) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        scope?.closeAll();
+                        menu?.close();
+                      });
+                    }
+                  },
+            shape: panelShape,
+            padding: padding,
+            selected: selected,
+            radius: radius ?? menuItemRadiusOf(itemContext),
+            wrapInGlass: false,
+            // 同一块面板里的条目必须同一套字：菜单条目统一 labelLarge，
+            // 免得「一起看」这类和「定时关闭」那类条目的字号字重不一样。
+            child: DefaultTextStyle(
+              style: Theme.of(itemContext).textTheme.labelLarge ??
+                  const TextStyle(),
+              child: child,
+            ),
+          );
+        },
       ),
     );
   }

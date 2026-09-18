@@ -117,6 +117,11 @@ class PlayerPanelHoldMenuAnchor extends StatefulWidget {
 }
 
 class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
+  /// 本层菜单的控制器（由框架在 builder 里给）。
+  MenuController? _controller;
+
+  /// 上层菜单的关闭入口。子菜单选中一项时要连上层一起关，靠它往上传。
+  KazumiMenuCloseScope? _parentCloseScope;
   PlayerPanelHold? _hold;
   bool _isOpen = false;
 
@@ -149,6 +154,8 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
 
   @override
   Widget build(BuildContext context) {
+    // 自己这一层菜单的上层关闭入口：子菜单选中一项时要把整条菜单链关掉。
+    _parentCloseScope = KazumiMenuCloseScope.maybeOf(context);
     // 菜单不要滚动条（倍速那种长列表会把滚动条压在圆角上）
     return ScrollbarTheme(
       data: const ScrollbarThemeData(
@@ -176,24 +183,37 @@ class _PlayerPanelHoldMenuAnchorState extends State<PlayerPanelHoldMenuAnchor> {
       alignmentOffset: widget.alignmentOffset,
       onOpen: _handleOpen,
       onClose: _handleClose,
-      builder: widget.builder,
+      builder: (BuildContext context, MenuController controller,
+          Widget? child) {
+        _controller = controller;
+        return widget.builder(context, controller, child);
+      },
       menuChildren: [
-        // 和收藏状态菜单同一套写法：一块玻璃当面板，内容原样交给它。
-        // 不钉高度、不自接管滚动——上次就是那两样把面板弄坏的。
-        KazumiGlass.glassSurface(
-          shape: KazumiGlass.panelShapeOf(context),
-          // 上下留空 = 面板圆角 − 条目圆角，两个圆角同心
-          padding: KazumiGlass.menuPanelPadding,
-          // 子菜单（倍速…）是从这里长出来的，ScrollbarTheme 套在这一层才吃得到
-          child: ScrollbarTheme(
-            data: const ScrollbarThemeData(
-              thickness: WidgetStatePropertyAll(0),
-              thumbVisibility: WidgetStatePropertyAll(false),
-              trackVisibility: WidgetStatePropertyAll(false),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: widget.menuChildren,
+        // 本层菜单的关闭入口：先关自己，再顺着上层作用域把整条菜单链关掉。
+        // 一级条目点下去 -> 只关本层（上层作用域为空时就是这个效果）；
+        // 二级条目点下去 -> 关自己 + 关它所在的那层菜单。
+        KazumiMenuCloseScope(
+          closeAll: () {
+            _controller?.close();
+            _parentCloseScope?.closeAll();
+          },
+          // 和收藏状态菜单同一套写法：一块玻璃当面板，内容原样交给它。
+          // 不钉高度、不自接管滚动——上次就是那两样把面板弄坏的。
+          child: KazumiGlass.glassSurface(
+            shape: KazumiGlass.panelShapeOf(context),
+            // 上下留空 = 面板圆角 − 条目圆角，两个圆角同心
+            padding: KazumiGlass.menuPanelPadding,
+            // 子菜单（倍速…）是从这里长出来的，ScrollbarTheme 套在这一层才吃得到
+            child: ScrollbarTheme(
+              data: const ScrollbarThemeData(
+                thickness: WidgetStatePropertyAll(0),
+                thumbVisibility: WidgetStatePropertyAll(false),
+                trackVisibility: WidgetStatePropertyAll(false),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: widget.menuChildren,
+              ),
             ),
           ),
         ),
